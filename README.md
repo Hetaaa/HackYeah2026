@@ -2,10 +2,10 @@
 
 Monorepo projektu hackathonowego.
 
-| Katalog     | Zawartość                                  | Dokumentacja                             |
-| ----------- | ------------------------------------------ | ---------------------------------------- |
-| `backend/`  | API: FastAPI + SQLModel + SQLite           | [backend/README.md](backend/README.md)   |
-| `frontend/` | React + Vite (w przygotowaniu)             | _TBD_                                    |
+| Katalog     | Zawartość                                | Start                                       |
+| ----------- | ---------------------------------------- | ------------------------------------------- |
+| `backend/`  | API: FastAPI + SQLModel + SQLite         | [backend/README.md](backend/README.md)      |
+| `frontend/` | React + Vite (JS), Zustand, React Router | `cd frontend && npm install && npm run dev` |
 
 ## Konfiguracja środowiska
 
