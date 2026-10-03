@@ -73,6 +73,8 @@ class PersonaRead(BaseModel):
 
 
 class NormRange(BaseModel):
+    """Reference days: good days, or all days with < 10 good days (PersonaRead.norm_reference)."""
+
     median: float = Field(description="Median on good days", examples=[455])
     low: float = Field(description="25th percentile on good days", examples=[430])
     high: float = Field(description="75th percentile on good days", examples=[480])
@@ -106,7 +108,8 @@ class FeatureValue(BaseModel):
 
 
 class Deviation(BaseModel):
-    """Descriptive comparison with the average good day (not a cause)."""
+    """Descriptive comparison with the average good day, or the average day with < 10 good
+    days (PersonaRead.norm_reference). Not a cause."""
 
     feature: str = Field(examples=["sleep_h"])
     label: str = Field(examples=["Sleep"])
