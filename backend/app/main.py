@@ -7,7 +7,7 @@ from sqlmodel import Session
 
 from app import db
 from app.config import settings
-from app.routers import days, demo, health, insights, surveys, today, users
+from app.routers import days, demo, features, health, insights, surveys, today, users
 from scripts.seed import seed_if_empty
 
 DESCRIPTION = """
@@ -24,6 +24,7 @@ TAGS = [
     {"name": "days", "description": "Wellness calendar and day view."},
     {"name": "insights", "description": "Bad day patterns and the good day recipe."},
     {"name": "surveys", "description": "Daily wellness survey (4 sliders, 1-5)."},
+    {"name": "features", "description": "Catalogue of watch features (labels, units)."},
     {"name": "demo", "description": "Demo helpers (reset after a live demo)."},
     {"name": "health", "description": "Liveness check."},
 ]
@@ -54,5 +55,6 @@ app.add_middleware(
 
 for router in (users.router, today.router, days.router, insights.router, surveys.router):
     app.include_router(router, prefix="/api")
+app.include_router(features.router, prefix="/api")
 app.include_router(demo.router, prefix="/api")
 app.include_router(health.router, prefix="/api")

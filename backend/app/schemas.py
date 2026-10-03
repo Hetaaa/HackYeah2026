@@ -296,3 +296,17 @@ class TodayRead(BaseModel):
 class DemoReset(BaseModel):
     personas: int = Field(description="Demo personas restored", examples=[4])
     days: int = Field(description="Days of the demo personas", examples=[477])
+
+
+class FeatureRead(BaseModel):
+    feature: str = Field(examples=["wake_pct"])
+    label: str = Field(examples=["Awake at night"])
+    unit: str = Field(examples=["%"], description="h, clock, %, bpm, steps, min, pts")
+    group: str = Field(examples=["C"])
+    group_label: str = Field(examples=["Sleep continuity"])
+    when: Literal["last_night", "day_before"] = Field(
+        description="What a day's value refers to: the night before it or the previous day"
+    )
+    better: Direction = Field(description="Which direction is usually better for wellbeing")
+    in_patterns: bool = Field(description="Can be a pattern / possible reason (else context)")
+    description: str
