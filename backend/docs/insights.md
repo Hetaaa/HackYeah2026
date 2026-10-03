@@ -60,7 +60,7 @@ Zasady, które stosuje algorytm:
    - persony demo: wzorce tylko z dni przed 12.03.2020 (`Persona.analysis_window_end`, COVID).
 5. **Widok dnia**:
    - **„Possible reason”** tylko z istotnego wzorca, którego warunek był spełniony tego dnia
-     (maks. 2). W pozostałe dobre i złe dni: „No clear pattern explains this day.”
+     (maks. 2). W pozostałe dobre i złe dni: „No clear reason”.
    - **`deviations`**: opisowe porównanie z przeciętnym dobrym dniem, do 2 cech odchylonych o ≥ 1 SD.
      Pojawia się każdego dnia i nie jest przyczyną.
 6. **`leans`** (w `deviations` i `features`): czy wartość odbiega od punktu odniesienia w stronę

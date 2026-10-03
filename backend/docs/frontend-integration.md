@@ -35,7 +35,7 @@ otwarty miesiąc kalendarza używają `persona.today`. Dla nowych użytkowników
 data, więc kod jest ten sam.
 
 **3. Tekst do wyświetlenia jest gotowy.** Pola `display`, `text`, `summary`, `headline`,
-`condition` mają sformatowane wartości („4 h 53 min”, „02:24”, „12.5%”). Nie formatuj `value`
+`condition` mają sformatowane wartości („4h53”, „02:24”, „12.5%”). Nie formatuj `value`
 samodzielnie. `value` służy do wykresów i porównań.
 
 **4. Jednostki (`unit`):** `h`, `clock`, `%`, `bpm`, `steps`, `min`, `pts`. `clock` (pora
@@ -93,14 +93,14 @@ kalendarzu, `/patterns`, `/recipe`, `/stats`.
 ```json
 {
   "status": "ok",
-  "summary": "We found 1 possible reason behind your bad days.",
+  "summary": "1 possible reason for bad days",
   "bad_days_count": 20,
   "patterns": [{
-    "feature": "wake_pct", "label": "Awake at night", "condition": "over 12%",
+    "feature": "wake_pct", "label": "Awake at night", "condition": "Awake over 12% of night",
     "level": "significant", "when": "last_night",
     "days_in_condition": 27, "target_days_in_condition": 15,
     "rate_in": 0.5556, "rate_out": 0.1282,
-    "text": "When you are awake over 12% of the night, 15 of 27 days were bad days (vs 13% otherwise).",
+    "text": "Awake over 12% of night: 15 of 27 days bad",
     "example_dates": ["2020-01-29", "2020-02-03", "..."]
   }]
 }
@@ -134,7 +134,7 @@ Uwaga na `fatigue` i `stress`: suwak „zmęczenie 5” nie znaczy „bardzo zm�
 na suwakach muszą to jasno mówić.
 
 Odpowiedź zawiera `label` (`good` / `neutral` / `bad`) i `score`, więc od razu możemy pokazać
-„Check-in saved: …”. Ten sam `PUT` służy do poprawienia ankiety. Data późniejsza niż `today`
+„Typical day for you” albo „Possible reason: …”. Ten sam `PUT` służy do poprawienia ankiety. Data późniejsza niż `today`
 zwraca 422.
 
 **Demo:** przycisk „Fill in as Sam”, który ustawia suwaki na `persona.demo_answers`. Na scenie
@@ -155,7 +155,7 @@ Pola `today`:
 | Pole | Do czego |
 | --- | --- |
 | `outlook` + `summary` | nagłówek: `tough` / `promising` / `mixed` / `neutral` / `unknown` + zdanie |
-| `heads_up[]` | ostrzeżenia z wzorców złych dni (`text`, np. „Heads-up: you were awake 12.5% of last night.”), w szczegółach `pattern_text` |
+| `heads_up[]` | ostrzeżenia z wzorców złych dni (`text`, np. „Heads-up: awake 12.5% of night”), w szczegółach `pattern_text` |
 | `good_signs[]` | to samo dla przepisu („Good sign: …”) |
 | `deviations[]` | do 2 największych różnic od średniego dobrego dnia, gotowe `text` + `leans` |
 | `features[]` | wszystkie cechy: `display` (dziś), `norm.average` (średni dobry dzień), `leans`, `in_patterns` |
@@ -165,7 +165,7 @@ Pole `features[]` daje tabelę „dziś vs średni dobry dzień”:
 
 ```json
 {"feature": "sleep_h", "label": "Sleep", "unit": "h", "when": "last_night",
- "value": 4.883, "display": "4 h 53 min",
+ "value": 4.883, "display": "4h53",
  "norm": {"average": 7.793, "median": 7.667, "low": 7.171, "high": 8.146},
  "in_patterns": true, "leans": "bad"}
 ```
@@ -178,8 +178,7 @@ Pole `features[]` daje tabelę „dziś vs średni dobry dzień”:
   snu albo nowy użytkownik, który dostaje `outlook = "unknown"`). Pokazujemy wtedy „–”.
 - Cechy z `in_patterns = false` to kontekst. Można je pokazać mniejsze albo zwinięte.
 - `heads_up` i `good_signs` nie zmieniają się po wypełnieniu ankiety (liczone z danych sprzed niej).
-  Zmienia się `summary`: po ankiecie pokazuje „Possible reason: …” albo „Check-in saved: a typical
-  day for you.”.
+  Zmienia się `summary`: po ankiecie pokazuje „Possible reason: …” albo „Typical day for you”.
 
 ## Ekran 2 (szczegóły)
 
@@ -192,9 +191,9 @@ Lista z `GET /api/users/{id}/patterns` (jak na ekranie 1), a po kliknięciu wzor
 ```json
 {
   "feature": "wake_pct", "label": "Awake at night", "unit": "%",
-  "op": "above", "threshold": 12.0, "display_threshold": "12%",
+  "op": "above", "threshold": 12.0, "display_threshold": "12%", "condition": "Awake over 12% of night",
   "variant": "lag1", "when": "last_night",
-  "text": "When you are awake over 12% of the night, 15 of 27 days were bad days (vs 13% otherwise).",
+  "text": "Awake over 12% of night: 15 of 27 days bad",
   "points": [
     {"date": "2019-11-16", "value": 11.945, "display": "11.9%", "label": "good", "in_condition": false}
   ]
@@ -218,8 +217,8 @@ mogą linkować do widoku dnia.
   "good_days_count": 32, "bad_days_count": 20,
   "features": [{
     "feature": "sleep_h", "label": "Sleep", "unit": "h", "when": "last_night", "in_patterns": true,
-    "good": {"average": 7.793, "display": "7 h 48 min", "days": 32},
-    "bad":  {"average": 7.078, "display": "7 h 05 min", "days": 20},
+    "good": {"average": 7.793, "display": "7h48", "days": 32},
+    "bad":  {"average": 7.078, "display": "7h05", "days": 20},
     "difference": -0.715
   }]
 }
@@ -238,10 +237,10 @@ mogą linkować do widoku dnia.
 ```json
 {"date": "2019-12-06", "label": "bad", "score": -1.319,
  "has_reason": true,
- "headline": "Possible reason: you were awake 14.5% of last night.",
+ "headline": "Possible reason: awake 14.5% of night",
  "top_deviations": [
    {"feature": "wake_pct", "label": "Awake at night", "direction": "higher", "leans": "bad",
-    "text": "You were awake 3 percentage points more of the night than on your average good day."}
+    "text": "Awake at night +3% vs good days"}
  ]}
 ```
 
@@ -259,7 +258,7 @@ mogą linkować do widoku dnia.
 
 | Pole | Do czego |
 | --- | --- |
-| `summary` | główne zdanie: „Possible reason: …” albo „No clear pattern explains this day.” |
+| `summary` | główne zdanie: „Possible reason: …” albo „No clear reason” |
 | `reasons[]` | do 2 możliwych powodów (`text`, `pattern_text`) |
 | `deviations[]` | porównanie z średnim dobrym dniem (`text`, `leans`) |
 | `features[]` | wszystkie wartości dnia z `norm` i `leans`, jak na ekranie głównym |
@@ -293,15 +292,16 @@ Błędy mają format `{"detail": "..."}`.
 ## Pułapki
 
 - **Robin (`p01`) ma tylko 3 dobre dni.** `norm_reference = "all_days"`, więc porównania idą do
-  średniego dnia, a teksty mówią „on your average day”. `leans` jest zawsze `null`, a przepis ma
+  średniego dnia, a teksty mówią „vs usual” (np. „Sleep -53 min vs usual”). `leans` jest zawsze `null`, a przepis ma
   status `insufficient_good_days`. Gdy `norm_reference == "all_days"`, zmień podpis na „vs your
   average day”. Ekrany z porównaniami pokazujemy na Samie (`p10`).
-- **Nie piszemy „than usual”.** Porównania są z „average good day”. Teksty z backendu już to
-  mają, więc nie przerabiaj ich na froncie.
+- **Porównania są ze średnim dobrym dniem** („vs good days”), a nie ze zwykłym dniem. Wyjątek to
+  osoby z < 10 dobrymi dniami (`norm_reference = "all_days"`, teksty „vs usual”). Teksty z
+  backendu (`app/insights/texts.py`) już to rozróżniają.
 - **„Possible reason”, nie „cause”.** To korelacje w danych danej osoby. Nie dopisuj diagnoz ani
   porad.
 - **Pierwsze zapytanie** po starcie backendu trwa ok. 0,4 s (liczenie analiz), kolejne są z cache.
-- **Kim (`p16`) zasypia rano** („you fell asleep at 09:41”). To prawdziwe dane nocnego marka, nie
+- **Kim (`p16`) zasypia rano** („asleep at 09:41”). To prawdziwe dane nocnego marka, nie
   błąd.
 
 Scenariusz prezentacji i odpowiedzi do wpisania na scenie: [demo.md](demo.md). Jak działa

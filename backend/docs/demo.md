@@ -54,7 +54,7 @@ z mood, fatigue i stress, a `sleep_quality` nie ma na nią wpływu. Odporność 
 | --- | --- |
 | Kim | dowolny suwak ±1 nadal daje zły dzień |
 | Robin | wyraźny margines od progu |
-| Sam, Alex | tylko dokładne odpowiedzi. U Sama mood, fatigue albo stress o 1 wyżej daje dzień neutralny („Check-in saved: a typical day for you.”) |
+| Sam, Alex | tylko dokładne odpowiedzi. U Sama mood, fatigue albo stress o 1 wyżej daje dzień neutralny („Typical day for you”) |
 
 Ostrzeżenie na ekranie Today nie zmienia się po wypełnieniu ankiety, bo jest liczone z danych sprzed
 niej.
@@ -69,44 +69,39 @@ zegarkiem.)
 
 **3. Ekran Today, jeszcze przed ankietą** (`GET /users/p10/today`):
 
-> Today may be tougher than usual. Check in to see how you feel.
-> **Heads-up:** you were awake 12.5% of last night.
-> *When you are awake over 12% of the night, 15 of 27 days were bad days (vs 13% otherwise).*
+> Tougher day possible
+> **Heads-up:** awake 12.5% of night
+> *Awake over 12% of night: 15 of 27 days bad*
 
 Punkt do omówienia: aplikacja wie to rano, z samego zegarka, bo to wzorzec tej konkretnej osoby.
 
 **4. Ankieta na żywo:** mood 3, fatigue 1, sleep quality 2, stress 2 (`PUT /users/p10/surveys/2020-02-14`).
 Wynik: `label = bad`, a Today pokazuje:
 
-> Possible reason: you were awake 12.5% of last night.
+> Possible reason: awake 12.5% of night
 
 **5. Widok dnia** (`GET /users/p10/days/2020-02-14`):
 - „Possible reason” (z istotnego wzorca),
-- „Compared with your average good day”: *Your heart rate during sleep was 15 bpm higher… You slept
-  2 h 55 min less…*,
+- porównanie ze średnim dobrym dniem: *Sleep HR +15 bpm vs good days*, *Sleep -2h55 vs good days*,
 - wartości na tle zakresu dobrych dni (`features[].norm`).
 
 **6. Kalendarz, grudzień 2019** (`GET /users/p10/days?from=2019-12-01&to=2019-12-31`): kolorowe dni,
 13 z nich ma „possible reason” (najwięcej ze wszystkich miesięcy).
 
 **7. Wzorce i przepis:**
-- `/patterns`: *When you are awake over 12% of the night, 15 of 27 days were bad days (vs 13% otherwise).*
-- `/recipe`: *When you get over 320 min of light activity the day before, 13 of 16 days were good days
-  (vs 38% otherwise).*
+- `/patterns`: *Awake over 12% of night: 15 of 27 days bad*
+- `/recipe`: *Over 5h20 light activity (day before): 13 of 16 days good*
 
-**8. Personalizacja → Robin (p01).** Today: *Heads-up: you spent 80 min in high heart-rate zones the day
-before.* Inna osoba, inna przyczyna. Przepis jest pusty („Not enough good days yet…”), co pokazuje, że
+**8. Personalizacja → Robin (p01).** Today: *Heads-up: 1h20 hard exercise (day before)*. Inna osoba, inna przyczyna. Przepis jest pusty („Not enough good days yet”), co pokazuje, że
 aplikacja nie zmyśla.
 
-**9. Alex (p06), dobry dzień.** Today: *Good sign: you slept 7 h 23 min last night.* Przepis: sen
-powyżej 6 h 30 min. Wzorzec złych dni to tylko „Early signal”, bo nie przeszedł testu istotności.
+**9. Alex (p06), dobry dzień.** Today: *Good sign: 7h23 sleep*. Przepis: *Over 6h30 sleep*. Wzorzec złych dni to tylko „Early signal”, bo nie przeszedł testu istotności.
 
 **10. Wiarygodność (slajd).**
 - Na losowych etykietach ~5% fałszywych alarmów.
 - Sztucznie wstrzyknięty efekt znaleziony z poprawnym progiem.
 - Wzorce trzymają się bez weekendów.
-- „Possible reason” tylko z istotnych wzorców, w pozostałe dni uczciwe *No clear pattern explains
-  this day.*
+- „Possible reason” tylko z istotnych wzorców, w pozostałe dni uczciwe *No clear reason*.
 
 ## Ekrany → endpointy
 
@@ -131,7 +126,7 @@ powyżej 6 h 30 min. Wzorzec złych dni to tylko „Early signal”, bo nie prze
 - **Kim (p16) po ankiecie na żywo** dostaje trzeci wzorzec złych dni (czuwanie > 13% nocy), bo
   nowy dzień przesuwa go poniżej p = 0,05. Zachowanie poprawne, ale lista na ekranie wzorców się
   zmienia. U pozostałych person wzorce po ankiecie zostają takie same.
-- **Kim (p16)** zasypia rano (*you fell asleep at 09:41 last night*). Opowiadać jako „nocny marek”
+- **Kim (p16)** zasypia rano (*Heads-up: asleep at 09:41*). Opowiadać jako „nocny marek”
   albo pominąć.
 - **Robin (p01) ma 3 dobre dni**: porównania idą do średniego dnia (`norm_reference = all_days`),
   a `leans` jest zawsze `null`. Na ekranie porównań i w kalendarzu lepiej pokazywać Sama.
