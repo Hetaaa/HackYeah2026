@@ -21,7 +21,7 @@ cp .env.example .env    # opcjonalnie, domyślne wartości działają bez .env
 uv run uvicorn app.main:app --reload
 ```
 
-Przy starcie tworzą się tabele, a jeśli `Item` jest pusta, ładuje się seed (5 rekordów).
+Przy starcie tworzą się tabele, a jeśli `Persona` jest pusta, ładuje się seed: 3 wygenerowane persony (`p01`–`p03`) po 150 dni, każda z innym wzorcem złych dni.
 
 - API: <http://localhost:8000/api>
 - Dokumentacja (Swagger): <http://localhost:8000/docs>
@@ -61,19 +61,50 @@ Usuwa i tworzy na nowo wszystkie tabele, potem ładuje seed. Działa też przy w
 | `CORS_ORIGINS` | `http://localhost:5173`   | Dozwolone originy, rozdzielone przecinkami  |
 | `ENV`          | `dev`                     | Nazwa środowiska                            |
 
-## Jak dodać nowy zasób
+## API
 
-Kopiuj wzorzec `Item`. Przykład dla `Event`:
+Brak auth: persona to `user_id` w ścieżce. Szczegóły i przykłady w Swaggerze (`/docs`).
 
-1. **Model**: w `app/models.py` dodaj `EventBase(SQLModel)` ze wspólnymi polami i `Event(EventBase, table=True)` z `id` (i ewentualnie `created_at`).
-2. **Schematy**: w `app/schemas.py` dodaj `EventCreate(EventBase)`, `EventUpdate` (wszystkie pola opcjonalne) i `EventRead(EventBase)` z `id`.
-3. **Serwis**: utwórz `app/services/events.py` ze zwykłymi funkcjami `list_events`, `get_event`, `create_event`, `update_event`, `delete_event`, które przyjmują `session: Session`.
-4. **Router**: utwórz `app/routers/events.py` z `APIRouter(prefix="/events", tags=["events"])`. Router woła tylko serwis i zwraca 404, gdy rekordu brak.
-5. **Podpięcie**: w `app/main.py` dodaj `app.include_router(events.router, prefix="/api")`.
-6. **Test**: utwórz `tests/test_events.py` na wzór `tests/test_items.py` (fixture `client`).
-7. **Baza**: `uv run python -m scripts.reset_db`.
+| Metoda | Ścieżka | Ekran |
+| ------ | ------- | ----- |
+| GET | `/api/users` | przełącznik persony |
+| GET | `/api/users/{user_id}` | persona |
+| GET | `/api/users/{user_id}/days?from=&to=` | kalendarz samopoczucia |
+| GET | `/api/users/{user_id}/days/{date}` | widok dnia |
+| GET | `/api/users/{user_id}/patterns` | wzorce złych dni |
+| GET | `/api/users/{user_id}/recipe` | przepis na dobry dzień |
+| GET | `/api/users/{user_id}/surveys/{date}` | czy ankieta wypełniona (404 jeśli nie) |
+| PUT | `/api/users/{user_id}/surveys/{date}` | zapis ankiety, zwraca etykietę dnia |
 
-Integracje z zewnętrznymi API trafiają do `app/clients/` i są wołane z serwisów.
+## Analiza (zespół od algorytmów)
+
+Cała logika liczenia jest w `app/analysis.py`. Serwisy wołają tylko te funkcje, więc wystarczy
+podmienić ich środek bez zmiany sygnatur:
+
+| Funkcja | Zwraca |
+| ------- | ------ |
+| `score_day(day)` | wynik dnia z ankiety albo `None` |
+| `label_day(day)` | `"good"` / `"neutral"` / `"bad"` albo `None` |
+| `personal_norm(days)` | `dict[cecha, NormRange]` z dobrych dni |
+| `day_deviations(days, date)` | `list[Deviation]` posortowana od największego odchylenia |
+| `explain_day(days, date)` | zdanie podsumowania dnia |
+| `bad_day_patterns(days)` | `PatternReport` |
+| `good_day_recipe(days)` | `Recipe` |
+
+`days` to wszystkie dni jednej persony (`app.models.Day`) posortowane po dacie. Typy wyników są
+w `app/schemas.py` i trafiają 1:1 do JSON-a. Lista cech i ich jednostek: `FEATURES` w `analysis.py`.
+
+Obecna implementacja to prosty stub (kwartyle z dobrych dni), żeby frontend miał realistyczne dane.
+
+## Import danych
+
+CSV, jeden wiersz = jeden dzień jednej persony. Kolumny: `user_id, date, sleep_minutes,
+resting_hr, steps, active_minutes, calories, mood, fatigue, sleep_quality, stress`
+(puste komórki dozwolone, istniejące dni są nadpisywane):
+
+```bash
+uv run python -m scripts.import_days data/days.csv
+```
 
 ## Współpraca z frontendem
 
