@@ -22,3 +22,6 @@ dist/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Local caches (insights heart-rate scan)
+.cache/
