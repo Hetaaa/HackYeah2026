@@ -1,0 +1,550 @@
+{
+  "injected": {
+    "found_rate": 0.725,
+    "runs": 160,
+    "threshold_within_0.5h_rate": 0.725
+  },
+  "n_candidates_bad": {
+    "p01": 89,
+    "p04": 109,
+    "p05": 94,
+    "p06": 102,
+    "p07": 112,
+    "p08": 108,
+    "p09": 127,
+    "p10": 96,
+    "p11": 121,
+    "p14": 118,
+    "p15": 93,
+    "p16": 81
+  },
+  "runs_per_person": 100,
+  "settings": {
+    "frozen": {
+      "null": {
+        "rates": {
+          "shuffle": {
+            "bad": {
+              "hits": 53,
+              "rate": 0.0442,
+              "runs": 1200
+            },
+            "good": {
+              "hits": 43,
+              "rate": 0.0478,
+              "runs": 900
+            }
+          },
+          "swap": {
+            "bad": {
+              "hits": 7,
+              "rate": 0.053,
+              "runs": 132
+            },
+            "good": {
+              "hits": 4,
+              "rate": 0.0556,
+              "runs": 72
+            }
+          }
+        },
+        "shuffle_per_person": {
+          "p01": {
+            "bad": 0.11
+          },
+          "p04": {
+            "bad": 0.02,
+            "good": 0.06
+          },
+          "p05": {
+            "bad": 0.04
+          },
+          "p06": {
+            "bad": 0.05,
+            "good": 0.06
+          },
+          "p07": {
+            "bad": 0.04,
+            "good": 0.05
+          },
+          "p08": {
+            "bad": 0.08,
+            "good": 0.04
+          },
+          "p09": {
+            "bad": 0.04,
+            "good": 0.04
+          },
+          "p10": {
+            "bad": 0.05,
+            "good": 0.05
+          },
+          "p11": {
+            "bad": 0.02
+          },
+          "p14": {
+            "bad": 0.01,
+            "good": 0.02
+          },
+          "p15": {
+            "bad": 0.01,
+            "good": 0.08
+          },
+          "p16": {
+            "bad": 0.06,
+            "good": 0.03
+          }
+        }
+      },
+      "real_significant": {
+        "p01": {
+          "bad": [
+            "z_cardio_peak_lag1 above 10 (22/28, p=0.033)"
+          ]
+        },
+        "p06": {
+          "good": [
+            "sleep_h_lag1 above 6.5 (18/50, p=0.01)"
+          ]
+        },
+        "p09": {
+          "bad": [
+            "sleep_h_lag1 below 5.5 (9/15, p=0.0222)"
+          ]
+        },
+        "p10": {
+          "bad": [
+            "wake_pct_lag1 above 12 (16/30, p=0.04)"
+          ],
+          "good": [
+            "lightly_lag1 above 320 (15/18, p=0.02)"
+          ]
+        },
+        "p16": {
+          "bad": [
+            "sleep_h_lag1 below 6 (11/14, p=0.0204)"
+          ],
+          "good": [
+            "steps_avg3 above 3000 (9/14, p=0.0204)"
+          ]
+        }
+      }
+    },
+    "no_cover_limit": {
+      "null": {
+        "rates": {
+          "shuffle": {
+            "bad": {
+              "hits": 52,
+              "rate": 0.0433,
+              "runs": 1200
+            },
+            "good": {
+              "hits": 40,
+              "rate": 0.0444,
+              "runs": 900
+            }
+          },
+          "swap": {
+            "bad": {
+              "hits": 6,
+              "rate": 0.0455,
+              "runs": 132
+            },
+            "good": {
+              "hits": 3,
+              "rate": 0.0417,
+              "runs": 72
+            }
+          }
+        },
+        "shuffle_per_person": {
+          "p01": {
+            "bad": 0.04
+          },
+          "p04": {
+            "bad": 0.04,
+            "good": 0.01
+          },
+          "p05": {
+            "bad": 0.07
+          },
+          "p06": {
+            "bad": 0.05,
+            "good": 0.06
+          },
+          "p07": {
+            "bad": 0.07,
+            "good": 0.1
+          },
+          "p08": {
+            "bad": 0.01,
+            "good": 0.04
+          },
+          "p09": {
+            "bad": 0.07,
+            "good": 0.06
+          },
+          "p10": {
+            "bad": 0.02,
+            "good": 0.04
+          },
+          "p11": {
+            "bad": 0.03
+          },
+          "p14": {
+            "bad": 0.03,
+            "good": 0.03
+          },
+          "p15": {
+            "bad": 0.05,
+            "good": 0.05
+          },
+          "p16": {
+            "bad": 0.04,
+            "good": 0.01
+          }
+        }
+      },
+      "real_significant": {
+        "p06": {
+          "good": [
+            "sleep_h_lag1 above 6 (22/76, p=0.01)"
+          ]
+        },
+        "p09": {
+          "bad": [
+            "sleep_h_lag1 below 5.5 (9/15, p=0.0222)"
+          ],
+          "good": [
+            "lightly_lag1 above 120 (25/56, p=0.0222)",
+            "steps_lag1 above 4000 (25/58, p=0.0222)"
+          ]
+        },
+        "p10": {
+          "good": [
+            "rem_pct_lag1 above 18 (36/65, p=0.04)",
+            "sleep_h_lag1 above 6.5 (36/65, p=0.04)"
+          ]
+        },
+        "p15": {
+          "good": [
+            "bedtime_h_avg3 below 6 (31/71, p=0.0175)"
+          ]
+        },
+        "p16": {
+          "bad": [
+            "sleep_h_lag1 below 6 (11/14, p=0.0204)"
+          ]
+        }
+      }
+    },
+    "sleep_eff": {
+      "null": {
+        "rates": {
+          "shuffle": {
+            "bad": {
+              "hits": 51,
+              "rate": 0.0425,
+              "runs": 1200
+            },
+            "good": {
+              "hits": 42,
+              "rate": 0.0467,
+              "runs": 900
+            }
+          },
+          "swap": {
+            "bad": {
+              "hits": 9,
+              "rate": 0.0682,
+              "runs": 132
+            },
+            "good": {
+              "hits": 3,
+              "rate": 0.0417,
+              "runs": 72
+            }
+          }
+        },
+        "shuffle_per_person": {
+          "p01": {
+            "bad": 0.1
+          },
+          "p04": {
+            "bad": 0.02,
+            "good": 0.05
+          },
+          "p05": {
+            "bad": 0.04
+          },
+          "p06": {
+            "bad": 0.05,
+            "good": 0.06
+          },
+          "p07": {
+            "bad": 0.04,
+            "good": 0.06
+          },
+          "p08": {
+            "bad": 0.07,
+            "good": 0.03
+          },
+          "p09": {
+            "bad": 0.04,
+            "good": 0.07
+          },
+          "p10": {
+            "bad": 0.06,
+            "good": 0.05
+          },
+          "p11": {
+            "bad": 0.02
+          },
+          "p14": {
+            "bad": 0.02,
+            "good": 0.01
+          },
+          "p15": {
+            "bad": 0.01,
+            "good": 0.07
+          },
+          "p16": {
+            "bad": 0.04,
+            "good": 0.02
+          }
+        }
+      },
+      "real_significant": {
+        "p01": {
+          "bad": [
+            "z_cardio_peak_lag1 above 10 (22/28, p=0.033)"
+          ]
+        },
+        "p06": {
+          "good": [
+            "sleep_h_lag1 above 6.5 (18/50, p=0.01)"
+          ]
+        },
+        "p08": {
+          "bad": [
+            "lightly_avg3 below 200 (9/12, p=0.0175)"
+          ]
+        },
+        "p09": {
+          "bad": [
+            "sleep_h_lag1 below 5.5 (9/15, p=0.0222)"
+          ]
+        },
+        "p10": {
+          "good": [
+            "lightly_lag1 above 320 (15/18, p=0.02)"
+          ]
+        },
+        "p16": {
+          "bad": [
+            "sleep_h_lag1 below 6 (11/14, p=0.0204)"
+          ],
+          "good": [
+            "steps_avg3 above 3000 (9/14, p=0.0204)"
+          ]
+        }
+      }
+    }
+  },
+  "split_half": {
+    "details": [
+      {
+        "dir": "1->2",
+        "kind": "bad",
+        "level": "significant",
+        "pattern": "z_cardio_peak_avg3 above 10",
+        "pid": "p01",
+        "replicates": true,
+        "test": "0.55 vs 0.32 (n_in 31)",
+        "train": "0.73 vs 0.32"
+      },
+      {
+        "dir": "2->1",
+        "kind": "bad",
+        "level": "significant",
+        "pattern": "z_cardio_peak_lag1 above 10",
+        "pid": "p01",
+        "replicates": true,
+        "test": "0.83 vs 0.43 (n_in 12)",
+        "train": "0.75 vs 0.33"
+      },
+      {
+        "dir": "1->2",
+        "kind": "bad",
+        "level": "preliminary",
+        "pattern": "lightly_avg3 below 180",
+        "pid": "p04",
+        "replicates": false,
+        "test": "0.14 vs 0.38 (n_in 14)",
+        "train": "0.88 vs 0.26"
+      },
+      {
+        "dir": "1->2",
+        "kind": "bad",
+        "level": "preliminary",
+        "pattern": "steps_avg3 below 9000",
+        "pid": "p04",
+        "replicates": false,
+        "test": "0.20 vs 0.34 (n_in 10)",
+        "train": "0.62 vs 0.27"
+      },
+      {
+        "dir": "1->2",
+        "kind": "good",
+        "level": "preliminary",
+        "pattern": "bedtime_h_avg3 below 4.5",
+        "pid": "p04",
+        "replicates": false,
+        "test": "0.32 vs 0.34 (n_in 19)",
+        "train": "0.86 vs 0.31"
+      },
+      {
+        "dir": "1->2",
+        "kind": "good",
+        "level": "preliminary",
+        "pattern": "wake_pct_lag1 below 13",
+        "pid": "p04",
+        "replicates": false,
+        "test": "0.26 vs 0.45 (n_in 31)",
+        "train": "0.67 vs 0.33"
+      },
+      {
+        "dir": "1->2",
+        "kind": "good",
+        "level": "preliminary",
+        "pattern": "sleep_h_lag1 above 6.5",
+        "pid": "p06",
+        "replicates": true,
+        "test": "0.21 vs 0.00 (n_in 24)",
+        "train": "0.50 vs 0.14"
+      },
+      {
+        "dir": "1->2",
+        "kind": "good",
+        "level": "preliminary",
+        "pattern": "bedtime_h_avg3 below 5",
+        "pid": "p06",
+        "replicates": false,
+        "test": "0.00 vs 0.08 (n_in 3)",
+        "train": "0.58 vs 0.22"
+      },
+      {
+        "dir": "2->1",
+        "kind": "good",
+        "level": "preliminary",
+        "pattern": "sleep_h_lag1 above 6.5",
+        "pid": "p06",
+        "replicates": true,
+        "test": "0.50 vs 0.14 (n_in 26)",
+        "train": "0.21 vs 0.00"
+      },
+      {
+        "dir": "1->2",
+        "kind": "bad",
+        "level": "preliminary",
+        "pattern": "z_cardio_peak_lag1 above 40",
+        "pid": "p07",
+        "replicates": true,
+        "test": "0.17 vs 0.07 (n_in 23)",
+        "train": "0.46 vs 0.25"
+      },
+      {
+        "dir": "2->1",
+        "kind": "bad",
+        "level": "preliminary",
+        "pattern": "wake_pct_lag1 above 16",
+        "pid": "p07",
+        "replicates": true,
+        "test": "0.50 vs 0.33 (n_in 6)",
+        "train": "0.44 vs 0.04"
+      },
+      {
+        "dir": "2->1",
+        "kind": "good",
+        "level": "preliminary",
+        "pattern": "wake_pct_lag1 below 13",
+        "pid": "p07",
+        "replicates": true,
+        "test": "0.38 vs 0.24 (n_in 29)",
+        "train": "0.59 vs 0.30"
+      },
+      {
+        "dir": "2->1",
+        "kind": "bad",
+        "level": "preliminary",
+        "pattern": "bedtime_h_lag1 above 6",
+        "pid": "p11",
+        "replicates": false,
+        "test": "0.28 vs 0.35 (n_in 18)",
+        "train": "0.57 vs 0.18"
+      }
+    ],
+    "patterns_checked": 13,
+    "replicated": 7,
+    "replication_rate": 0.538
+  },
+  "weekday_check": [
+    {
+      "all_days": "0.79 vs 0.38",
+      "holds": true,
+      "kind": "bad",
+      "pattern": "z_cardio_peak_lag1 above 10",
+      "pid": "p01",
+      "weekdays": "0.80 vs 0.37 (n_in 25)"
+    },
+    {
+      "all_days": "0.36 vs 0.07",
+      "holds": true,
+      "kind": "good",
+      "pattern": "sleep_h_lag1 above 6.5",
+      "pid": "p06",
+      "weekdays": "0.34 vs 0.07 (n_in 32)"
+    },
+    {
+      "all_days": "0.60 vs 0.12",
+      "holds": true,
+      "kind": "bad",
+      "pattern": "sleep_h_lag1 below 5.5",
+      "pid": "p09",
+      "weekdays": "0.64 vs 0.14 (n_in 11)"
+    },
+    {
+      "all_days": "0.53 vs 0.15",
+      "holds": true,
+      "kind": "bad",
+      "pattern": "wake_pct_lag1 above 12",
+      "pid": "p10",
+      "weekdays": "0.57 vs 0.14 (n_in 21)"
+    },
+    {
+      "all_days": "0.83 vs 0.38",
+      "holds": true,
+      "kind": "good",
+      "pattern": "lightly_lag1 above 320",
+      "pid": "p10",
+      "weekdays": "0.77 vs 0.40 (n_in 13)"
+    },
+    {
+      "all_days": "0.79 vs 0.21",
+      "holds": true,
+      "kind": "bad",
+      "pattern": "sleep_h_lag1 below 6",
+      "pid": "p16",
+      "weekdays": "0.73 vs 0.23 (n_in 11)"
+    },
+    {
+      "all_days": "0.64 vs 0.21",
+      "holds": true,
+      "kind": "good",
+      "pattern": "steps_avg3 above 3000",
+      "pid": "p16",
+      "weekdays": "0.56 vs 0.20 (n_in 9)"
+    }
+  ]
+}

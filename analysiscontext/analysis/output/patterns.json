@@ -1,0 +1,403 @@
+{
+  "p01": {
+    "bad": {
+      "n_candidates": 89,
+      "n_shifts": 90,
+      "null_q95": 0.1441,
+      "patterns": [
+        {
+          "column": "z_cardio_peak_lag1",
+          "days_in_condition": 28,
+          "feature": "z_cardio_peak",
+          "group": "E",
+          "kind": "bad",
+          "level": "significant",
+          "n_valid": 117,
+          "op": "above",
+          "p_feature": 0.022,
+          "p_global": 0.033,
+          "rate_in": 0.7857,
+          "rate_out": 0.382,
+          "score": 0.2226,
+          "target_days_in_condition": 22,
+          "text": "When you spend over 10 min in high heart-rate zones the day before, 22 of 28 days were bad days (vs 38% otherwise).",
+          "threshold": 10.0,
+          "variant": "lag1"
+        }
+      ]
+    },
+    "good": {
+      "disabled": "insufficient_good_days",
+      "patterns": []
+    }
+  },
+  "p04": {
+    "bad": {
+      "n_candidates": 109,
+      "n_shifts": 75,
+      "null_q95": 0.1413,
+      "patterns": []
+    },
+    "good": {
+      "n_candidates": 109,
+      "n_shifts": 75,
+      "null_q95": 0.1614,
+      "patterns": []
+    }
+  },
+  "p05": {
+    "bad": {
+      "n_candidates": 94,
+      "n_shifts": 56,
+      "null_q95": 0.2447,
+      "patterns": [
+        {
+          "column": "lightly_lag1",
+          "days_in_condition": 30,
+          "feature": "lightly",
+          "group": "F",
+          "kind": "bad",
+          "level": "preliminary",
+          "n_valid": 83,
+          "op": "below",
+          "p_feature": 0.0175,
+          "p_global": 0.3684,
+          "rate_in": 0.6,
+          "rate_out": 0.3208,
+          "score": 0.1024,
+          "target_days_in_condition": 18,
+          "text": "Early signal: When you get under 240 min of light activity the day before, 18 of 30 days were bad days (vs 32% otherwise).",
+          "threshold": 240.0,
+          "variant": "lag1"
+        }
+      ]
+    },
+    "good": {
+      "disabled": "insufficient_good_days",
+      "patterns": []
+    }
+  },
+  "p06": {
+    "bad": {
+      "n_candidates": 102,
+      "n_shifts": 99,
+      "null_q95": 0.1418,
+      "patterns": []
+    },
+    "good": {
+      "n_candidates": 102,
+      "n_shifts": 99,
+      "null_q95": 0.1104,
+      "patterns": [
+        {
+          "column": "sleep_h_lag1",
+          "days_in_condition": 50,
+          "feature": "sleep_h",
+          "group": "A",
+          "kind": "good",
+          "level": "significant",
+          "n_valid": 126,
+          "op": "above",
+          "p_feature": 0.01,
+          "p_global": 0.01,
+          "rate_in": 0.36,
+          "rate_out": 0.0658,
+          "score": 0.1756,
+          "target_days_in_condition": 18,
+          "text": "When you sleep over 6 h 30 min, 18 of 50 days were good days (vs 7% otherwise).",
+          "threshold": 6.5,
+          "variant": "lag1"
+        }
+      ]
+    }
+  },
+  "p07": {
+    "bad": {
+      "n_candidates": 112,
+      "n_shifts": 81,
+      "null_q95": 0.16,
+      "patterns": []
+    },
+    "good": {
+      "n_candidates": 112,
+      "n_shifts": 81,
+      "null_q95": 0.2197,
+      "patterns": []
+    }
+  },
+  "p08": {
+    "bad": {
+      "n_candidates": 108,
+      "n_shifts": 56,
+      "null_q95": 0.1566,
+      "patterns": [
+        {
+          "column": "lightly_avg3",
+          "days_in_condition": 12,
+          "feature": "lightly",
+          "group": "F",
+          "kind": "bad",
+          "level": "preliminary",
+          "n_valid": 80,
+          "op": "below",
+          "p_feature": 0.0175,
+          "p_global": 0.0526,
+          "rate_in": 0.75,
+          "rate_out": 0.2647,
+          "score": 0.203,
+          "target_days_in_condition": 9,
+          "text": "Early signal: When you get under 200 min of light activity on average over the previous 3 days, 9 of 12 days were bad days (vs 26% otherwise).",
+          "threshold": 200.0,
+          "variant": "avg3"
+        }
+      ]
+    },
+    "good": {
+      "n_candidates": 108,
+      "n_shifts": 56,
+      "null_q95": 0.1345,
+      "patterns": [
+        {
+          "column": "hr_sleep_mean_lag1",
+          "days_in_condition": 28,
+          "feature": "hr_sleep_mean",
+          "group": "I",
+          "kind": "good",
+          "level": "preliminary",
+          "n_valid": 83,
+          "op": "below",
+          "p_feature": 0.0351,
+          "p_global": 0.6491,
+          "rate_in": 0.5714,
+          "rate_out": 0.3818,
+          "score": 0.0089,
+          "target_days_in_condition": 16,
+          "text": "Early signal: When your heart rate during sleep is under 56 bpm, 16 of 28 days were good days (vs 38% otherwise).",
+          "threshold": 56.0,
+          "variant": "lag1"
+        }
+      ]
+    }
+  },
+  "p09": {
+    "bad": {
+      "n_candidates": 127,
+      "n_shifts": 44,
+      "null_q95": 0.1313,
+      "patterns": [
+        {
+          "column": "sleep_h_lag1",
+          "days_in_condition": 15,
+          "feature": "sleep_h",
+          "group": "A",
+          "kind": "bad",
+          "level": "significant",
+          "n_valid": 71,
+          "op": "below",
+          "p_feature": 0.0222,
+          "p_global": 0.0222,
+          "rate_in": 0.6,
+          "rate_out": 0.125,
+          "score": 0.2325,
+          "target_days_in_condition": 9,
+          "text": "When you sleep under 5 h 30 min, 9 of 15 days were bad days (vs 12% otherwise).",
+          "threshold": 5.5,
+          "variant": "lag1"
+        }
+      ]
+    },
+    "good": {
+      "n_candidates": 127,
+      "n_shifts": 44,
+      "null_q95": 0.159,
+      "patterns": []
+    }
+  },
+  "p10": {
+    "bad": {
+      "n_candidates": 96,
+      "n_shifts": 49,
+      "null_q95": 0.1504,
+      "patterns": [
+        {
+          "column": "wake_pct_lag1",
+          "days_in_condition": 30,
+          "feature": "wake_pct",
+          "group": "C",
+          "kind": "bad",
+          "level": "significant",
+          "n_valid": 76,
+          "op": "above",
+          "p_feature": 0.02,
+          "p_global": 0.04,
+          "rate_in": 0.5333,
+          "rate_out": 0.1522,
+          "score": 0.2092,
+          "target_days_in_condition": 16,
+          "text": "When you are awake over 12% of the night, 16 of 30 days were bad days (vs 15% otherwise).",
+          "threshold": 12.0,
+          "variant": "lag1"
+        }
+      ]
+    },
+    "good": {
+      "n_candidates": 96,
+      "n_shifts": 49,
+      "null_q95": 0.1303,
+      "patterns": [
+        {
+          "column": "lightly_lag1",
+          "days_in_condition": 18,
+          "feature": "lightly",
+          "group": "F",
+          "kind": "good",
+          "level": "significant",
+          "n_valid": 76,
+          "op": "above",
+          "p_feature": 0.02,
+          "p_global": 0.02,
+          "rate_in": 0.8333,
+          "rate_out": 0.3793,
+          "score": 0.2285,
+          "target_days_in_condition": 15,
+          "text": "When you get over 320 min of light activity the day before, 15 of 18 days were good days (vs 38% otherwise).",
+          "threshold": 320.0,
+          "variant": "lag1"
+        }
+      ]
+    }
+  },
+  "p11": {
+    "bad": {
+      "n_candidates": 121,
+      "n_shifts": 77,
+      "null_q95": 0.1664,
+      "patterns": []
+    },
+    "good": {
+      "disabled": "insufficient_good_days",
+      "patterns": []
+    }
+  },
+  "p14": {
+    "bad": {
+      "n_candidates": 118,
+      "n_shifts": 53,
+      "null_q95": 0.2676,
+      "patterns": []
+    },
+    "good": {
+      "n_candidates": 118,
+      "n_shifts": 53,
+      "null_q95": 0.2004,
+      "patterns": [
+        {
+          "column": "z_cardio_peak_avg3",
+          "days_in_condition": 31,
+          "feature": "z_cardio_peak",
+          "group": "E",
+          "kind": "good",
+          "level": "preliminary",
+          "n_valid": 75,
+          "op": "below",
+          "p_feature": 0.0185,
+          "p_global": 0.3519,
+          "rate_in": 0.3548,
+          "rate_out": 0.1136,
+          "score": 0.0975,
+          "target_days_in_condition": 11,
+          "text": "Early signal: When you spend under 10 min in high heart-rate zones on average over the previous 3 days, 11 of 31 days were good days (vs 11% otherwise).",
+          "threshold": 10.0,
+          "variant": "avg3"
+        },
+        {
+          "column": "lightly_lag1",
+          "days_in_condition": 20,
+          "feature": "lightly",
+          "group": "F",
+          "kind": "good",
+          "level": "preliminary",
+          "n_valid": 80,
+          "op": "above",
+          "p_feature": 0.0185,
+          "p_global": 0.5741,
+          "rate_in": 0.4,
+          "rate_out": 0.15,
+          "score": 0.0688,
+          "target_days_in_condition": 8,
+          "text": "Early signal: When you get over 180 min of light activity the day before, 8 of 20 days were good days (vs 15% otherwise).",
+          "threshold": 180.0,
+          "variant": "lag1"
+        }
+      ]
+    }
+  },
+  "p15": {
+    "bad": {
+      "n_candidates": 93,
+      "n_shifts": 56,
+      "null_q95": 0.154,
+      "patterns": []
+    },
+    "good": {
+      "n_candidates": 93,
+      "n_shifts": 56,
+      "null_q95": 0.1492,
+      "patterns": []
+    }
+  },
+  "p16": {
+    "bad": {
+      "n_candidates": 81,
+      "n_shifts": 48,
+      "null_q95": 0.1096,
+      "patterns": [
+        {
+          "column": "sleep_h_lag1",
+          "days_in_condition": 14,
+          "feature": "sleep_h",
+          "group": "A",
+          "kind": "bad",
+          "level": "significant",
+          "n_valid": 75,
+          "op": "below",
+          "p_feature": 0.0204,
+          "p_global": 0.0204,
+          "rate_in": 0.7857,
+          "rate_out": 0.2131,
+          "score": 0.311,
+          "target_days_in_condition": 11,
+          "text": "When you sleep under 6 h, 11 of 14 days were bad days (vs 21% otherwise).",
+          "threshold": 6.0,
+          "variant": "lag1"
+        }
+      ]
+    },
+    "good": {
+      "n_candidates": 81,
+      "n_shifts": 48,
+      "null_q95": 0.1077,
+      "patterns": [
+        {
+          "column": "steps_avg3",
+          "days_in_condition": 14,
+          "feature": "steps",
+          "group": "D",
+          "kind": "good",
+          "level": "significant",
+          "n_valid": 75,
+          "op": "above",
+          "p_feature": 0.0204,
+          "p_global": 0.0204,
+          "rate_in": 0.6429,
+          "rate_out": 0.2131,
+          "score": 0.1745,
+          "target_days_in_condition": 9,
+          "text": "When you walk more than 3,000 steps on average over the previous 3 days, 9 of 14 days were good days (vs 21% otherwise).",
+          "threshold": 3000.0,
+          "variant": "avg3"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,274 @@
+{
+  "engine": {
+    "analysis_window_end": "2020-03-12",
+    "dead_zone": 0.5,
+    "fallback": null,
+    "max_cover": 0.5,
+    "max_patterns_per_kind": 3,
+    "max_reasons_per_day": 2,
+    "min_support": 10,
+    "permutation": "circular_shift_all_offsets_min14",
+    "significance": "95th_percentile_of_max_statistic"
+  },
+  "features": {
+    "bedtime_h": {
+      "bad_when": "above",
+      "columns": [
+        "bedtime_h_lag1",
+        "bedtime_h_avg3"
+      ],
+      "grid_step": 0.5,
+      "group": "B",
+      "mode": "search",
+      "variants": [
+        "lag1",
+        "avg3"
+      ]
+    },
+    "deep_pct": {
+      "bad_when": "below",
+      "columns": [
+        "deep_pct_lag1"
+      ],
+      "grid_step": 2.0,
+      "group": "G",
+      "mode": "view",
+      "variants": [
+        "lag1"
+      ]
+    },
+    "hr_sleep_mean": {
+      "bad_when": "above",
+      "columns": [
+        "hr_sleep_mean_lag1"
+      ],
+      "grid_step": 1.0,
+      "group": "I",
+      "mode": "search",
+      "variants": [
+        "lag1"
+      ]
+    },
+    "lightly": {
+      "bad_when": "below",
+      "columns": [
+        "lightly_lag1",
+        "lightly_avg3"
+      ],
+      "grid_step": 20,
+      "group": "F",
+      "mode": "search",
+      "variants": [
+        "lag1",
+        "avg3"
+      ]
+    },
+    "mvpa": {
+      "bad_when": "below",
+      "columns": [
+        "mvpa_lag1",
+        "mvpa_avg3"
+      ],
+      "grid_step": 10,
+      "group": "E",
+      "mode": "search",
+      "variants": [
+        "lag1",
+        "avg3"
+      ]
+    },
+    "rem_pct": {
+      "bad_when": "below",
+      "columns": [
+        "rem_pct_lag1"
+      ],
+      "grid_step": 2.0,
+      "group": "G",
+      "mode": "search",
+      "variants": [
+        "lag1"
+      ]
+    },
+    "rhr_night": {
+      "bad_when": "above",
+      "columns": [
+        "rhr_night_lag1"
+      ],
+      "grid_step": 1.0,
+      "group": "I",
+      "mode": "view",
+      "variants": [
+        "lag1"
+      ]
+    },
+    "sedentary": {
+      "bad_when": "above",
+      "columns": [
+        "sedentary_lag1"
+      ],
+      "grid_step": 30,
+      "group": "D",
+      "mode": "view",
+      "variants": [
+        "lag1"
+      ]
+    },
+    "sleep_eff": {
+      "bad_when": "below",
+      "columns": [
+        "sleep_eff_lag1"
+      ],
+      "grid_step": 1.0,
+      "group": "C",
+      "mode": "view",
+      "variants": [
+        "lag1"
+      ]
+    },
+    "sleep_h": {
+      "bad_when": "below",
+      "columns": [
+        "sleep_h_lag1",
+        "sleep_h_avg3"
+      ],
+      "grid_step": 0.5,
+      "group": "A",
+      "mode": "search",
+      "variants": [
+        "lag1",
+        "avg3"
+      ]
+    },
+    "ss_overall": {
+      "bad_when": "below",
+      "columns": [
+        "ss_overall_lag1"
+      ],
+      "grid_step": 5,
+      "group": "A",
+      "mode": "view",
+      "variants": [
+        "lag1"
+      ]
+    },
+    "steps": {
+      "bad_when": "below",
+      "columns": [
+        "steps_lag1",
+        "steps_avg3"
+      ],
+      "grid_step": 1000,
+      "group": "D",
+      "mode": "search",
+      "variants": [
+        "lag1",
+        "avg3"
+      ]
+    },
+    "time_in_bed_h": {
+      "bad_when": "below",
+      "columns": [
+        "time_in_bed_h_lag1"
+      ],
+      "grid_step": 0.5,
+      "group": "A",
+      "mode": "view",
+      "variants": [
+        "lag1"
+      ]
+    },
+    "wake_min": {
+      "bad_when": "above",
+      "columns": [
+        "wake_min_lag1"
+      ],
+      "grid_step": 5,
+      "group": "C",
+      "mode": "view",
+      "variants": [
+        "lag1"
+      ]
+    },
+    "wake_pct": {
+      "bad_when": "above",
+      "columns": [
+        "wake_pct_lag1"
+      ],
+      "grid_step": 1.0,
+      "group": "C",
+      "mode": "search",
+      "variants": [
+        "lag1"
+      ]
+    },
+    "z_cardio_peak": {
+      "bad_when": "above",
+      "columns": [
+        "z_cardio_peak_lag1",
+        "z_cardio_peak_avg3"
+      ],
+      "grid_step": 10,
+      "group": "E",
+      "mode": "search",
+      "variants": [
+        "lag1",
+        "avg3"
+      ]
+    }
+  },
+  "gates": {
+    "group_E_hrz_min_days": 20,
+    "group_E_hrz_min_minutes": 10,
+    "min_bad_days": 15,
+    "min_full_days": 60,
+    "min_good_days": 15,
+    "min_raw_sd": 0.2
+  },
+  "groups": {
+    "A": "sleep length",
+    "B": "bedtime",
+    "C": "sleep continuity",
+    "D": "movement volume",
+    "E": "intense effort (z_cardio_peak or mvpa per participant)",
+    "F": "light activity",
+    "G": "sleep structure",
+    "I": "nightly heart rate"
+  },
+  "label": {
+    "centre": "median",
+    "dead_zone": 0.5,
+    "fields": [
+      "mood",
+      "fatigue",
+      "stress"
+    ],
+    "fit_window": "D < 2020-03-12"
+  },
+  "valid_ranges": {
+    "hr_sleep_mean": [
+      35,
+      110
+    ],
+    "rem_pct": [
+      0,
+      50
+    ],
+    "rhr_night": [
+      30,
+      110
+    ],
+    "sleep_h": [
+      2,
+      14
+    ],
+    "steps": [
+      0,
+      60000
+    ],
+    "wake_pct": [
+      0,
+      50
+    ]
+  },
+  "wear_day_min": 720
+}
