@@ -26,6 +26,7 @@ SURVEY_RAW = [
 SCALE15 = ["fatigue", "mood", "sleep_quality", "soreness", "stress"]
 NIGHT_REPORT_END_H = 5  # reports before 05:00 local belong to the previous day
 DEAD_ZONE = 0.5  # |z| <= 0.5 -> neutral
+MIN_LABEL_DAYS = 14  # fewer check-ins: absolute label (no personal baseline yet)
 
 # ---- cleaning
 WEAR_DAY_MIN = 720  # minutes worn between 06:00 and 24:00, otherwise activity of that day is NaN

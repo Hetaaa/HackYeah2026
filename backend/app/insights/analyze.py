@@ -11,14 +11,17 @@ def _num(v: object) -> float | None:
     return None if pd.isna(v) else round(float(v), 3)
 
 
-def analyze_user(user: UserData, window_end: pd.Timestamp | None = None) -> dict:
+def analyze_user(
+    user: UserData, window_end: pd.Timestamp | None = None, all_dates: bool = False
+) -> dict:
     """Patterns + per-day content for one user. Deterministic, ~0.1 s for 150 days.
 
     window_end: days on/after it get calendar content but are not used to find patterns
     (PMData demo: config.PMDATA_WINDOW_END; real users: None).
+    all_dates: a day entry for every date with any data, not only days with a check-in.
     Returns {"info": gates and counts, "patterns": {"bad", "good"}, "days": [...]}.
     """
-    table, info = cleaning.build_table(user, window_end)
+    table, info = cleaning.build_table(user, window_end, all_dates)
     patterns = engine.find_patterns(table, info)
     for kind in patterns.values():
         for p in kind["patterns"]:

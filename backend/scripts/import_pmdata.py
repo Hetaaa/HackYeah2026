@@ -97,14 +97,14 @@ def main() -> None:
     pids = pmdata.PIDS if args.all else list(C.PERSONAS)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     with (OUT_DIR / "personas.csv").open("w", newline="", encoding="utf-8") as file:
-        writer = csv.writer(file)
+        writer = csv.writer(file, lineterminator="\n")
         writer.writerow(["id", "name", "description", "analysis_window_end"])
         for pid in pids:
             persona = C.PERSONAS.get(pid)
             name, description = (persona.name, persona.tagline) if persona else (pid.upper(), "")
             writer.writerow([pid, name, description, C.PMDATA_WINDOW_END.date().isoformat()])
     with (OUT_DIR / "days.csv").open("w", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=COLUMNS)
+        writer = csv.DictWriter(file, fieldnames=COLUMNS, lineterminator="\n")
         writer.writeheader()
         total = 0
         for pid in pids:

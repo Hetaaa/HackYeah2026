@@ -30,8 +30,12 @@ def surveys_by_day(surveys: pd.DataFrame) -> pd.DataFrame:
     w = surveys.copy()
     ts = pd.to_datetime(w.ts_utc, utc=True).dt.tz_convert(C.TZ).dt.tz_localize(None)
     w["ts_local"] = ts
-    w["night_report"] = (ts.dt.hour + ts.dt.minute / 60) < C.NIGHT_REPORT_END_H
-    w["date"] = ts.dt.normalize() - pd.to_timedelta(w.night_report.astype(int), unit="D")
+    if "date" in w:  # in-app survey: the user picked the day it describes
+        w["date"] = pd.to_datetime(w.date)
+        w["night_report"] = False
+    else:  # timestamp only (PMData): 00:00-04:59 = previous evening
+        w["night_report"] = (ts.dt.hour + ts.dt.minute / 60) < C.NIGHT_REPORT_END_H
+        w["date"] = ts.dt.normalize() - pd.to_timedelta(w.night_report.astype(int), unit="D")
     for c in C.SURVEY_RAW:
         if c not in w:
             w[c] = np.nan
@@ -52,15 +56,23 @@ def activity(days: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def align(user: UserData, window_end: pd.Timestamp | None = None) -> pd.DataFrame:
+def align(
+    user: UserData, window_end: pd.Timestamp | None = None, all_dates: bool = False
+) -> pd.DataFrame:
+    """all_dates: one row for every date with any data (calendar), not only survey days."""
     first = surveys_by_day(user.surveys)
+    if all_dates:
+        dates = pd.DatetimeIndex(first.date).union(user.nights.index).union(user.days.index)
+        first = pd.DataFrame({"date": dates}).merge(first, on="date", how="left")
+        first["night_report"] = first.night_report.fillna(False).astype(bool)
     d = first.date
     nights, days = user.nights, activity(user.days)
     out = first[["date", "ts_local", "night_report", *C.SURVEY_RAW]].copy()
     out.insert(0, "user_id", user.user_id)
     out["weekday"] = d.dt.dayofweek
     end_d = pd.to_datetime(nights.end).reindex(d).reset_index(drop=True)
-    late = (end_d > out.ts_local + pd.Timedelta(minutes=C.SLEEP_END_TOL_MIN)).to_numpy(bool)
+    late = (end_d > out.ts_local + pd.Timedelta(minutes=C.SLEEP_END_TOL_MIN)).fillna(False)
+    late = late.to_numpy(bool)
     out["sleep_after_survey"] = late
     out["sleep_type"] = nights.sleep_type.reindex(d).to_numpy()
     for name in C.NIGHT_COLS:
@@ -85,10 +97,22 @@ def align(user: UserData, window_end: pd.Timestamp | None = None) -> pd.DataFram
 
 
 def add_label(df: pd.DataFrame) -> dict:
-    """Median-centred composite of mood/fatigue/stress, fitted on in-window days (in place)."""
+    """Median-centred composite of mood/fatigue/stress, fitted on in-window days (in place).
+
+    With fewer than MIN_LABEL_DAYS check-ins there is no personal baseline yet: the label falls
+    back to the plain mean of the three answers (>= 3.5 good, <= 2.5 bad), score = mean - 3.
+    """
     ok = df[C.LABEL_FIELDS].notna().all(axis=1)
     fit = ok & ~df.outside_window
-    params: dict = {}
+    params: dict = {"label_source": "personal"}
+    if fit.sum() < C.MIN_LABEL_DAYS:
+        mean = df[C.LABEL_FIELDS].mean(axis=1).where(ok)
+        df["comp"] = mean
+        df["z"] = mean - 3
+        label = np.select([mean >= 3.5, mean <= 2.5], ["good", "bad"], "neutral")
+        df["label"] = pd.Series(label, index=df.index).where(ok)
+        raw_sd = float(mean[ok].std(ddof=0)) if ok.sum() > 1 else np.nan
+        return {"label_source": "absolute", "raw_sd": raw_sd, "comp_sd": np.nan}
     dev = pd.DataFrame(index=df.index)
     for f in C.LABEL_FIELDS:
         med = float(df.loc[fit, f].median()) if fit.any() else np.nan
@@ -109,10 +133,10 @@ def add_label(df: pd.DataFrame) -> dict:
 
 
 def build_table(
-    user: UserData, window_end: pd.Timestamp | None = None
+    user: UserData, window_end: pd.Timestamp | None = None, all_dates: bool = False
 ) -> tuple[pd.DataFrame, dict]:
     """Aligned + labelled daily table and gate info for one user."""
-    df = align(user, window_end)
+    df = align(user, window_end, all_dates)
     label = add_label(df)
     full = df.label.notna() & df.sleep_h_lag1.notna() & df.steps_lag1.notna()
     df["in_analysis_window"] = full & ~df.outside_window
@@ -134,7 +158,7 @@ def build_table(
         "good_patterns_enabled": n_good >= C.MIN_GOOD_DAYS,
         "group_e_feature": "z_cardio_peak" if hrz_days >= C.E_HRZ_MIN_DAYS else "mvpa",
         "n_surveys": len(user.surveys),
-        "n_days": len(df),
+        "n_days": int(df.label.notna().sum()),
         "n_full_days": int(full.sum()),
         "n_full_days_needed": C.MIN_FULL_DAYS,
         "classic_nights": int((user.nights.sleep_type == "classic").sum()),

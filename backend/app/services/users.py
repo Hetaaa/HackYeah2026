@@ -1,7 +1,9 @@
 from sqlmodel import Session, func, select
 
+from app import analysis
 from app.models import Day, Persona
 from app.schemas import PersonaRead
+from app.services.days import analyze_user
 
 
 def list_personas(session: Session) -> list[PersonaRead]:
@@ -19,6 +21,8 @@ def to_read(session: Session, persona: Persona) -> PersonaRead:
             Day.user_id == persona.id
         )
     ).one()
+    result = analyze_user(session, persona.id)
+    have, needed = analysis.days_with_data(result)
     return PersonaRead(
         id=persona.id,
         name=persona.name,
@@ -26,4 +30,7 @@ def to_read(session: Session, persona: Persona) -> PersonaRead:
         first_date=first_date,
         last_date=last_date,
         days_count=days_count,
+        insights_status=analysis.insights_status(result),
+        days_with_data=have,
+        days_needed=needed,
     )

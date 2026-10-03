@@ -153,7 +153,8 @@ def find_patterns(table: pd.DataFrame, info: dict) -> dict:
         if not info[f"{kind}_patterns_enabled"]:
             out[kind] = {"status": f"insufficient_{kind}_days", "patterns": []}
             continue
-        found = run_person(rows, rows.label.to_numpy() == kind, feats, kind)
+        target = (rows.label == kind).to_numpy()
+        found = [_with_shares(p, rows) for p in run_person(rows, target, feats, kind)]
         sig = [p for p in found if p["level"] == "significant"]
         if sig:
             out[kind] = {"status": "ok", "patterns": sig[: C.MAX_PATTERNS]}
@@ -161,4 +162,19 @@ def find_patterns(table: pd.DataFrame, info: dict) -> dict:
             out[kind] = {"status": "preliminary", "patterns": found[: C.MAX_PATTERNS]}
         else:
             out[kind] = {"status": "not_enough_evidence", "patterns": []}
+    return out
+
+
+def _with_shares(p: dict, rows: pd.DataFrame) -> dict:
+    """Share of bad / good days on which the condition held, plus up to 3 recent example dates."""
+    x = rows[p["column"]]
+    cond = (x < p["threshold"]) if p["op"] == "below" else (x > p["threshold"])
+    out = dict(p)
+    for kind in ("bad", "good"):
+        days = (rows.label == kind) & x.notna()
+        out[f"share_{kind}"] = (
+            round(float((cond & days).sum() / days.sum()), 4) if days.any() else 0.0
+        )
+    hits = rows.date[cond & (rows.label == p["kind"])]
+    out["example_dates"] = [str(d.date()) for d in hits.tail(3)]
     return out

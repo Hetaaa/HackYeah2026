@@ -33,8 +33,17 @@ def norms(rows: pd.DataFrame) -> tuple[dict, str]:
                 "degenerate": mad == 0,  # no spread on norm days: z is meaningless
                 "mean": float(x.mean()),
                 "sd": max(float(x.std(ddof=0)), f.z_floor),
+                "p25": float(x.quantile(0.25)),
+                "p75": float(x.quantile(0.75)),
             }
     return out, source
+
+
+def _norm_range(n: dict | None) -> dict | None:
+    """Median and interquartile range of the reference days (good days)."""
+    if n is None:
+        return None
+    return {"median": round(n["median"], 3), "low": round(n["p25"], 3), "high": round(n["p75"], 3)}
 
 
 def _holds(p: dict, x: float) -> bool:
@@ -82,6 +91,7 @@ def compare_day(row: pd.Series, nrm: dict, feats: list[str], ref: str) -> list[d
                     "column": col,
                     "value": round(float(x), 3),
                     "reference": round(n["mean"], 3),
+                    "norm": _norm_range(n),
                     "diff": round(d, 3),
                     "z": round(z, 2),
                     "text": texts.compare_text(name, d, ref),
@@ -110,6 +120,7 @@ def values(row: pd.Series, nrm: dict) -> list[dict]:
                 "display": texts.fmt(name, float(x)) if has else None,
                 "reference": round(n["mean"], 3) if n else None,
                 "display_reference": texts.fmt(name, n["mean"]) if n else None,
+                "norm": _norm_range(n),
             }
         )
     return out
