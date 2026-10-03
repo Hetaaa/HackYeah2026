@@ -39,6 +39,22 @@ def norms(rows: pd.DataFrame) -> tuple[dict, str]:
     return out, source
 
 
+def label_stats(rows: pd.DataFrame) -> dict:
+    """Per feature (lag1): mean on good and on bad days of the analysis window."""
+    out = {}
+    for name in C.FEATURES:
+        col = f"{name}_lag1"
+        if col not in rows:
+            continue
+        groups = {}
+        for label in ("good", "bad"):
+            x = rows.loc[rows.label == label, col].dropna()
+            mean = float(x.mean()) if len(x) >= C.STATS_MIN_DAYS else None
+            groups[label] = {"n": len(x), "mean": mean}
+        out[name] = groups
+    return out
+
+
 def _norm_range(n: dict | None) -> dict | None:
     """Median and interquartile range of the reference days (good days)."""
     if n is None:

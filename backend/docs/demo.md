@@ -122,6 +122,7 @@ powyżej 6 h 30 min. Wzorzec złych dni to tylko „Early signal”, bo nie prze
 | Wykres wzorca | `GET /api/users/{id}/patterns/{feature}?kind=` | `points[]` (`value`, `label`, `in_condition`), `threshold`, `op` |
 | Legenda / opisy cech | `GET /api/features` | `label`, `unit`, `description`, `tested_direction` |
 | Przepis | `GET /api/users/{id}/recipe` | `status`, `summary`, `ingredients[]` |
+| Tabela dobre vs złe dni | `GET /api/users/{id}/stats` | `features[]` (`good`, `bad`: `average`, `display`, `days`), `analysed_days`, `date_from`, `date_to` |
 | Reset demo | `POST /api/demo/reset` | |
 
 ## Na co uważać

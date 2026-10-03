@@ -257,6 +257,38 @@ class Recipe(BaseModel):
     ingredients: list[Ingredient]
 
 
+class GroupAverage(BaseModel):
+    average: float | None = Field(
+        description="Mean in the feature's unit; null with fewer than 3 days", examples=[7.4]
+    )
+    display: str | None = Field(examples=["7 h 24 min"])
+    days: int = Field(description="Days with a value", examples=[24])
+
+
+class FeatureStats(BaseModel):
+    feature: str = Field(examples=["sleep_h"])
+    label: str = Field(examples=["Sleep"])
+    unit: str = Field(examples=["h"])
+    when: When = Field(description="Which data the averages describe")
+    in_patterns: bool = Field(description="False: shown for context only, never a reason")
+    good: GroupAverage = Field(description="Average on good days")
+    bad: GroupAverage = Field(description="Average on bad days")
+    difference: float | None = Field(
+        description="bad.average - good.average (null when either is missing)", examples=[-1.1]
+    )
+
+
+class StatsReport(BaseModel):
+    """Every feature's average on good vs bad days: descriptive, no significance test."""
+
+    analysed_days: int = Field(description="Days with a check-in and watch data", examples=[68])
+    date_from: dt.date | None = Field(description="First analysed day", examples=["2019-11-05"])
+    date_to: dt.date | None = Field(description="Last analysed day", examples=["2020-02-14"])
+    good_days_count: int = Field(examples=[22])
+    bad_days_count: int = Field(examples=[20])
+    features: list[FeatureStats]
+
+
 class SurveyCreate(SurveyBase):
     pass
 

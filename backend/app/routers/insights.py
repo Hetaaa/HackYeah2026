@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, Path, Query, status
 
 from app.db import SessionDep
 from app.deps import NOT_FOUND, PersonaDep
-from app.schemas import PatternChart, PatternReport, Recipe
+from app.schemas import PatternChart, PatternReport, Recipe, StatsReport
 from app.services import insights as insights_service
 
 router = APIRouter(prefix="/users/{user_id}", tags=["insights"], responses=NOT_FOUND)
@@ -26,6 +26,17 @@ def get_patterns(persona: PersonaDep, session: SessionDep) -> PatternReport:
 )
 def get_recipe(persona: PersonaDep, session: SessionDep) -> Recipe:
     return insights_service.get_recipe(session, persona.id)
+
+
+@router.get(
+    "/stats",
+    summary="Good vs bad day averages",
+    description="Every feature's average on the user's good days and on their bad days "
+    "(last night's sleep, the previous day's activity). Descriptive only: a difference here is "
+    "not a pattern; patterns are in /patterns and /recipe.",
+)
+def get_stats(persona: PersonaDep, session: SessionDep) -> StatsReport:
+    return insights_service.get_stats(session, persona.id)
 
 
 @router.get(

@@ -63,6 +63,7 @@ MAX_REASONS = 2
 MIN_NORM_DAYS = 10
 COMPARE_MIN_Z = 1.0
 COMPARE_MAX = 2
+STATS_MIN_DAYS = 3  # good/bad day average shown only from 3 days on
 
 
 @dataclass(frozen=True)

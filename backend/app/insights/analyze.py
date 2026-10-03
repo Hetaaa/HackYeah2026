@@ -19,7 +19,8 @@ def analyze_user(
     window_end: days on/after it get calendar content but are not used to find patterns
     (PMData demo: config.PMDATA_WINDOW_END; real users: None).
     all_dates: a day entry for every date with any data, not only days with a check-in.
-    Returns {"info": gates and counts, "patterns": {"bad", "good"}, "days": [...]}.
+    Returns {"info": gates and counts, "patterns": {"bad", "good"}, "stats": good vs bad day
+    averages per feature, "days": [...]}.
     """
     table, info = cleaning.build_table(user, window_end, all_dates)
     patterns = engine.find_patterns(table, info)
@@ -28,13 +29,18 @@ def analyze_user(
             p["text"] = texts.pattern_text(p)
 
     table = table.sort_values("date")
-    nrm, source = calendar.norms(table[table.in_analysis_window])
+    window = table[table.in_analysis_window]
+    nrm, source = calendar.norms(window)
+    stats = calendar.label_stats(window)
     info["norm_source"] = source
     ref = "on your average good day" if source == "good_days" else "on your average day"
     feats = list(engine.search_features(info["group_e_feature"]))
     raw = _raw_values(user, feats)
     info["first_date"] = str(table.date.min().date()) if len(table) else None
     info["last_date"] = str(table.date.max().date()) if len(table) else None
+    info["n_window_days"] = len(window)
+    info["window_first_date"] = str(window.date.min().date()) if len(window) else None
+    info["window_last_date"] = str(window.date.max().date()) if len(window) else None
 
     days = []
     for _, row in table.iterrows():
@@ -59,7 +65,7 @@ def analyze_user(
                 "late_night": bool(row.sleep_after_survey),
             }
         )
-    return {"info": info, "patterns": patterns, "days": days}
+    return {"info": info, "patterns": patterns, "stats": stats, "days": days}
 
 
 def _raw_values(user: UserData, feats: list[str]) -> dict:

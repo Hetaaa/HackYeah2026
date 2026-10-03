@@ -92,3 +92,31 @@ def test_chart_shape_and_preliminary_pattern(client: TestClient, demo: Session) 
 def test_chart_for_the_unused_exercise_feature_is_404(client: TestClient, demo: Session) -> None:
     assert "mvpa" not in client.get("/api/users/p01").json()["pattern_features"]
     assert client.get("/api/users/p01/patterns/mvpa").status_code == 404
+
+
+def test_stats_compare_good_and_bad_days(client: TestClient, demo: Session) -> None:
+    report = client.get("/api/users/p10/stats").json()
+
+    assert report["analysed_days"] == 66
+    assert (report["good_days_count"], report["bad_days_count"]) == (32, 20)
+    assert (report["date_from"], report["date_to"]) == ("2019-11-16", "2020-02-13")
+    stats = {f["feature"]: f for f in report["features"]}
+    wake = stats["wake_pct"]
+    assert wake["in_patterns"] and wake["when"] == "last_night"
+    assert (wake["good"]["display"], wake["bad"]["display"]) == ("11.0%", "13.4%")
+    assert wake["good"]["days"] == 32
+    assert wake["difference"] == round(wake["bad"]["average"] - wake["good"]["average"], 3)
+    assert stats["bedtime_h"]["good"]["display"] == "00:20"
+    assert not stats["mvpa"]["in_patterns"]  # p10 uses z_cardio_peak for exercise
+
+
+def test_stats_without_check_ins(client: TestClient, session: Session) -> None:
+    session.add(Persona(id="new", name="New"))
+    session.commit()
+
+    report = client.get("/api/users/new/stats").json()
+
+    assert report["analysed_days"] == 0 and report["date_from"] is None
+    sleep = next(f for f in report["features"] if f["feature"] == "sleep_h")
+    assert sleep["good"] == {"average": None, "display": None, "days": 0}
+    assert sleep["difference"] is None
