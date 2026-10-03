@@ -1,0 +1,179 @@
+@use "tokens" as *;
+
+.root {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba($plum, 0.4);
+  pointer-events: auto;
+}
+
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px $gutter calc(30px + env(safe-area-inset-bottom));
+  border-radius: $radius-lg $radius-lg 0 0;
+  background: $surface;
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.confetti {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.grabber {
+  display: block;
+  width: 40px;
+  height: 5px;
+  margin: 0 auto 18px;
+  border-radius: 3px;
+  background: $line;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eyebrow {
+  @include eyebrow;
+  color: $orange;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: $bg;
+}
+
+.title {
+  margin: 8px 0 20px;
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.row {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.label {
+  margin-bottom: 8px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.scale {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.option {
+  position: relative;
+  height: 46px;
+  border-radius: $radius-sm;
+  background: $bg;
+}
+
+.pill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: $orange;
+  box-shadow: 0 6px 16px rgba($orange, 0.35);
+}
+
+.number {
+  position: relative; // above the pill
+  font-size: 17px;
+  font-weight: 600;
+  color: $ink;
+  transition: color 0.2s;
+}
+
+.selected .number {
+  color: #fff;
+}
+
+.ends {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  font-size: 10px;
+  color: $muted;
+}
+
+.save {
+  width: 100%;
+  height: 54px;
+  margin-top: 22px;
+  border-radius: 18px;
+  background: $plum;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 0 60px;
+  text-align: center;
+
+  .title {
+    margin: 22px 0 6px;
+  }
+}
+
+.badge {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: $orange;
+  box-shadow: 0 14px 34px rgba($orange, 0.4);
+}
+
+.hint {
+  font-size: 13px;
+  color: $muted;
+}

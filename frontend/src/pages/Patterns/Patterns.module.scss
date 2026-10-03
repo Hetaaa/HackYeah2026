@@ -1,0 +1,9 @@
+@use "tokens" as *;
+
+.page {
+  padding: 0 $gutter;
+}
+
+.tabs {
+  margin: 24px 0 14px;
+}

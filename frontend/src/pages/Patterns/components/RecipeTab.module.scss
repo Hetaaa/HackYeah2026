@@ -1,0 +1,176 @@
+@use "tokens" as *;
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.formula {
+  position: relative;
+  overflow: hidden;
+  padding: 26px 22px 46px;
+  border-radius: $radius-lg;
+  background: $lavender;
+}
+
+.eyebrow {
+  @include eyebrow;
+  font-size: 9px;
+  color: $ink-soft;
+}
+
+.formulaTitle {
+  position: relative;
+  max-width: 250px;
+  margin: 18px 0 22px;
+  font-size: 31px;
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.06em;
+}
+
+.rate {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  strong {
+    font-size: 46px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  small {
+    font-size: 26px;
+  }
+
+  // direct child only: CountUp inside <strong> renders a span too
+  > span {
+    max-width: 120px;
+    font-size: 12px;
+    line-height: 1.1;
+    color: $ink-soft;
+  }
+}
+
+.ring {
+  position: absolute;
+  right: -78px;
+  bottom: -92px;
+  width: 200px;
+  height: 200px;
+  border: 34px solid #a98bd0;
+  border-radius: 50%;
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px 14px 14px;
+  border-radius: 18px;
+  background: $surface;
+}
+
+.rank {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fde8de;
+  color: $orange;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.itemBody {
+  flex: 1;
+}
+
+.area {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $muted;
+}
+
+.itemTitle {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.itemNote {
+  font-size: 11px;
+  color: $muted;
+}
+
+.score {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  font-size: 16px;
+  font-weight: 800;
+
+  svg {
+    position: absolute;
+    inset: 0;
+    rotate: -90deg;
+  }
+}
+
+.scoreTrack,
+.scoreFill {
+  fill: none;
+  stroke-width: 3;
+}
+
+.scoreTrack {
+  stroke: #ebe6e7;
+}
+
+.scoreFill {
+  stroke: $orange;
+  stroke-linecap: round;
+}
+
+.tryToday {
+  padding: 18px 20px 20px;
+  border-radius: 22px;
+  background: #fdd3bf;
+}
+
+.tryEyebrow {
+  @include eyebrow;
+  font-size: 9px;
+  color: #a8462a;
+}
+
+.tryTitle {
+  margin: 6px 0 4px;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.tryText {
+  font-size: 11px;
+  color: $ink-soft;
+}

@@ -1,0 +1,89 @@
+@use "tokens" as *;
+
+.card {
+  display: flex;
+  flex-direction: column;
+  padding: 18px 18px 22px;
+  border-radius: $radius-lg;
+  background: $lavender;
+}
+
+.eyebrow {
+  @include eyebrow;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: $lavender-ink;
+}
+
+.step {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 12px;
+  background: rgba(#fff, 0.45);
+  color: $lavender-ink;
+  letter-spacing: 0;
+}
+
+.title {
+  margin: 14px 0 12px;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: -0.05em;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 10px 14px;
+  border-radius: 16px;
+  background: $lavender-soft;
+}
+
+.value {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.label {
+  font-size: 9px;
+  color: $ink-soft;
+}
+
+.summary {
+  margin: 14px 0 16px;
+  font-size: 11.5px;
+  color: $ink-soft;
+
+  strong {
+    font-weight: 700;
+    color: $ink;
+  }
+}
+
+.link {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 4px;
+  border-bottom: 1.5px solid $ink;
+  font-size: 12px;
+  font-weight: 600;
+}

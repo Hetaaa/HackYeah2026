@@ -1,0 +1,38 @@
+@use "tokens" as *;
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 10px 0 22px;
+  border-radius: 20px;
+  background: $orange;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  box-shadow: 0 12px 28px rgba($orange, 0.35);
+  transition:
+    background 0.4s,
+    box-shadow 0.4s,
+    scale 0.15s;
+}
+
+.done {
+  background: $plum;
+  box-shadow: 0 12px 28px rgba($plum, 0.2);
+
+  .arrow {
+    background: $orange;
+  }
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: $plum;
+}

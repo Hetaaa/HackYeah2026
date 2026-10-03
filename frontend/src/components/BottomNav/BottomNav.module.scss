@@ -1,0 +1,63 @@
+@use "tokens" as *;
+
+.nav {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 22px;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 10px 8px 12px;
+  border-radius: $radius-lg;
+  background: rgba($surface, 0.94);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 12px 40px rgba(40, 20, 30, 0.1);
+
+  @media (max-width: 500px) {
+    bottom: calc(env(safe-area-inset-bottom) + 10px);
+  }
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  color: $muted;
+  transition:
+    color 0.2s,
+    scale 0.15s;
+}
+
+.icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+}
+
+.pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: $plum;
+}
+
+.glyph {
+  position: relative; // above the pill
+  display: flex;
+  transition: color 0.2s;
+}
+
+.active {
+  color: $ink;
+  font-weight: 600;
+
+  .glyph {
+    color: #fff;
+  }
+}

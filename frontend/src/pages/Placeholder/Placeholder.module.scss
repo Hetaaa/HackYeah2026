@@ -1,0 +1,16 @@
+@use "tokens" as *;
+
+.page {
+  padding: 24px $gutter;
+}
+
+.title {
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.text {
+  margin-top: 8px;
+  color: $muted;
+}

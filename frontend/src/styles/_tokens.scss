@@ -1,0 +1,41 @@
+// Design tokens from Figma ("why." main page)
+
+$bg: #f6f4f4;
+$surface: #ffffff;
+
+$ink: #1a1016;
+$ink-soft: #5e5a5c;
+$muted: #8a8587;
+$line: #e6e1e2;
+
+$orange: #ff6a1a;
+$orange-dark: #e85a0c;
+
+$plum: #1e1219; // dark cards
+$plum-bar: #5c4654;
+
+$lavender: #d8c7f1; // recipe + movement card
+$lavender-soft: #e8ddf8; // tiles inside recipe card
+$lavender-ink: #6b4fa0;
+
+$purple: #7b4fc9;
+$red: #d84a4a;
+
+$radius-lg: 28px;
+$radius-md: 20px;
+$radius-sm: 14px;
+
+$gutter: 24px;
+
+$font: "Manrope", system-ui, -apple-system, sans-serif;
+
+@mixin eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@mixin card-shadow {
+  box-shadow: 0 10px 30px rgba(40, 20, 30, 0.08);
+}
