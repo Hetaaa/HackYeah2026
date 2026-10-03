@@ -56,6 +56,7 @@ def analyze_user(
                 "compare": calendar.compare_day(row, nrm, feats, ref),
                 "values": calendar.values(row, nrm),
                 "raw": raw.get(row.date, {"night": {}, "activity": {}}),
+                "late_night": bool(row.sleep_after_survey),
             }
         )
     return {"info": info, "patterns": patterns, "days": days}

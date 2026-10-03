@@ -1,7 +1,7 @@
 import datetime as dt
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StringConstraints
 
 from app.models import SurveyBase
 
@@ -26,7 +26,9 @@ class ErrorRead(BaseModel):
 class PersonaCreate(BaseModel):
     """Onboarding: a new real user (watch data and check-ins come later)."""
 
-    name: str = Field(min_length=1, max_length=100, examples=["Maja"])
+    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)] = (
+        Field(examples=["Maja"])
+    )
     description: str = Field(default="", max_length=500, examples=[""])
 
 
@@ -58,6 +60,12 @@ class PersonaRead(BaseModel):
         examples=["2020-02-14"],
     )
     is_demo: bool = Field(default=False, description="Persona replays recorded demo data")
+    pattern_features: list[str] = Field(
+        default_factory=list,
+        description="Features this user's patterns are searched on (the exercise feature is "
+        "z_cardio_peak or mvpa, depending on the data)",
+        examples=[["sleep_h", "bedtime_h", "wake_pct", "steps", "z_cardio_peak", "lightly"]],
+    )
     demo_answers: SurveyBase | None = Field(
         default=None, description="Demo only: the real check-in of `today`, to prefill sliders"
     )
@@ -131,6 +139,7 @@ class DaySummary(BaseModel):
 class TimelineValue(BaseModel):
     feature: str = Field(examples=["sleep_h"])
     label: str = Field(examples=["Sleep"])
+    unit: str = Field(examples=["h"])
     value: float = Field(examples=[5.3])
     display: str = Field(examples=["5 h 19 min"])
     highlight: bool = Field(description="Used by this day's possible reason")
@@ -213,6 +222,8 @@ class PatternChart(PatternStats):
     feature: str = Field(examples=["wake_pct"])
     label: str = Field(examples=["Awake at night"])
     unit: str = Field(examples=["%"])
+    op: Literal["below", "above"] = Field(description="Condition side of the threshold")
+    variant: Literal["lag1", "avg3"] = Field(description="Single night/day or 3-day average")
     condition: str = Field(examples=["over 12%"])
     display_threshold: str = Field(examples=["12%"])
     text: str
@@ -307,6 +318,13 @@ class FeatureRead(BaseModel):
     when: Literal["last_night", "day_before"] = Field(
         description="What a day's value refers to: the night before it or the previous day"
     )
-    better: Direction = Field(description="Which direction is usually better for wellbeing")
-    in_patterns: bool = Field(description="Can be a pattern / possible reason (else context)")
+    tested_direction: Direction = Field(
+        description="Which direction the algorithm tests as linked to bad days, e.g. 'lower' "
+        "sleep, 'higher' night heart rate. A per-person hypothesis, NOT health advice: "
+        "a pattern exists only if the person's own data confirm it."
+    )
+    can_be_pattern: bool = Field(
+        description="Can become a pattern / possible reason (else context only). mvpa and "
+        "z_cardio_peak are alternatives: each user uses one, see PersonaRead.pattern_features"
+    )
     description: str

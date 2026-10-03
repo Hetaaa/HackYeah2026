@@ -95,3 +95,62 @@ def test_timeline_for_last_night_reason(client: TestClient, demo: Session) -> No
     }
 
     assert highlighted == {(0, "wake_pct")}
+
+
+def test_timeline_avg3_highlights_three_previous_days(client: TestClient, demo: Session) -> None:
+    day = client.get("/api/users/p16/days/2019-11-15").json()
+    highlighted = {
+        (p["offset"], v["feature"])
+        for p in day["timeline"]
+        for v in p["activity"]
+        if v["highlight"]
+    }
+
+    assert highlighted == {(-3, "steps"), (-2, "steps"), (-1, "steps")}  # not today's steps
+    steps = [
+        v["value"] for p in day["timeline"][:3] for v in p["activity"] if v["feature"] == "steps"
+    ]
+    assert round(sum(steps) / 3, 3) == day["reasons"][0]["value"]
+
+
+def test_timeline_hides_a_night_that_ended_after_the_check_in(
+    client: TestClient, session: Session
+) -> None:
+    import datetime as dt
+
+    from app.models import Day, Persona
+
+    session.add(Persona(id="late", name="Late"))
+    session.add(
+        Day.model_validate(
+            {
+                "user_id": "late",
+                "date": "2024-01-10",
+                "sleep_minutes": 420,
+                "sleep_start": dt.datetime(2024, 1, 9, 23, 0),
+                "sleep_end": dt.datetime(2024, 1, 10, 9, 0),  # woke after the 06:00 check-in
+                "mood": 3,
+                "fatigue": 3,
+                "sleep_quality": 3,
+                "stress": 3,
+                "survey_at": dt.datetime(2024, 1, 10, 5, 0, tzinfo=dt.UTC),  # 06:00 Oslo
+            }
+        )
+    )
+    session.commit()
+
+    day = client.get("/api/users/late/days/2024-01-10").json()
+
+    assert next(f for f in day["features"] if f["feature"] == "sleep_h")["value"] is None
+    assert day["timeline"][-1]["night"] == []
+
+
+def test_new_user_day_view(client: TestClient, demo: Session) -> None:
+    user = client.post("/api/users", json={"name": "Maja"}).json()
+    answers = {"mood": 3, "fatigue": 3, "sleep_quality": 3, "stress": 3}
+    client.put(f"/api/users/{user['id']}/surveys/{user['today']}", json=answers)
+
+    day = client.get(f"/api/users/{user['id']}/days/{user['today']}").json()
+
+    assert [p["label"] for p in day["timeline"]] == [None, None, None, "neutral"]
+    assert all(p["night"] == [] and p["activity"] == [] for p in day["timeline"])

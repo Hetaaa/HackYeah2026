@@ -53,8 +53,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-for router in (users.router, today.router, days.router, insights.router, surveys.router):
+for router in (
+    users.router,
+    today.router,
+    days.router,
+    insights.router,
+    surveys.router,
+    features.router,
+    demo.router,
+):
     app.include_router(router, prefix="/api")
-app.include_router(features.router, prefix="/api")
-app.include_router(demo.router, prefix="/api")
 app.include_router(health.router, prefix="/api")

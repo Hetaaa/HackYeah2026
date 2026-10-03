@@ -83,6 +83,10 @@ def days_with_data(analysis: dict) -> tuple[int, int]:
     return analysis["info"]["n_full_days"], analysis["info"]["n_full_days_needed"]
 
 
+def pattern_features(analysis: dict) -> list[str]:
+    return list(engine.search_features(analysis["info"]["group_e_feature"]))
+
+
 def label_mode(analysis: dict) -> str:
     """'personal' (relative to the user's history) or 'absolute' (< 14 check-ins / no spread)."""
     return analysis["info"]["label_source"]
@@ -215,21 +219,27 @@ WINDOW_OFFSETS = {
 
 def timeline(analysis: dict, date: dt.date) -> list[TimelinePoint]:
     entry = _entry(analysis, date)
+    # last night ended after the check-in: the analysis did not use it, so don't show it either
+    late = bool(entry and entry["late_night"])
     highlight: dict[int, set[str]] = {}
     for r in entry["reasons"] if entry else []:
         for offset in WINDOW_OFFSETS[r["when"]][C.FEATURES[r["feature"]].night]:
-            highlight.setdefault(offset, set()).add(r["feature"])
+            if not (late and offset == 0):
+                highlight.setdefault(offset, set()).add(r["feature"])
     points = []
     for offset in range(-3, 1):
         d = date + dt.timedelta(days=offset)
         e = _entry(analysis, d)
         raw = e["raw"] if e else {"night": {}, "activity": {}}
+        if late and offset == 0:
+            raw = {"night": {}, "activity": raw["activity"]}
 
         def values(part: str, offset: int = offset, raw: dict = raw) -> list[TimelineValue]:
             return [
                 TimelineValue(
                     feature=name,
                     label=FEATURES[name].label,
+                    unit=FEATURES[name].unit,
                     value=value,
                     display=texts.fmt(name, value),
                     highlight=name in highlight.get(offset, set()),
@@ -410,6 +420,8 @@ def pattern_chart(analysis: dict, feature: str, kind: str) -> PatternChart | Non
         **_stats(p),
         kind=kind,
         unit=FEATURES[feature].unit,
+        op=p["op"],
+        variant=p["variant"],
         display_threshold=texts.fmt(feature, p["threshold"]),
         points=[
             PatternPoint(

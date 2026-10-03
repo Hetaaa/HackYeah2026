@@ -21,7 +21,7 @@ def create_persona(session: Session, data: PersonaCreate) -> Persona:
     """New users get a random id and are listed after the demo personas."""
     last = session.exec(select(func.max(Persona.position))).one()
     persona = Persona.model_validate(
-        data.model_dump() | {"id": f"u{uuid.uuid4().hex[:8]}", "position": (last or 0) + 1}
+        data.model_dump() | {"id": f"u{uuid.uuid4().hex[:12]}", "position": (last or 0) + 1}
     )
     session.add(persona)
     session.commit()
@@ -77,4 +77,12 @@ def to_read(session: Session, persona: Persona) -> PersonaRead:
         today=today_of(persona),
         is_demo=persona.demo_today is not None,
         demo_answers=demo_answers(persona),
+        pattern_features=analysis.pattern_features(result),
     )
+
+
+def delete_persona(session: Session, persona: Persona) -> None:
+    for day in session.exec(select(Day).where(Day.user_id == persona.id)):
+        session.delete(day)
+    session.delete(persona)
+    session.commit()

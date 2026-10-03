@@ -116,8 +116,11 @@ powyżej 6 h 30 min. Wzorzec złych dni to tylko „Early signal”, bo nie prze
 | Today (home) | `GET /api/users/{id}/today` | `outlook`, `summary`, `heads_up[]`, `good_signs[]`, `survey` |
 | Ankieta | `PUT /api/users/{id}/surveys/{today}` | zwraca `label`, `score` |
 | Kalendarz | `GET /api/users/{id}/days?from=&to=` | `label`, `has_reason`, `headline`, `top_deviations` |
-| Widok dnia | `GET /api/users/{id}/days/{date}` | `summary`, `reasons[]`, `deviations[]`, `features[]` (`display`, `norm`) |
+| Widok dnia | `GET /api/users/{id}/days/{date}` | `summary`, `reasons[]`, `deviations[]`, `features[]` (`display`, `norm`), `timeline[]` (D-3..D, `highlight`) |
+| Onboarding | `POST /api/users` | zwraca nowego użytkownika (`insights_status = insufficient_days`) |
 | Wzorce złych dni | `GET /api/users/{id}/patterns` | `status`, `summary`, `patterns[]` (`text`, `level`, `rate_in`, `rate_out`) |
+| Wykres wzorca | `GET /api/users/{id}/patterns/{feature}?kind=` | `points[]` (`value`, `label`, `in_condition`), `threshold`, `op` |
+| Legenda / opisy cech | `GET /api/features` | `label`, `unit`, `description`, `tested_direction` |
 | Przepis | `GET /api/users/{id}/recipe` | `status`, `summary`, `ingredients[]` |
 | Reset demo | `POST /api/demo/reset` | |
 

@@ -1,6 +1,6 @@
-from typing import Literal
+from typing import Annotated, Literal
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Path, Query, status
 
 from app.db import SessionDep
 from app.deps import NOT_FOUND, PersonaDep
@@ -36,7 +36,15 @@ def get_recipe(persona: PersonaDep, session: SessionDep) -> Recipe:
     "ingredient (kind=good). 404 when the persona has no such pattern.",
 )
 def get_pattern_chart(
-    persona: PersonaDep, feature: str, session: SessionDep, kind: Literal["bad", "good"] = "bad"
+    persona: PersonaDep,
+    feature: Annotated[
+        str, Path(description="Feature id (GET /api/features)", examples=["wake_pct"])
+    ],
+    session: SessionDep,
+    kind: Annotated[
+        Literal["bad", "good"],
+        Query(description="bad = bad-day pattern, good = recipe ingredient"),
+    ] = "bad",
 ) -> PatternChart:
     chart = insights_service.get_pattern_chart(session, persona.id, feature, kind)
     if chart is None:

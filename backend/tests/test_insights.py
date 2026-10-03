@@ -80,3 +80,15 @@ def test_recipe_chart_and_missing_pattern(client: TestClient, demo: Session) -> 
     assert recipe["kind"] == "good" and recipe["condition"] == "over 320 min"
     assert client.get("/api/users/p10/patterns/steps").status_code == 404
     assert client.get("/api/users/p10/patterns/lightly?kind=meh").status_code == 422
+
+
+def test_chart_shape_and_preliminary_pattern(client: TestClient, demo: Session) -> None:
+    chart = client.get("/api/users/p06/patterns/sleep_h").json()
+
+    assert chart["level"] == "preliminary" and chart["op"] == "below" and chart["variant"] == "lag1"
+    assert sum(p["in_condition"] for p in chart["points"]) == chart["days_in_condition"]
+
+
+def test_chart_for_the_unused_exercise_feature_is_404(client: TestClient, demo: Session) -> None:
+    assert "mvpa" not in client.get("/api/users/p01").json()["pattern_features"]
+    assert client.get("/api/users/p01/patterns/mvpa").status_code == 404

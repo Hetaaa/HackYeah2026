@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
 
 from app.db import SessionDep
 from app.deps import NOT_FOUND, PersonaDep
@@ -27,3 +27,17 @@ def create_user(data: PersonaCreate, session: SessionDep) -> PersonaRead:
 @router.get("/{user_id}", summary="Get one persona", responses=NOT_FOUND)
 def get_user(persona: PersonaDep, session: SessionDep) -> PersonaRead:
     return users_service.to_read(session, persona)
+
+
+@router.delete(
+    "/{user_id}",
+    summary="Delete a user",
+    description="Deletes a non-demo user and all their days. Demo personas cannot be deleted "
+    "(403); use POST /api/demo/reset to undo demo check-ins.",
+    status_code=status.HTTP_204_NO_CONTENT,
+    responses=NOT_FOUND,
+)
+def delete_user(persona: PersonaDep, session: SessionDep) -> None:
+    if persona.demo_today is not None:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Demo personas cannot be deleted")
+    users_service.delete_persona(session, persona)

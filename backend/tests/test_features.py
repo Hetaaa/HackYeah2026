@@ -14,9 +14,11 @@ def test_feature_catalogue(client: TestClient) -> None:
         "group": "C",
         "group_label": "Sleep continuity",
         "when": "last_night",
-        "better": "lower",
-        "in_patterns": True,
+        "tested_direction": "higher",
+        "can_be_pattern": True,
         "description": "Share of time in bed spent awake during the night.",
     }
-    assert features["steps"]["when"] == "day_before" and features["steps"]["better"] == "higher"
-    assert features["sleep_eff"]["in_patterns"] is False
+    assert features["steps"]["when"] == "day_before"
+    assert features["steps"]["tested_direction"] == "lower"
+    assert features["z_cardio_peak"]["tested_direction"] == "higher"  # a hypothesis, not advice
+    assert features["sleep_eff"]["can_be_pattern"] is False

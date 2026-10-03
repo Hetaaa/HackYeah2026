@@ -69,14 +69,18 @@ Brak auth: persona to `user_id` w ścieżce. Szczegóły i przykłady w Swaggerz
 | Metoda | Ścieżka | Ekran |
 | ------ | ------- | ----- |
 | GET | `/api/users` | przełącznik persony |
+| POST | `/api/users` | onboarding: nowy użytkownik (201) |
+| DELETE | `/api/users/{user_id}` | usunięcie użytkownika (nie dla person demo) |
 | GET | `/api/users/{user_id}` | persona |
 | GET | `/api/users/{user_id}/days?from=&to=` | kalendarz samopoczucia |
 | GET | `/api/users/{user_id}/days/{date}` | widok dnia |
 | GET | `/api/users/{user_id}/patterns` | wzorce złych dni |
+| GET | `/api/users/{user_id}/patterns/{feature}?kind=bad\|good` | wykres wzorca (wartości dzień po dniu) |
 | GET | `/api/users/{user_id}/recipe` | przepis na dobry dzień |
 | GET | `/api/users/{user_id}/surveys/{date}` | czy ankieta wypełniona (404 jeśli nie) |
 | PUT | `/api/users/{user_id}/surveys/{date}` | zapis ankiety, zwraca etykietę dnia |
 | GET | `/api/users/{user_id}/today` | ekran główny: heads-up / good signs na dziś |
+| GET | `/api/features` | katalog cech (nazwy, jednostki, opisy) |
 | POST | `/api/demo/reset` | przywrócenie person demo (tylko z `DEMO_RESET=true`, inaczej 403) |
 
 Demo: persony mają własne „dziś” (`today`, `demo_answers`). Scenariusz prezentacji, odpowiedzi do

@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session
 
@@ -81,3 +82,27 @@ def test_onboarding_creates_a_real_user(client: TestClient, demo: Session) -> No
 def test_onboarding_validation(client: TestClient) -> None:
     assert client.post("/api/users", json={"name": ""}).status_code == 422
     assert client.post("/api/users", json={}).status_code == 422
+
+
+def test_onboarding_rejects_blank_name_and_deletes_users(client: TestClient, demo: Session) -> None:
+    assert client.post("/api/users", json={"name": "   "}).status_code == 422
+    user = client.post("/api/users", json={"name": "  Maja "}).json()
+    assert user["name"] == "Maja" and len(user["id"]) == 13
+
+    assert client.delete(f"/api/users/{user['id']}").status_code == 204
+    assert client.get(f"/api/users/{user['id']}").status_code == 404
+    assert client.delete("/api/users/p10").status_code == 403  # demo persona
+
+
+def test_demo_reset_keeps_onboarded_users(
+    client: TestClient, demo: Session, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.config import settings
+
+    monkeypatch.setattr(settings, "demo_reset", True)
+    user = client.post("/api/users", json={"name": "Maja"}).json()
+
+    client.post("/api/demo/reset")
+
+    ids = [u["id"] for u in client.get("/api/users").json()]
+    assert ids == ["p06", "p01", "p10", "p16", user["id"]]

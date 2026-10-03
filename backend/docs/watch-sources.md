@@ -14,7 +14,11 @@ Stan na 3.10.2026. Dla zespołu i na slajd „co dalej”. Źródła na końcu.
 | `lightly` | minuty lekkiej aktywności (typowe dla Fitbita) | opcjonalne |
 | filtr noszenia | pokrycie dnia próbkami tętna | przydatne (bez niego zakładamy, że zegarek był noszony) |
 
-**Minimum:** sesje snu z fazami, próbki tętna i kroki. Resztę da się z nich policzyć.
+**Twarde minimum:** sesja snu (czas snu) i dzienne kroki. Bez nich dzień nie liczy się do
+analizy, więc użytkownik zostaje na `insufficient_days`. **Dobre pokrycie** dają dodatkowo fazy
+snu i próbki tętna: z nich liczymy `wake_pct`, `rem_pct`, `hr_sleep_mean`, minuty w strefach i
+noszenie. `lightly` i `mvpa` wymagają minutowej intensywności ruchu od producenta, bo z dziennych
+kroków i tętna ich nie odtworzymy.
 
 Algorytm jest osobisty: porównuje osobę tylko z nią samą. Różne definicje u producentów
 (np. „exercise minutes” Apple vs „intensity minutes” Garmina) więc nie przeszkadzają. Przeszkadza
@@ -22,38 +26,46 @@ dopiero zmiana zegarka w trakcie, bo urywa ciągłość danych.
 
 ## Źródła
 
-| Zegarek / ekosystem | Udział w rynku 2025 | Jak dostać dane | Fazy snu | Tętno | Kroki / aktywność | Dostęp dla nas | Ocena |
+| Zegarek / ekosystem | Udział w rynku smartwatchy 2025* | Jak dostać dane | Fazy snu | Tętno | Kroki / aktywność | Dostęp dla nas | Ocena |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| **Fitbit, Google Pixel Watch** | – | **Google Health API** (chmura, Google OAuth). Fitbit Web API wyłączone 30.09.2026. | ✅ | ✅ próbki, strefy | ✅ kroki, active minutes, czas w strefach | otwarte (OAuth) | ✅ najprostsze, nasz algorytm powstał na danych Fitbita |
+| **Fitbit, Google Pixel Watch** | – | **Google Health API** (chmura, Google OAuth). Fitbit Web API wyłączone 30.09.2026. | ✅ | ✅ próbki, strefy | ✅ kroki, active minutes, czas w strefach | OAuth; zakresy zdrowotne Google zwykle wymagają weryfikacji aplikacji przed produkcją | ✅ najbliższe naszym danym (algorytm powstał na Fitbicie) |
 | **Apple Watch** | 17% (2.) | **HealthKit** tylko na iPhonie. Brak API serwer–serwer, potrzebna aplikacja iOS, która czyta dane i wysyła na backend. | ✅ (watchOS 9+: awake/core/deep/REM) | ✅ próbki | ✅ kroki, exercise minutes; brak „light minutes” | aplikacja iOS | ⚠️ pełne dane, ale wymaga apki mobilnej |
 | **Xiaomi (Mi Band, Redmi Watch)** | 18% (1.) | **Brak publicznego API.** Mi Fitness zapisuje do **Health Connect** (Android) i Apple Health (iOS). | ⚠️ sesje snu tak, szczegółowa analiza zostaje w aplikacji Xiaomi | ✅ co minutę | ✅ kroki | przez Health Connect / HealthKit | ⚠️ możliwe, jakość faz do sprawdzenia |
 | **Huawei** | 16% (3.) | **Huawei Health Kit** (chmura, dla zatwierdzonych partnerów) albo agregator (np. Thryve) | ✅ | ✅ | ✅ | wniosek partnerski | ⚠️ możliwe, ale formalności |
-| **Samsung Galaxy Watch** | 9% (4.) | **Samsung Health Data SDK** (Android) albo **Health Connect** | ✅ | ✅ | ✅ | aplikacja Android | ⚠️ wymaga apki mobilnej |
+| **Samsung Galaxy Watch** | 9% (4.) | **Samsung Health Data SDK** (Android, prawdopodobnie wymaga zgody partnerskiej Samsunga) albo **Health Connect** | ✅ | ✅ | ✅ | aplikacja Android | ⚠️ wymaga apki mobilnej |
 | **Garmin** | 5% (5.) | **Garmin Health API** (chmura, push). **Program wstrzymany dla nowych deweloperów od wiosny 2026.** Alternatywy: agregator (Terra) albo Garmin → Apple Health / Health Connect. | ✅ | ✅ | ✅ kroki, intensity minutes | obecnie zamknięty | ❌ bezpośrednio teraz nie, ✅ pośrednio |
 | **Amazfit (Zepp)** | – | Brak otwartego API chmurowego; Zepp zapisuje do **Health Connect** / Apple Health | ⚠️ jak Xiaomi | ✅ | ✅ | przez Health Connect / HealthKit | ⚠️ |
 | **Polar** | – | **AccessLink API v3** (chmura, OAuth, darmowa rejestracja) | ✅ Sleep Plus Stages | ✅ continuous HR | ✅ dzienna aktywność, treningi | otwarte | ✅ łatwe |
 | **Oura** (pierścień) | – | **Oura API v2** (OAuth, webhooki) | ✅ | ✅ próbki | ✅ kroki, czas aktywności | otwarte | ✅ łatwe |
-| **Whoop** (opaska) | – | **Whoop API v2** (OAuth) | ✅ | ✅ podsumowania, strefy w treningach | ⚠️ strain zamiast kroków | otwarte | ⚠️ brak kroków (do weryfikacji) |
+| **Whoop** (opaska) | – | **Whoop API v2** (OAuth) | ✅ | ✅ podsumowania, strefy w treningach | ❌ strain zamiast kroków | otwarte | ❌ bez kroków nie przechodzi naszej bramki (trzeba by ją poluzować) |
 | **Withings** | – | Withings Public API (OAuth) | ✅ | ✅ | ✅ | otwarte | ✅ |
+
+\* Udziały: Canalys, cały rok 2025 (Xiaomi 18%, Apple 17%, Huawei 16%, Samsung 9%, Garmin 5%).
+Inne firmy i kwartały dają inną kolejność (np. IDC: Huawei pierwszy w Q1 i Q2 2025), więc liczby
+są orientacyjne.
 
 ## Wnioski
 
 1. **Dwie drogi pokrywają większość rynku:**
-   - **Chmura (OAuth na backendzie):** Google Health API (Fitbit, Pixel), Polar, Oura, Withings,
-     Whoop. Klienci w `app/clients/`, każdy z adapterem do `UserData` (jak `app/insights/fitbit.py`).
+   - **Chmura (OAuth na backendzie):** Google Health API (Fitbit, Pixel), Polar, Oura, Withings
+     (Whoop dopiero po poluzowaniu wymogu kroków). Klienci w `app/clients/`, każdy z adapterem do
+     `UserData` (jak `app/insights/fitbit.py`).
    - **Aplikacja mobilna:** iOS czyta HealthKit, Android czyta Health Connect, obie wysyłają dane
      na backend. Ta jedna droga obejmuje Apple Watch, Samsunga, Xiaomi, Amazfit, Pixel i pośrednio
-     Garmina. To łącznie ok. **50%** rynku (Xiaomi 18%, Apple 17%, Samsung 9%, Garmin 5%).
+     Garmina: orientacyjnie **45–50%** rynku smartwatchy, licząc pośredni dostęp i niepewną
+     jakość faz snu Xiaomi.
 2. **Najmniejszym kosztem** pierwsze prawdziwe źródło to **Google Health API**. Dane są
    najbliższe PMData (algorytm był walidowany na Fitbicie), a OAuth działa na backendzie bez apki
    mobilnej. Nasz parser `fitbit.py` obsługuje format starego Fitbit Web API, więc do Google Health
-   API trzeba nowego adaptera (inny JSON, limity zakresów zapytań 14/90 dni).
+   API trzeba nowego adaptera (inny JSON, limity zakresu zapytań według dokumentacji).
 3. **Huawei** (16% rynku) wymaga wniosku partnerskiego albo agregatora. **Garmin** chwilowo tylko
    pośrednio.
 4. **Skrót przez agregator:**
    - **Open Wearables** (MIT, self-hosted, bez opłat za użytkownika): Garmin, Polar, Whoop, Strava,
-     Apple Health, Samsung Health, Health Connect, Suunto, Oura.
-   - **Terra** (od $499/mies.): ma też dostęp do Garmina mimo wstrzymanego programu.
+     Apple Health, Samsung Health, Health Connect, Suunto, Oura. Apple Health i Samsung nadal
+     wymagają ich SDK w aplikacji mobilnej.
+   - **Terra** (płatna, cennik na ich stronie): ma też dostęp do Garmina mimo wstrzymanego
+     programu.
 
    Adapter: jeden format agregatora → `UserData`.
 
@@ -63,9 +75,11 @@ dopiero zmiana zegarka w trakcie, bo urywa ciągłość danych.
   produkujący noce (start, koniec, fazy, tętno w czasie snu) i dni (kroki, minuty aktywności,
   noszenie), zapisany jako wiersze `Day`.
 - Brakujące cechy nie są błędem: algorytm pomija je w wyszukiwaniu wzorców (np. Apple bez
-  `lightly`).
-- Dla źródeł bez gotowych minut w strefach tętna liczymy je z próbek tętna (strefy jak u Fitbita:
-  % tętna maksymalnego 220 − wiek).
+  `lightly`). Wyjątki: czas snu i kroki są wymagane (bramka „pełnego dnia”).
+- Dla źródeł bez gotowych minut w strefach tętna trzeba je liczyć z próbek tętna. Fitbit
+  (Active Zone Minutes) używa rezerwy tętna, czyli tętna maksymalnego i spoczynkowego, więc
+  onboarding musiałby zbierać **wiek** (którego teraz nie mamy). Definicję stref z czasów PMData
+  trzeba sprawdzić przed implementacją.
 - **Strefa czasowa per użytkownik** staje się konieczna, gdy pojawią się prawdziwi użytkownicy
   (teraz jest na sztywno `Europe/Oslo`).
 
