@@ -19,6 +19,7 @@ class Persona(SQLModel, table=True):
     demo_answers: str | None = Field(
         default=None,
         max_length=20,
+        schema_extra={"pattern": r"^[1-5](,[1-5]){3}$"},
         description="Demo only: real check-in of demo_today, 'mood,fatigue,sleep_quality,stress'",
     )
     position: int = Field(default=0, description="Order in the persona switcher")

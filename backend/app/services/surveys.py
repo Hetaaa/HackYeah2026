@@ -33,7 +33,10 @@ def save_survey(session: Session, user_id: str, date: dt.date, data: SurveyCreat
 
 def to_read(session: Session, day: Day) -> SurveyRead:
     """The label is personal (relative to the user's history), so it needs all their days."""
-    result = get_analysis(session, day.user_id)
+    return read_from(day, get_analysis(session, day.user_id))
+
+
+def read_from(day: Day, result: dict) -> SurveyRead:
     return SurveyRead(
         date=day.date,
         mood=day.mood,

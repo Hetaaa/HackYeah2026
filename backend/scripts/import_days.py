@@ -35,7 +35,7 @@ def parse_row(row: dict[str, str]) -> dict[str, object]:
     return data
 
 
-def import_personas(session: Session, path: Path) -> int:
+def import_personas(session: Session, path: Path, commit: bool = True) -> int:
     with path.open(newline="", encoding="utf-8") as file:
         rows = list(csv.DictReader(file))
     for row in rows:
@@ -46,11 +46,13 @@ def import_personas(session: Session, path: Path) -> int:
         else:
             persona.sqlmodel_update(Persona.model_validate(data).model_dump())
             session.add(persona)
-    session.commit()
+    session.flush()
+    if commit:
+        session.commit()
     return len(rows)
 
 
-def import_days(session: Session, path: Path) -> int:
+def import_days(session: Session, path: Path, commit: bool = True) -> int:
     with path.open(newline="", encoding="utf-8") as file:
         rows = [parse_row(row) for row in csv.DictReader(file)]
     for data in rows:
@@ -67,7 +69,8 @@ def import_days(session: Session, path: Path) -> int:
             day.sqlmodel_update(new_day.model_dump(exclude={"id"}))
             session.add(day)
         session.flush()
-    session.commit()
+    if commit:
+        session.commit()
     return len(rows)
 
 

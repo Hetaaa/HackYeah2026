@@ -42,3 +42,21 @@ def test_label_mode_and_norm_reference(client: TestClient, demo: Session) -> Non
     assert users["p06"]["label_mode"] == "personal"
     assert users["p06"]["norm_reference"] == "good_days"
     assert users["p01"]["norm_reference"] == "all_days"  # only 3 good days
+
+
+def test_malformed_demo_answers_are_ignored(client: TestClient, demo: Session) -> None:
+    import pytest
+    from pydantic import ValidationError
+
+    from app.models import Persona
+
+    with pytest.raises(ValidationError):
+        Persona.model_validate({"id": "x", "name": "X", "demo_answers": "3.0,3,3,3"})
+    persona = demo.get(Persona, "p10")
+    persona.demo_answers = "3,3"  # bypasses validation, like a hand-edited row
+    demo.add(persona)
+    demo.commit()
+
+    users = {u["id"]: u for u in client.get("/api/users").json()}
+
+    assert users["p10"]["demo_answers"] is None

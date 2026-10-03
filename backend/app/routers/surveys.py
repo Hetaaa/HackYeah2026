@@ -34,8 +34,7 @@ def get_survey(persona: PersonaDep, date: dt.date, session: SessionDep) -> Surve
 def save_survey(
     persona: PersonaDep, date: dt.date, data: SurveyCreate, session: SessionDep
 ) -> SurveyRead:
-    latest = persona.demo_today or users_service.today_of(persona) + dt.timedelta(days=1)
-    if not EARLIEST_DATE <= date <= latest:
+    if not EARLIEST_DATE <= date <= users_service.latest_survey_date(persona):
         raise HTTPException(
             status.HTTP_422_UNPROCESSABLE_CONTENT, detail=f"Date {date} is out of range"
         )

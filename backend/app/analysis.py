@@ -225,12 +225,16 @@ def _signal(s: dict) -> Signal:
     )
 
 
-def today(analysis: dict, date: dt.date, survey: SurveyRead | None, has_row: bool) -> TodayRead:
-    """Signals use only data known before the morning check-in, so they work before it too."""
-    entry = _entry(analysis, date) if has_row else None
-    heads_up = [_signal(s) for s in entry["signals"]["bad"]] if entry else []
-    good_signs = [_signal(s) for s in entry["signals"]["good"]] if entry else []
-    has_watch_data = bool(entry) and any(v["value"] is not None for v in entry["values"])
+def today(analysis: dict, morning: dict, date: dt.date, survey: SurveyRead | None) -> TodayRead:
+    """analysis: current data; morning: the same data without today's check-in (signals).
+
+    Signals use only data known before the check-in (last night, the day before) and patterns
+    found without today's answers, so the morning heads-up stays put after the check-in.
+    """
+    early = _entry(morning, date)
+    heads_up = [_signal(s) for s in early["signals"]["bad"]] if early else []
+    good_signs = [_signal(s) for s in early["signals"]["good"]] if early else []
+    has_watch_data = bool(early) and any(v["value"] is not None for v in early["values"])
     if not has_watch_data:
         outlook = "unknown"
     elif heads_up and good_signs:
@@ -249,8 +253,8 @@ def today(analysis: dict, date: dt.date, survey: SurveyRead | None, has_row: boo
         summary=summary,
         heads_up=heads_up,
         good_signs=good_signs,
-        deviations=[_deviation(c) for c in entry["compare"]] if entry else [],
-        features=_features(analysis, entry),
+        deviations=[_deviation(c) for c in early["compare"]] if early else [],
+        features=_features(morning, early),
     )
 
 

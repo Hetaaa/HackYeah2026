@@ -60,6 +60,7 @@ Usuwa i tworzy na nowo wszystkie tabele, potem ładuje seed. Działa też przy w
 | `DATABASE_URL` | `sqlite:///./app.db`      | URL bazy (SQLAlchemy)                       |
 | `CORS_ORIGINS` | `http://localhost:5173`   | Dozwolone originy, rozdzielone przecinkami  |
 | `ENV`          | `dev`                     | Nazwa środowiska                            |
+| `DEMO_RESET`   | `false`                   | Włącza `POST /api/demo/reset` (na demo)    |
 
 ## API
 
@@ -76,7 +77,7 @@ Brak auth: persona to `user_id` w ścieżce. Szczegóły i przykłady w Swaggerz
 | GET | `/api/users/{user_id}/surveys/{date}` | czy ankieta wypełniona (404 jeśli nie) |
 | PUT | `/api/users/{user_id}/surveys/{date}` | zapis ankiety, zwraca etykietę dnia |
 | GET | `/api/users/{user_id}/today` | ekran główny: heads-up / good signs na dziś |
-| POST | `/api/demo/reset` | przywrócenie danych demo (wyłączone przy `ENV=prod`) |
+| POST | `/api/demo/reset` | przywrócenie person demo (tylko z `DEMO_RESET=true`, inaczej 403) |
 
 Demo: persony mają własne „dziś” (`today`, `demo_answers`). Scenariusz prezentacji, odpowiedzi do
 wpisania i mapowanie ekranów: [docs/demo.md](docs/demo.md).

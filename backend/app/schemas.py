@@ -219,7 +219,7 @@ class Signal(BaseModel):
     pattern_text: str = Field(
         examples=[
             "When you are awake over 12% of the night, 15 of 27 days were bad days "
-            "(vs 15% otherwise)."
+            "(vs 13% otherwise)."
         ]
     )
 
@@ -242,5 +242,5 @@ class TodayRead(BaseModel):
 
 
 class DemoReset(BaseModel):
-    personas: int = Field(examples=[4])
-    days: int = Field(examples=[477])
+    personas: int = Field(description="Demo personas restored", examples=[4])
+    days: int = Field(description="Days of the demo personas", examples=[477])

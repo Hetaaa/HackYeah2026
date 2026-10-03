@@ -24,7 +24,9 @@ from app.insights.sources.rows import user_from_rows
 OUT_DIR = Path(__file__).resolve().parent.parent / "data" / "demo"
 CACHE = Path(".cache/insights")
 SURVEY = ["mood", "fatigue", "sleep_quality", "stress"]
+LABEL_FIELDS = ["mood", "fatigue", "stress"]  # sleep_quality is collected but not in the label
 MIN_HISTORY_DAYS = 90  # "today" late enough for a rich calendar
+SAFE_SCORE = 0.8  # label threshold is 0.5: a margin against a slider slip
 NIGHT = {  # Day column -> nights column
     "sleep_end": "end",
     "sleep_type": "sleep_type",
@@ -107,18 +109,26 @@ def _story_kind(result: dict) -> str | None:
     return None
 
 
-def pick_today(pid: str, rows: list[dict[str, str]]) -> tuple[str, dict[str, str]] | None:
-    """Latest day that tells the persona's story live (scanned from the end, stop at first hit):
+def _key(p: dict) -> tuple:
+    return p["feature"], p["variant"], p["op"], p["threshold"]
 
-    - before its check-in, last night / the day before already trigger a significant pattern
-      (the "Today" heads-up),
-    - its real answers, filled in during the demo, give the matching label and a reason,
-    - the persona keeps that pattern once the day is added.
-    Returns (date, real answers) or None.
-    """
-    kind = _story_kind(_analyze(pid, rows))
-    if kind is None:
-        return None
+
+def _nudged(answers: dict[str, str]) -> list[dict[str, str]]:
+    """The answers with one of mood / fatigue / stress moved by 1 (a slider slip on stage)."""
+    out = []
+    for field in LABEL_FIELDS:
+        for step in (-1, 1):
+            value = min(5, max(1, int(answers[field]) + step))
+            if str(value) != answers[field]:
+                out.append(answers | {field: str(value)})
+    return out
+
+
+def _candidates(pid: str, rows: list[dict[str, str]], kind: str):
+    """Days (latest first) whose morning heads-up and check-in tell the persona's story:
+    a significant pattern is triggered before the check-in, the real answers give the matching
+    label with that same pattern as the reason, and it stays significant with the day added.
+    Yields (index, answers, score)."""
     min_date = (pd.Timestamp(rows[0]["date"]) + pd.Timedelta(days=MIN_HISTORY_DAYS)).date()
     end = (C.PMDATA_WINDOW_END - pd.Timedelta(days=1)).date().isoformat()
     for i in range(len(rows) - 1, -1, -1):
@@ -127,15 +137,41 @@ def pick_today(pid: str, rows: list[dict[str, str]]) -> tuple[str, dict[str, str
             continue
         if not all(today[f] for f in SURVEY):
             continue
-        answers = {f: today[f] for f in SURVEY}
         before = rows[:i] + [today | dict.fromkeys([*SURVEY, "survey_at"], "")]
-        entry = _analyze(pid, before)["days"][-1]
-        if not entry["signals"][kind]:
+        signals = _analyze(pid, before)["days"][-1]["signals"][kind]
+        if not signals:
             continue
         after = _analyze(pid, rows[: i + 1])
         day = after["days"][-1]
-        if day["label"] == kind and day["reasons"] and _story_kind(after) == kind:
-            return today["date"], answers
+        reason = day["reasons"][0]["feature"] if day["reasons"] else None
+        if day["label"] == kind and reason == signals[0]["feature"] and _story_kind(after) == kind:
+            yield i, {f: today[f] for f in SURVEY}, day["score"]
+
+
+def pick_today(pid: str, rows: list[dict[str, str]]) -> tuple[str, dict[str, str], str] | None:
+    """Latest story day, preferring days that are safe against a slider slip on stage:
+
+    1. "robust": the label survives any one of mood / fatigue / stress being off by 1,
+    2. "margin": the check-in score is clearly past the label threshold (|score| >= 0.8),
+    3. "exact": only the exact real answers give the story (prefill them in the UI).
+    Returns (date, real answers, tier) or None.
+    """
+    kind = _story_kind(_analyze(pid, rows))
+    if kind is None:
+        return None
+    found = list(_candidates(pid, rows, kind))
+    for i, answers, _ in found:
+        nudges = _nudged(answers)
+        if all(
+            _analyze(pid, rows[:i] + [rows[i] | n])["days"][-1]["label"] == kind for n in nudges
+        ):
+            return rows[i]["date"], answers, "robust"
+    for i, answers, score in found:
+        if abs(score) >= SAFE_SCORE:
+            return rows[i]["date"], answers, "margin"
+    if found:
+        i, answers, _ = found[0]
+        return rows[i]["date"], answers, "exact"
     return None
 
 
@@ -150,7 +186,7 @@ def main() -> None:
     for position, pid in enumerate(pids):
         rows = day_rows(args.pmdata, pid)
         picked = pick_today(pid, rows)
-        today, answers = picked if picked else (rows[-1]["date"], None)
+        today, answers, tier = picked if picked else (rows[-1]["date"], None, "none")
         # the demo ends "today": later days are dropped, today's check-in is left to fill live
         rows = [r for r in rows if r["date"] <= today]
         if answers:
@@ -169,7 +205,7 @@ def main() -> None:
                 "position": position,
             }
         )
-        print(f"{pid}: today {today}, answers {answers}, {len(rows)} days")
+        print(f"{pid}: today {today} ({tier}), answers {answers}, {len(rows)} days")
     with (OUT_DIR / "personas.csv").open("w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=list(personas[0]), lineterminator="\n")
         writer.writeheader()

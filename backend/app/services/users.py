@@ -1,8 +1,11 @@
 import datetime as dt
+from zoneinfo import ZoneInfo
 
+from pydantic import ValidationError
 from sqlmodel import Session, func, select
 
 from app import analysis
+from app.insights import config as C
 from app.models import Day, Persona, SurveyBase
 from app.schemas import PersonaRead
 from app.services.days import get_analysis
@@ -18,15 +21,24 @@ def get_persona(session: Session, user_id: str) -> Persona | None:
 
 
 def today_of(persona: Persona) -> dt.date:
-    """Demo clock for recorded personas, the real (UTC) date for everyone else."""
-    return persona.demo_today or dt.datetime.now(dt.UTC).date()
+    """Demo clock for recorded personas, the user's local date for everyone else."""
+    return persona.demo_today or dt.datetime.now(ZoneInfo(C.TZ)).date()
+
+
+def latest_survey_date(persona: Persona) -> dt.date:
+    """Demo personas: their today. Real users: tomorrow (clock skew / time zones ahead)."""
+    return persona.demo_today or today_of(persona) + dt.timedelta(days=1)
 
 
 def demo_answers(persona: Persona) -> SurveyBase | None:
-    if not persona.demo_answers:
+    """'mood,fatigue,sleep_quality,stress' -> SurveyBase; malformed values are ignored."""
+    try:
+        mood, fatigue, sleep_quality, stress = (int(v) for v in persona.demo_answers.split(","))
+        return SurveyBase.model_validate(
+            {"mood": mood, "fatigue": fatigue, "sleep_quality": sleep_quality, "stress": stress}
+        )
+    except (AttributeError, ValueError, ValidationError):
         return None
-    mood, fatigue, sleep_quality, stress = (int(v) for v in persona.demo_answers.split(","))
-    return SurveyBase(mood=mood, fatigue=fatigue, sleep_quality=sleep_quality, stress=stress)
 
 
 def to_read(session: Session, persona: Persona) -> PersonaRead:

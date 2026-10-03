@@ -9,17 +9,20 @@ na danych demo.
 cd backend
 uv sync
 uv run python -m scripts.reset_db        # baza od nowa: 4 persony z PMData (data/demo/*.csv)
-uv run uvicorn app.main:app              # API: http://localhost:8000/api, Swagger: /docs
+DEMO_RESET=true uv run uvicorn app.main:app   # API: http://localhost:8000/api, Swagger: /docs
 ```
 
-`reset_db` jest wymagany po pobraniu zmian, bo baza ma nowe kolumny. Bez niego stara `app.db`
-nie zostanie zaseedowana.
+`reset_db` jest wymagany po pobraniu zmian. Stara `app.db` nie ma nowych kolumn (`create_all`
+ich nie dodaje), więc endpointy person zwracają **500** (`no such column persona.demo_today`).
 
 **Między przebiegami prezentacji** cofnij ankiety wpisane na żywo:
 
 ```bash
 curl -X POST http://localhost:8000/api/demo/reset    # {"personas": 4, "days": 477}
 ```
+
+Reset działa tylko z `DEMO_RESET=true` (inaczej 403), więc publiczny deploy nie da się wyczyścić z
+zewnątrz. Przywraca wyłącznie persony demo, innych użytkowników nie rusza.
 
 ## Zegar demo
 
@@ -28,7 +31,7 @@ Persony to nagrane dane z PMData (listopad 2019 – marzec 2020). Każda ma wła
 
 - dane kończą się na tym dniu,
 - ankieta z „dziś” jest pusta, żeby wypełnić ją na żywo,
-- prawdziwe odpowiedzi tej osoby z tego dnia są w `demo_answers` (frontend może dać przycisk
+- prawdziwe odpowiedzi tej osoby z tego dnia są w `demo_answers` (frontend powinien dać przycisk
   „wypełnij jak Sam” albo ustawić suwaki),
 - ankieta na późniejszą datę zwraca 422.
 
@@ -44,11 +47,25 @@ kalendarza, data ankiety.
 | 3 | p10 | Sam | 2020-02-14 | **Niespokojne noce + lekki ruch**: wzorce w obie strony, najlepsza do pokazania | 3, 1, 2, 2 |
 | 4 | p16 | Kim (zapas) | 2020-02-27 | **Nocny marek**: krótki sen i bardzo późne zasypianie | 3, 2, 3, 2 |
 
+**Odpowiedzi trzeba wpisać dokładnie**, najlepiej przyciskiem z `demo_answers`. Etykieta liczy się
+z mood, fatigue i stress, a `sleep_quality` nie ma na nią wpływu. Odporność na pomyłkę:
+
+| Persona | Odporność |
+| --- | --- |
+| Kim | dowolny suwak ±1 nadal daje zły dzień |
+| Robin | wyraźny margines od progu |
+| Sam, Alex | tylko dokładne odpowiedzi. U Sama mood, fatigue albo stress o 1 wyżej daje dzień neutralny („Check-in saved: a typical day for you.”) |
+
+Ostrzeżenie na ekranie Today nie zmienia się po wypełnieniu ankiety, bo jest liczone z danych sprzed
+niej.
+
 ## Scenariusz (ok. 6 min)
 
 **1. Problem (slajd).** Zegarek pokazuje liczby, nikt nie mówi, dlaczego czujesz się źle.
 
-**2. Przełącznik person → Sam (p10).** „Prawdziwa osoba z badania PMData, 102 dni z zegarka i ankiet.”
+**2. Przełącznik person → Sam (p10).** „Prawdziwa osoba z badania PMData: ponad 3 miesiące
+danych z zegarka i codziennych ankiet.” (102 dni w kalendarzu, 66 pełnych dni z ankietą i
+zegarkiem.)
 
 **3. Ekran Today, jeszcze przed ankietą** (`GET /users/p10/today`):
 
