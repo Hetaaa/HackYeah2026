@@ -75,6 +75,11 @@ Brak auth: persona to `user_id` w ścieżce. Szczegóły i przykłady w Swaggerz
 | GET | `/api/users/{user_id}/recipe` | przepis na dobry dzień |
 | GET | `/api/users/{user_id}/surveys/{date}` | czy ankieta wypełniona (404 jeśli nie) |
 | PUT | `/api/users/{user_id}/surveys/{date}` | zapis ankiety, zwraca etykietę dnia |
+| GET | `/api/users/{user_id}/today` | ekran główny: heads-up / good signs na dziś |
+| POST | `/api/demo/reset` | przywrócenie danych demo (wyłączone przy `ENV=prod`) |
+
+Demo: persony mają własne „dziś” (`today`, `demo_answers`). Scenariusz prezentacji, odpowiedzi do
+wpisania i mapowanie ekranów: [docs/demo.md](docs/demo.md).
 
 Ścieżki się nie zmieniły. Algorytm dodał pola (`reasons`, `status`, `has_reason`, `headline`,
 `insights_status`, `label_mode`, `norm_reference`, statystyki wzorców), ale **zmienił też znaczenie
