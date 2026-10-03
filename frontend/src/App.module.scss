@@ -1,0 +1,19 @@
+// The only scrolling element: lives inside the phone screen, under the nav.
+.scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-top: 54px;
+  padding-bottom: 130px;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (max-width: 500px) {
+    padding-top: calc(env(safe-area-inset-top) + 12px);
+    padding-bottom: calc(env(safe-area-inset-bottom) + 120px);
+  }
+}

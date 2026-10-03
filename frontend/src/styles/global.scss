@@ -1,0 +1,54 @@
+@use "tokens" as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: $font;
+  color: $ink;
+  background: $bg;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+// Press feedback for everything tappable. Uses `scale`, so it stacks with motion's transforms.
+button,
+a {
+  transition: scale 0.15s ease;
+}
+
+button:not(:disabled):active,
+a:active {
+  scale: 0.97;
+}

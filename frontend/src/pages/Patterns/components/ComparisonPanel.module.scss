@@ -1,0 +1,152 @@
+@use "tokens" as *;
+
+.panel {
+  margin-top: 16px;
+  padding: 18px 16px 16px;
+  border-radius: 24px;
+  background: #ece6e8;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.eyebrow {
+  @include eyebrow;
+  font-size: 10px;
+  font-weight: 700;
+  color: $muted;
+}
+
+.updated {
+  font-size: 10px;
+  font-weight: 500;
+  color: $muted;
+}
+
+.title {
+  margin: 2px 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+// Shared column template for the header and the rows.
+%grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 0.9fr;
+  align-items: center;
+}
+
+.columns {
+  @extend %grid;
+  padding: 0 12px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $muted;
+
+  span:nth-child(2),
+  span:nth-child(3) {
+    text-align: right;
+  }
+}
+
+.table {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: hidden;
+  border-radius: 14px;
+  background: $surface;
+}
+
+.row {
+  @extend %grid;
+  padding: 10px 12px;
+
+  & + & {
+    border-top: 1.5px solid #ece6e8;
+  }
+}
+
+.name {
+  margin-bottom: 4px;
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.badge {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.strong {
+  background: #fde0d4;
+  color: #a8462a;
+}
+
+.medium {
+  background: #e6dbf6;
+  color: $lavender-ink;
+}
+
+.early {
+  background: #eeebec;
+  color: $ink-soft;
+}
+
+.good {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: $ink;
+  text-align: right;
+}
+
+.lower {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.lowerValue {
+  font-size: 14.5px;
+  font-weight: 800;
+}
+
+.delta {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: $orange;
+}
+
+.note {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #d9d0d3;
+}
+
+.noteIcon {
+  flex: none;
+  color: $plum;
+}
+
+.noteTitle {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.noteText {
+  font-size: 11.5px;
+  color: $ink-soft;
+}

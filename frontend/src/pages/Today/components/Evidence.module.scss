@@ -1,0 +1,204 @@
+@use "tokens" as *;
+
+.section {
+  margin-top: 40px;
+}
+
+.eyebrow {
+  @include eyebrow;
+  font-size: 11px;
+  font-weight: 700;
+  color: $muted;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.title {
+  font-size: 23px;
+  font-weight: 500;
+  letter-spacing: -0.05em;
+}
+
+.more {
+  font-size: 12px;
+  font-weight: 600;
+  color: $orange;
+}
+
+.subtitle {
+  margin: 4px 0 18px;
+  font-size: 12.5px;
+  color: $ink-soft;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 228px;
+  padding: 16px 16px 14px;
+  border-radius: $radius-lg;
+}
+
+.cardHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.metric {
+  @include eyebrow;
+  margin-top: 10px;
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.value {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.05em;
+
+  small {
+    margin-left: 1px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+}
+
+.delta {
+  margin-top: 8px;
+  font-size: 11.5px;
+  font-weight: 500;
+
+  strong {
+    margin-right: 2px;
+    font-weight: 800;
+    color: $orange;
+  }
+}
+
+.note {
+  position: relative; // above the ring
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.sleep {
+  background: $plum;
+  color: #fff;
+
+  .icon {
+    background: rgba(#fff, 0.1);
+  }
+
+  .metric,
+  .delta {
+    color: #d6ccd1;
+  }
+}
+
+.chart {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-top: 14px;
+}
+
+.bars {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  min-height: 56px;
+}
+
+.bar,
+.barToday {
+  flex: 1;
+  min-height: 6px;
+  border-radius: 5px;
+  background: $plum-bar;
+}
+
+.barToday {
+  background: $orange;
+}
+
+// Dashed "your usual" reference line across the bars.
+.usualLine {
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  border-top: 1.5px dashed rgba(#fff, 0.55);
+}
+
+.days {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+
+  span {
+    flex: 1;
+    font-size: 9px;
+    font-weight: 600;
+    text-align: center;
+    color: #8d7f87;
+  }
+
+  .dayToday {
+    color: $orange;
+  }
+}
+
+.movement {
+  background: $lavender;
+
+  .icon {
+    border: 1.5px solid rgba($ink, 0.12);
+  }
+
+  .metric,
+  .delta {
+    color: $ink-soft;
+  }
+
+  .note {
+    color: $ink;
+  }
+}
+
+.ring {
+  position: absolute;
+  right: -26px;
+  bottom: -38px;
+  width: 112px;
+  height: 112px;
+  border: 13px solid rgba(#fff, 0.35);
+  border-radius: 50%;
+}
