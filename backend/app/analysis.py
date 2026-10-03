@@ -260,17 +260,7 @@ def timeline(analysis: dict, date: dt.date) -> list[TimelinePoint]:
 
 
 # ---------------------------------------------------------------- today (home screen)
-OUTLOOK_SUMMARY = {
-    "tough": "Today may be tougher than usual. Check in to see how you feel.",
-    "promising": "Today looks promising.",
-    "mixed": "Mixed signals for today.",
-    "neutral": "Nothing in last night's sleep or yesterday's activity points either way.",
-    "unknown": "No watch data for today yet.",
-}
-
-
 def _signal(s: dict) -> Signal:
-    lead = "Heads-up" if s["kind"] == "bad" else "Good sign"
     return Signal(
         kind=s["kind"],
         feature=s["feature"],
@@ -278,7 +268,7 @@ def _signal(s: dict) -> Signal:
         value=s["value"],
         display=texts.fmt(s["feature"], s["value"]),
         when=_when({"feature": s["feature"], "variant": s["when"]}),
-        text=f"{lead}: {s['value_text']}.",
+        text=texts.signal_text(s["kind"], s["value_text"]),
         pattern_text=s["pattern_text"],
     )
 
@@ -300,9 +290,9 @@ def today(analysis: dict, morning: dict, date: dt.date, survey: SurveyRead | Non
     else:
         outlook = "tough" if heads_up else "promising" if good_signs else "neutral"
     if survey is not None:
-        summary = explain_day(analysis, date) or "Check-in saved: a typical day for you."
+        summary = explain_day(analysis, date) or texts.CHECKIN_SAVED
     else:
-        summary = OUTLOOK_SUMMARY[outlook]
+        summary = texts.OUTLOOK[outlook]
     return TodayRead(
         date=date,
         has_watch_data=has_watch_data,
@@ -324,15 +314,6 @@ def _when(p: dict) -> str:
     return "last_night" if night else "day_before"
 
 
-def _condition(p: dict) -> str:
-    amount = texts.fmt(p["feature"], p["threshold"])
-    if p["feature"] == "bedtime_h":
-        return f"{'before' if p['op'] == 'below' else 'after'} {amount}"
-    if p["feature"] == "steps":
-        return f"{'fewer' if p['op'] == 'below' else 'more'} than {amount} steps"
-    return f"{'under' if p['op'] == 'below' else 'over'} {amount}"
-
-
 def _stats(p: dict) -> dict:
     return {
         "level": p["level"],
@@ -346,39 +327,14 @@ def _stats(p: dict) -> dict:
         "p_value": p["p_global"] if p["level"] == "significant" else p["p_feature"],
         "feature": p["feature"],
         "label": FEATURES[p["feature"]].label,
-        "condition": _condition(p),
+        "condition": texts.pattern_condition(p),
         "text": p["text"],
     }
 
 
-def _plural(count: int, word: str) -> str:
-    return f"{count} {word}" if count == 1 else f"{count} {word}s"
-
-
 def _status_summary(analysis: dict, status: str, kind: str, n: int) -> str:
     have, needed = days_with_data(analysis)
-    common = {
-        "insufficient_days": f"Keep checking in: insights appear after {needed} days with watch "
-        f"data and a check-in ({have} so far).",
-        "insufficient_variation": "Your check-ins are very similar every day, so there is "
-        "nothing to compare yet.",
-        "preliminary": f"No clear pattern yet, but {_plural(n, 'early signal')} "
-        f"{'is' if n == 1 else 'are'} worth watching.",
-    }
-    if status in common:
-        return common[status]
-    if kind == "bad":
-        return {
-            "ok": f"We found {_plural(n, 'possible reason')} behind your bad days.",
-            "not_enough_evidence": "Your bad days don't share a clear pattern in your watch "
-            "data yet.",
-            "insufficient_bad_days": "Not enough bad days yet to look for patterns.",
-        }[status]
-    return {
-        "ok": f"Your good days usually share {_plural(n, 'thing')}.",
-        "not_enough_evidence": "Your good days don't share a clear recipe in your watch data yet.",
-        "insufficient_good_days": "Not enough good days yet to write your recipe.",
-    }[status]
+    return texts.status_summary(status, kind, n, have, needed)
 
 
 def bad_day_patterns(analysis: dict) -> PatternReport:

@@ -36,6 +36,9 @@ backend/
 - Services are plain functions that take `session: Session` as the first argument. No classes, no abstract interfaces, no repository layer, no DI containers.
 - Routers get the session via `session: SessionDep` (Annotated `Depends(get_session)`).
 - External integrations only in `app/clients/`, called from services.
+- Every user-facing text (patterns, reasons, signals, comparisons, screen headlines, feature
+  descriptions) is built in `app/insights/texts.py`, nowhere else. Keep texts short: "Under 7h sleep",
+  "Under 4k steps (day before)", "Sleep -1h43 vs good days".
 - No migrations. Lifespan runs `create_all` and seeds if `Persona` is empty. Schema change: `uv run python -m scripts.reset_db`.
 - Build table rows from input via `X.model_validate(x_create)`: `table=True` models skip validation when constructed directly (`Day(mood=9)` is accepted).
 - Run uvicorn with a single worker: startup seeding is check-then-insert and would duplicate rows with several workers.

@@ -91,7 +91,7 @@ class FeatureValue(BaseModel):
     )
     norm: NormRange | None
     when: When = Field(default="last_night", description="Which data the value describes")
-    display: str | None = Field(default=None, examples=["5 h 54 min"])
+    display: str | None = Field(default=None, examples=["5h54"])
     in_patterns: bool = Field(
         default=True, description="False: shown for context only, never used as a reason"
     )
@@ -108,7 +108,7 @@ class Deviation(BaseModel):
     difference: float = Field(description="value - norm.average", examples=[-1.7])
     z: float = Field(description="Signed size in SDs of good days, sorted by abs", examples=[-2.06])
     direction: Direction
-    text: str = Field(examples=["You slept 1 h 43 min less than on your average good day."])
+    text: str = Field(examples=["Sleep -1h43 vs good days"])
 
 
 class Reason(BaseModel):
@@ -117,11 +117,9 @@ class Reason(BaseModel):
     feature: str = Field(examples=["sleep_h"])
     label: str = Field(examples=["Sleep"])
     value: float = Field(examples=[5.3])
-    display: str = Field(examples=["5 h 19 min"])
-    text: str = Field(examples=["Possible reason: you slept 5 h 19 min last night."])
-    pattern_text: str = Field(
-        examples=["When you sleep under 6 h, 11 of 14 days were bad days (vs 21% otherwise)."]
-    )
+    display: str = Field(examples=["5h19"])
+    text: str = Field(examples=["Possible reason: 5h19 sleep"])
+    pattern_text: str = Field(examples=["Under 6h sleep: 11 of 14 days bad"])
 
 
 class DaySummary(BaseModel):
@@ -141,7 +139,7 @@ class TimelineValue(BaseModel):
     label: str = Field(examples=["Sleep"])
     unit: str = Field(examples=["h"])
     value: float = Field(examples=[5.3])
-    display: str = Field(examples=["5 h 19 min"])
+    display: str = Field(examples=["5h19"])
     highlight: bool = Field(description="Used by this day's possible reason")
 
 
@@ -163,8 +161,8 @@ class DayDetail(BaseModel):
     features: list[FeatureValue]
     deviations: list[Deviation] = Field(description="Compared with your average good day")
     summary: str | None = Field(
-        examples=["Possible reason: you slept 5 h 19 min last night."],
-        description="First reason, or a 'no clear pattern' line on good/bad days without one",
+        examples=["Possible reason: 5h19 sleep"],
+        description="First reason, or 'No clear reason' on good/bad days without one",
     )
     reasons: list[Reason] = Field(default_factory=list, description="Up to 2 possible reasons")
     outside_window: bool = Field(
@@ -198,12 +196,10 @@ class PatternStats(BaseModel):
 class Pattern(PatternStats):
     feature: str = Field(examples=["sleep_h"])
     label: str = Field(examples=["Sleep"])
-    condition: str = Field(examples=["under 6 h"])
+    condition: str = Field(examples=["Under 6h sleep"])
     bad_share: float = Field(description="Share of bad days matching", examples=[0.71])
     good_share: float = Field(description="Share of good days matching", examples=[0.18])
-    text: str = Field(
-        examples=["When you sleep under 6 h, 11 of 14 days were bad days (vs 21% otherwise)."]
-    )
+    text: str = Field(examples=["Under 6h sleep: 11 of 14 days bad"])
     example_dates: list[dt.date]
 
 
@@ -224,7 +220,7 @@ class PatternChart(PatternStats):
     unit: str = Field(examples=["%"])
     op: Literal["below", "above"] = Field(description="Condition side of the threshold")
     variant: Literal["lag1", "avg3"] = Field(description="Single night/day or 3-day average")
-    condition: str = Field(examples=["over 12%"])
+    condition: str = Field(examples=["Awake over 12% of night"])
     display_threshold: str = Field(examples=["12%"])
     text: str
     points: list[PatternPoint] = Field(description="Analysed days (analysis window) in date order")
@@ -232,7 +228,7 @@ class PatternChart(PatternStats):
 
 class PatternReport(BaseModel):
     status: InsightStatus = "ok"
-    summary: str = Field(examples=["We found 2 possible reasons behind your bad days."])
+    summary: str = Field(examples=["2 possible reasons for bad days"])
     bad_days_count: int = Field(examples=[24])
     patterns: list[Pattern]
 
@@ -240,19 +236,14 @@ class PatternReport(BaseModel):
 class Ingredient(PatternStats):
     feature: str = Field(examples=["steps"])
     label: str = Field(examples=["Steps"])
-    condition: str = Field(examples=["more than 3,000 steps"])
+    condition: str = Field(examples=["Over 3k steps (3-day avg)"])
     good_share: float = Field(description="Share of good days matching", examples=[0.8])
-    text: str = Field(
-        examples=[
-            "When you walk more than 3,000 steps on average over the previous 3 days, "
-            "9 of 14 days were good days (vs 21% otherwise)."
-        ]
-    )
+    text: str = Field(examples=["Over 3k steps (3-day avg): 9 of 14 days good"])
 
 
 class Recipe(BaseModel):
     status: InsightStatus = "ok"
-    summary: str = Field(examples=["Your good days usually share these 3 things."])
+    summary: str = Field(examples=["3 things your good days share"])
     good_days_count: int = Field(examples=[90])
     ingredients: list[Ingredient]
 
@@ -278,13 +269,8 @@ class Signal(BaseModel):
     value: float = Field(examples=[13.3])
     display: str = Field(examples=["13.3%"])
     when: When
-    text: str = Field(examples=["Heads-up: you were awake 13.3% of last night."])
-    pattern_text: str = Field(
-        examples=[
-            "When you are awake over 12% of the night, 15 of 27 days were bad days "
-            "(vs 13% otherwise)."
-        ]
-    )
+    text: str = Field(examples=["Heads-up: awake 13.3% of night"])
+    pattern_text: str = Field(examples=["Awake over 12% of night: 15 of 27 days bad"])
 
 
 class TodayRead(BaseModel):
@@ -297,7 +283,7 @@ class TodayRead(BaseModel):
         description="tough: only heads-ups; promising: only good signs; mixed: both; "
         "neutral: none; unknown: no watch data"
     )
-    summary: str = Field(examples=["Today may be tougher than usual."])
+    summary: str = Field(examples=["Tougher day possible"])
     heads_up: list[Signal] = Field(description="Bad-day patterns triggered (max 2)")
     good_signs: list[Signal] = Field(description="Good-day patterns triggered (max 2)")
     deviations: list[Deviation] = Field(description="Compared with your average good day")

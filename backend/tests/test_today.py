@@ -14,11 +14,11 @@ def test_heads_up_before_check_in(client: TestClient, demo: Session) -> None:
 
     assert today["date"] == "2020-02-14" and today["survey"] is None
     assert today["outlook"] == "tough"
-    assert today["summary"] == "Today may be tougher than usual. Check in to see how you feel."
+    assert today["summary"] == "Tougher day possible"
     signal = today["heads_up"][0]
     assert signal["feature"] == "wake_pct" and signal["when"] == "last_night"
-    assert signal["text"] == "Heads-up: you were awake 12.5% of last night."
-    assert signal["pattern_text"].startswith("When you are awake over 12% of the night")
+    assert signal["text"] == "Heads-up: awake 12.5% of night"
+    assert signal["pattern_text"].startswith("Awake over 12% of night")
     assert today["has_watch_data"] and today["features"]
 
 
@@ -30,7 +30,7 @@ def test_live_check_in_explains_the_day(client: TestClient, demo: Session) -> No
 
     assert saved.json()["label"] == "bad"
     assert today["survey"]["label"] == "bad"
-    assert today["summary"] == "Possible reason: you were awake 12.5% of last night."
+    assert today["summary"] == "Possible reason: awake 12.5% of night"
     assert client.get("/api/users/p10/patterns").json()["status"] == "ok"  # pattern survives
 
 
@@ -38,7 +38,7 @@ def test_good_sign(client: TestClient, demo: Session) -> None:
     today = client.get("/api/users/p06/today").json()
 
     assert today["outlook"] == "promising" and today["heads_up"] == []
-    assert today["good_signs"][0]["text"] == "Good sign: you slept 7 h 23 min last night."
+    assert today["good_signs"][0]["text"] == "Good sign: 7h23 sleep"
 
 
 def test_check_in_after_demo_today_is_rejected(client: TestClient, demo: Session) -> None:
@@ -56,7 +56,7 @@ def test_real_user_today_without_watch_data(client: TestClient, session: Session
 
     assert user["is_demo"] is False and user["demo_answers"] is None
     assert user["today"] == dt.datetime.now(ZoneInfo("Europe/Oslo")).date().isoformat()
-    assert today["outlook"] == "unknown" and today["summary"] == "No watch data for today yet."
+    assert today["outlook"] == "unknown" and today["summary"] == "No watch data yet"
 
 
 def test_heads_up_stays_after_check_in(client: TestClient, demo: Session) -> None:

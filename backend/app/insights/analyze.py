@@ -30,7 +30,7 @@ def analyze_user(
     table = table.sort_values("date")
     nrm, source = calendar.norms(table[table.in_analysis_window])
     info["norm_source"] = source
-    ref = "on your average good day" if source == "good_days" else "on your average day"
+    ref = texts.compare_ref(source)
     feats = list(engine.search_features(info["group_e_feature"]))
     raw = _raw_values(user, feats)
     info["first_date"] = str(table.date.min().date()) if len(table) else None
