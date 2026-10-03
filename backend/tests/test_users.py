@@ -60,3 +60,24 @@ def test_malformed_demo_answers_are_ignored(client: TestClient, demo: Session) -
     users = {u["id"]: u for u in client.get("/api/users").json()}
 
     assert users["p10"]["demo_answers"] is None
+
+
+def test_onboarding_creates_a_real_user(client: TestClient, demo: Session) -> None:
+    response = client.post("/api/users", json={"name": "Maja"})
+
+    assert response.status_code == 201
+    user = response.json()
+    assert user["id"].startswith("u") and user["name"] == "Maja"
+    assert user["is_demo"] is False and user["days_count"] == 0
+    assert user["insights_status"] == "insufficient_days"
+    assert (user["days_with_data"], user["days_needed"]) == (0, 60)
+    assert [u["id"] for u in client.get("/api/users").json()][-1] == user["id"]
+
+    check_in = {"mood": 4, "fatigue": 4, "sleep_quality": 4, "stress": 4}
+    saved = client.put(f"/api/users/{user['id']}/surveys/{user['today']}", json=check_in)
+    assert saved.status_code == 200 and saved.json()["label"] == "good"
+
+
+def test_onboarding_validation(client: TestClient) -> None:
+    assert client.post("/api/users", json={"name": ""}).status_code == 422
+    assert client.post("/api/users", json={}).status_code == 422

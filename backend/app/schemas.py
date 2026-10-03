@@ -23,6 +23,13 @@ class ErrorRead(BaseModel):
     detail: str = Field(examples=["Persona p99 not found"])
 
 
+class PersonaCreate(BaseModel):
+    """Onboarding: a new real user (watch data and check-ins come later)."""
+
+    name: str = Field(min_length=1, max_length=100, examples=["Maja"])
+    description: str = Field(default="", max_length=500, examples=[""])
+
+
 class PersonaRead(BaseModel):
     id: str = Field(examples=["p01"])
     name: str = Field(examples=["Alex"])

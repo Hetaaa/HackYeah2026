@@ -1,4 +1,5 @@
 import datetime as dt
+import uuid
 from zoneinfo import ZoneInfo
 
 from pydantic import ValidationError
@@ -7,13 +8,25 @@ from sqlmodel import Session, func, select
 from app import analysis
 from app.insights import config as C
 from app.models import Day, Persona, SurveyBase
-from app.schemas import PersonaRead
+from app.schemas import PersonaCreate, PersonaRead
 from app.services.days import get_analysis
 
 
 def list_personas(session: Session) -> list[PersonaRead]:
     personas = session.exec(select(Persona).order_by(Persona.position, Persona.id)).all()
     return [to_read(session, persona) for persona in personas]
+
+
+def create_persona(session: Session, data: PersonaCreate) -> Persona:
+    """New users get a random id and are listed after the demo personas."""
+    last = session.exec(select(func.max(Persona.position))).one()
+    persona = Persona.model_validate(
+        data.model_dump() | {"id": f"u{uuid.uuid4().hex[:8]}", "position": (last or 0) + 1}
+    )
+    session.add(persona)
+    session.commit()
+    session.refresh(persona)
+    return persona
 
 
 def get_persona(session: Session, user_id: str) -> Persona | None:
