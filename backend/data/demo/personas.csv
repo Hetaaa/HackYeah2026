@@ -1,0 +1,5 @@
+id,name,description,analysis_window_end,demo_today,demo_answers,position
+p06,Alex,Sleep length shapes the good days,2020-03-12,2020-03-08,"4,3,3,4",0
+p01,Robin,Hard training days take their toll,2020-03-12,2020-03-06,"3,2,2,3",1
+p10,Sam,"Restless nights, light movement",2020-03-12,2020-02-14,"3,1,2,2",2
+p16,Kim,A night owl whose sleep sets the tone,2020-03-12,2020-02-27,"3,2,3,2",3

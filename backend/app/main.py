@@ -7,8 +7,27 @@ from sqlmodel import Session
 
 from app import db
 from app.config import settings
-from app.routers import health, items
+from app.routers import days, demo, features, health, insights, surveys, today, users
 from scripts.seed import seed_if_empty
+
+DESCRIPTION = """
+Turns watch data and a daily wellness survey into answers to
+"why did I feel bad today?".
+
+There is no auth: pick a persona from `GET /api/users` and pass its id in the path.
+Day labels are `good`, `neutral` or `bad`, and `null` when the survey is missing.
+"""
+
+TAGS = [
+    {"name": "users", "description": "Demo personas (persona switcher)."},
+    {"name": "today", "description": "Home screen: heads-up and good signs for today."},
+    {"name": "days", "description": "Wellness calendar and day view."},
+    {"name": "insights", "description": "Bad day patterns and the good day recipe."},
+    {"name": "surveys", "description": "Daily wellness survey (4 sliders, 1-5)."},
+    {"name": "features", "description": "Catalogue of watch features (labels, units)."},
+    {"name": "demo", "description": "Demo helpers (reset after a live demo)."},
+    {"name": "health", "description": "Liveness check."},
+]
 
 
 @asynccontextmanager
@@ -19,7 +38,13 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     yield
 
 
-app = FastAPI(title="Hackathon API", version="0.1.0", lifespan=lifespan)
+app = FastAPI(
+    title="Why Today API",
+    version="0.1.0",
+    description=DESCRIPTION,
+    openapi_tags=TAGS,
+    lifespan=lifespan,
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,5 +53,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+for router in (
+    users.router,
+    today.router,
+    days.router,
+    insights.router,
+    surveys.router,
+    features.router,
+    demo.router,
+):
+    app.include_router(router, prefix="/api")
 app.include_router(health.router, prefix="/api")
-app.include_router(items.router, prefix="/api")

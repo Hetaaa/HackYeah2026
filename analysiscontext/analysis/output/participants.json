@@ -1,0 +1,603 @@
+{
+  "p01": {
+    "bad_patterns_enabled": true,
+    "classic_nights": 0,
+    "exclusion_reasons": [],
+    "good_patterns_enabled": false,
+    "group_E_feature": "z_cardio_peak",
+    "group_E_hrz_days": 28,
+    "included": true,
+    "label": {
+      "comp_sd": 0.6826379317863714,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.5446074019164835
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.2727178028658929
+      },
+      "raw_sd": 0.2681050613625432,
+      "stress": {
+        "median": 3.0,
+        "sd": 0.2763853991962833
+      }
+    },
+    "n": {
+      "n_days": 138,
+      "n_full": 133,
+      "n_full_prelockdown": 117,
+      "n_label_ok": 138,
+      "n_reports": 138,
+      "n_sleep_lag1": 137,
+      "n_wear_dm1": 133
+    },
+    "n_bad_window": 56,
+    "n_good_window": 3,
+    "persona_role": "main"
+  },
+  "p02": {
+    "bad_patterns_enabled": false,
+    "classic_nights": 2,
+    "exclusion_reasons": [
+      "raw_sd 0.137 < 0.2"
+    ],
+    "good_patterns_enabled": false,
+    "group_E_feature": "z_cardio_peak",
+    "group_E_hrz_days": 45,
+    "included": false,
+    "label": {
+      "comp_sd": 0.7132880582130737,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.18325288123932687
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.23461362941372024
+      },
+      "raw_sd": 0.13709948196297866,
+      "stress": {
+        "median": 3.0,
+        "sd": 0.18047616184504506
+      }
+    },
+    "n": {
+      "n_days": 99,
+      "n_full": 92,
+      "n_full_prelockdown": 84,
+      "n_label_ok": 99,
+      "n_reports": 99,
+      "n_sleep_lag1": 96,
+      "n_wear_dm1": 93
+    },
+    "n_bad_window": 3,
+    "n_good_window": 3,
+    "persona_role": null
+  },
+  "p03": {
+    "bad_patterns_enabled": false,
+    "classic_nights": 2,
+    "exclusion_reasons": [
+      "raw_sd 0.176 < 0.2",
+      "full_days 24 < 60"
+    ],
+    "good_patterns_enabled": false,
+    "group_E_feature": "mvpa",
+    "group_E_hrz_days": 1,
+    "included": false,
+    "label": {
+      "comp_sd": 0.5941627851158595,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.29627184866309747
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.2797406792824908
+      },
+      "raw_sd": 0.17559422921421233,
+      "stress": {
+        "median": 3.0,
+        "sd": 0.2534389511086608
+      }
+    },
+    "n": {
+      "n_days": 80,
+      "n_full": 24,
+      "n_full_prelockdown": 23,
+      "n_label_ok": 80,
+      "n_reports": 82,
+      "n_sleep_lag1": 49,
+      "n_wear_dm1": 30
+    },
+    "n_bad_window": 7,
+    "n_good_window": 0,
+    "persona_role": null
+  },
+  "p04": {
+    "bad_patterns_enabled": true,
+    "classic_nights": 1,
+    "exclusion_reasons": [],
+    "good_patterns_enabled": true,
+    "group_E_feature": "z_cardio_peak",
+    "group_E_hrz_days": 43,
+    "included": true,
+    "label": {
+      "comp_sd": 0.7451628306414302,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.6763133119702576
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.7793012661022284
+      },
+      "raw_sd": 0.5547708756806864,
+      "stress": {
+        "median": 3.0,
+        "sd": 0.8584842309732876
+      }
+    },
+    "n": {
+      "n_days": 143,
+      "n_full": 119,
+      "n_full_prelockdown": 102,
+      "n_label_ok": 142,
+      "n_reports": 145,
+      "n_sleep_lag1": 123,
+      "n_wear_dm1": 131
+    },
+    "n_bad_window": 34,
+    "n_good_window": 37,
+    "persona_role": null
+  },
+  "p05": {
+    "bad_patterns_enabled": true,
+    "classic_nights": 0,
+    "exclusion_reasons": [],
+    "good_patterns_enabled": false,
+    "group_E_feature": "mvpa",
+    "group_E_hrz_days": 4,
+    "included": true,
+    "label": {
+      "comp_sd": 0.8277758706835533,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.6426759383626482
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.8259258767882416
+      },
+      "raw_sd": 0.6209395714059768,
+      "stress": {
+        "median": 3.0,
+        "sd": 0.8657406674940582
+      }
+    },
+    "n": {
+      "n_days": 134,
+      "n_full": 100,
+      "n_full_prelockdown": 83,
+      "n_label_ok": 134,
+      "n_reports": 137,
+      "n_sleep_lag1": 102,
+      "n_wear_dm1": 121
+    },
+    "n_bad_window": 35,
+    "n_good_window": 5,
+    "persona_role": null
+  },
+  "p06": {
+    "bad_patterns_enabled": true,
+    "classic_nights": 1,
+    "exclusion_reasons": [],
+    "good_patterns_enabled": true,
+    "group_E_feature": "z_cardio_peak",
+    "group_E_hrz_days": 51,
+    "included": true,
+    "label": {
+      "comp_sd": 0.7060979135019907,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.5377409363108411
+      },
+      "mood": {
+        "median": 4.0,
+        "sd": 0.31602817225797686
+      },
+      "raw_sd": 0.35699705478644694,
+      "stress": {
+        "median": 3.0,
+        "sd": 0.6468108541086248
+      }
+    },
+    "n": {
+      "n_days": 147,
+      "n_full": 144,
+      "n_full_prelockdown": 126,
+      "n_label_ok": 147,
+      "n_reports": 147,
+      "n_sleep_lag1": 145,
+      "n_wear_dm1": 146
+    },
+    "n_bad_window": 53,
+    "n_good_window": 23,
+    "persona_role": "main"
+  },
+  "p07": {
+    "bad_patterns_enabled": true,
+    "classic_nights": 0,
+    "exclusion_reasons": [],
+    "good_patterns_enabled": true,
+    "group_E_feature": "z_cardio_peak",
+    "group_E_hrz_days": 79,
+    "included": true,
+    "label": {
+      "comp_sd": 0.6774169142471893,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.4933630663132243
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.5091033371567668
+      },
+      "raw_sd": 0.38677603922676873,
+      "stress": {
+        "median": 3.0,
+        "sd": 0.7470691755012704
+      }
+    },
+    "n": {
+      "n_days": 132,
+      "n_full": 122,
+      "n_full_prelockdown": 108,
+      "n_label_ok": 132,
+      "n_reports": 133,
+      "n_sleep_lag1": 124,
+      "n_wear_dm1": 127
+    },
+    "n_bad_window": 25,
+    "n_good_window": 41,
+    "persona_role": null
+  },
+  "p08": {
+    "bad_patterns_enabled": true,
+    "classic_nights": 0,
+    "exclusion_reasons": [],
+    "good_patterns_enabled": true,
+    "group_E_feature": "z_cardio_peak",
+    "group_E_hrz_days": 61,
+    "included": true,
+    "label": {
+      "comp_sd": 0.6935285723290151,
+      "fatigue": {
+        "median": 2.0,
+        "sd": 0.8229344882933783
+      },
+      "mood": {
+        "median": 4.0,
+        "sd": 0.6647341239748111
+      },
+      "raw_sd": 0.552725797695502,
+      "stress": {
+        "median": 3.0,
+        "sd": 0.8873187666068935
+      }
+    },
+    "n": {
+      "n_days": 103,
+      "n_full": 92,
+      "n_full_prelockdown": 83,
+      "n_label_ok": 103,
+      "n_reports": 104,
+      "n_sleep_lag1": 94,
+      "n_wear_dm1": 94
+    },
+    "n_bad_window": 28,
+    "n_good_window": 37,
+    "persona_role": null
+  },
+  "p09": {
+    "bad_patterns_enabled": true,
+    "classic_nights": 7,
+    "exclusion_reasons": [],
+    "good_patterns_enabled": true,
+    "group_E_feature": "mvpa",
+    "group_E_hrz_days": 5,
+    "included": true,
+    "label": {
+      "comp_sd": 0.7788517876640554,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.9070579229661567
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.7810331095627905
+      },
+      "raw_sd": 0.6673791527853993,
+      "stress": {
+        "median": 3.0,
+        "sd": 0.9428090415820634
+      }
+    },
+    "n": {
+      "n_days": 102,
+      "n_full": 77,
+      "n_full_prelockdown": 71,
+      "n_label_ok": 102,
+      "n_reports": 102,
+      "n_sleep_lag1": 94,
+      "n_wear_dm1": 82
+    },
+    "n_bad_window": 16,
+    "n_good_window": 25,
+    "persona_role": null
+  },
+  "p10": {
+    "bad_patterns_enabled": true,
+    "classic_nights": 0,
+    "exclusion_reasons": [],
+    "good_patterns_enabled": true,
+    "group_E_feature": "z_cardio_peak",
+    "group_E_hrz_days": 30,
+    "included": true,
+    "label": {
+      "comp_sd": 0.7596758388600303,
+      "fatigue": {
+        "median": 2.0,
+        "sd": 0.780226545692902
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.5619514869490163
+      },
+      "raw_sd": 0.5023306713873201,
+      "stress": {
+        "median": 2.0,
+        "sd": 0.645804701060125
+      }
+    },
+    "n": {
+      "n_days": 95,
+      "n_full": 76,
+      "n_full_prelockdown": 76,
+      "n_label_ok": 95,
+      "n_reports": 96,
+      "n_sleep_lag1": 80,
+      "n_wear_dm1": 84
+    },
+    "n_bad_window": 23,
+    "n_good_window": 37,
+    "persona_role": "main"
+  },
+  "p11": {
+    "bad_patterns_enabled": true,
+    "classic_nights": 0,
+    "exclusion_reasons": [],
+    "good_patterns_enabled": false,
+    "group_E_feature": "z_cardio_peak",
+    "group_E_hrz_days": 27,
+    "included": true,
+    "label": {
+      "comp_sd": 0.7027513410887772,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.43757924049933666
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.21392880251237487
+      },
+      "raw_sd": 0.24600763793217542,
+      "stress": {
+        "median": 3.0,
+        "sd": 0.41065685584735817
+      }
+    },
+    "n": {
+      "n_days": 107,
+      "n_full": 106,
+      "n_full_prelockdown": 104,
+      "n_label_ok": 106,
+      "n_reports": 107,
+      "n_sleep_lag1": 107,
+      "n_wear_dm1": 107
+    },
+    "n_bad_window": 32,
+    "n_good_window": 0,
+    "persona_role": null
+  },
+  "p12": {
+    "bad_patterns_enabled": false,
+    "classic_nights": 0,
+    "exclusion_reasons": [
+      "full_days 1 < 60"
+    ],
+    "good_patterns_enabled": false,
+    "group_E_feature": "mvpa",
+    "group_E_hrz_days": 1,
+    "included": false,
+    "label": {
+      "comp_sd": 0.726030501230686,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.7036995939815099
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.3727974050495409
+      },
+      "raw_sd": 0.37316995920698265,
+      "stress": {
+        "median": 3.0,
+        "sd": 0.48279559208937944
+      }
+    },
+    "n": {
+      "n_days": 83,
+      "n_full": 1,
+      "n_full_prelockdown": 1,
+      "n_label_ok": 83,
+      "n_reports": 83,
+      "n_sleep_lag1": 1,
+      "n_wear_dm1": 57
+    },
+    "n_bad_window": 0,
+    "n_good_window": 1,
+    "persona_role": null
+  },
+  "p13": {
+    "bad_patterns_enabled": false,
+    "classic_nights": 1,
+    "exclusion_reasons": [
+      "full_days 28 < 60"
+    ],
+    "good_patterns_enabled": false,
+    "group_E_feature": "mvpa",
+    "group_E_hrz_days": 0,
+    "included": false,
+    "label": {
+      "comp_sd": 0.6930210016202054,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.9886934777267464
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.7281328963814913
+      },
+      "raw_sd": 0.5581135841203833,
+      "stress": {
+        "median": 2.0,
+        "sd": 0.5809602334922832
+      }
+    },
+    "n": {
+      "n_days": 69,
+      "n_full": 28,
+      "n_full_prelockdown": 28,
+      "n_label_ok": 68,
+      "n_reports": 72,
+      "n_sleep_lag1": 35,
+      "n_wear_dm1": 35
+    },
+    "n_bad_window": 6,
+    "n_good_window": 5,
+    "persona_role": null
+  },
+  "p14": {
+    "bad_patterns_enabled": true,
+    "classic_nights": 2,
+    "exclusion_reasons": [],
+    "good_patterns_enabled": true,
+    "group_E_feature": "z_cardio_peak",
+    "group_E_hrz_days": 30,
+    "included": true,
+    "label": {
+      "comp_sd": 0.748717204628597,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.6393023408319395
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.4297338732448943
+      },
+      "raw_sd": 0.383772754394853,
+      "stress": {
+        "median": 3.0,
+        "sd": 0.516046368919774
+      }
+    },
+    "n": {
+      "n_days": 123,
+      "n_full": 90,
+      "n_full_prelockdown": 80,
+      "n_label_ok": 123,
+      "n_reports": 125,
+      "n_sleep_lag1": 101,
+      "n_wear_dm1": 96
+    },
+    "n_bad_window": 27,
+    "n_good_window": 17,
+    "persona_role": null
+  },
+  "p15": {
+    "bad_patterns_enabled": true,
+    "classic_nights": 0,
+    "exclusion_reasons": [],
+    "good_patterns_enabled": true,
+    "group_E_feature": "z_cardio_peak",
+    "group_E_hrz_days": 64,
+    "included": true,
+    "label": {
+      "comp_sd": 0.7695224136367376,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.8468088381111122
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.6062528012245361
+      },
+      "raw_sd": 0.5341343658837895,
+      "stress": {
+        "median": 4.0,
+        "sd": 0.6463493292048992
+      }
+    },
+    "n": {
+      "n_days": 93,
+      "n_full": 92,
+      "n_full_prelockdown": 83,
+      "n_label_ok": 93,
+      "n_reports": 95,
+      "n_sleep_lag1": 93,
+      "n_wear_dm1": 92
+    },
+    "n_bad_window": 37,
+    "n_good_window": 31,
+    "persona_role": null
+  },
+  "p16": {
+    "bad_patterns_enabled": true,
+    "classic_nights": 1,
+    "exclusion_reasons": [],
+    "good_patterns_enabled": true,
+    "group_E_feature": "mvpa",
+    "group_E_hrz_days": 0,
+    "included": true,
+    "label": {
+      "comp_sd": 0.7789028781444267,
+      "fatigue": {
+        "median": 3.0,
+        "sd": 0.6033607740664803
+      },
+      "mood": {
+        "median": 3.0,
+        "sd": 0.5500142020860869
+      },
+      "raw_sd": 0.49084419018288067,
+      "stress": {
+        "median": 3.0,
+        "sd": 0.6930885479495603
+      }
+    },
+    "n": {
+      "n_days": 82,
+      "n_full": 77,
+      "n_full_prelockdown": 75,
+      "n_label_ok": 82,
+      "n_reports": 82,
+      "n_sleep_lag1": 81,
+      "n_wear_dm1": 78
+    },
+    "n_bad_window": 24,
+    "n_good_window": 22,
+    "persona_role": "backup"
+  }
+}

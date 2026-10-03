@@ -34,3 +34,12 @@ def client(engine: Engine) -> TestClient:
     # Not used as a context manager on purpose: lifespan (and its seed) is skipped,
     # so every test starts with an empty database.
     return TestClient(app)
+
+
+@pytest.fixture
+def demo(session: Session) -> Session:
+    """Database with the PMData demo personas (data/demo/*.csv)."""
+    from scripts.seed import seed
+
+    seed(session)
+    return session

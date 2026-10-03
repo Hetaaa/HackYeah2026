@@ -17,10 +17,16 @@ backend/
     db.py         engine, get_session, SessionDep
     models.py     SQLModel tables + shared *Base field classes
     schemas.py    request/response models: XCreate, XUpdate, XRead
+    analysis.py   adapter: Day rows -> app/insights -> API schemas; services only call its functions
+    insights/     wellness algorithm (pandas): cleaning, pattern engine, day texts; owned by the
+                  algorithms team, see backend/docs/insights.md
+    deps.py       PersonaDep: resolves {user_id} from the path or returns 404
     routers/      one file per area, thin HTTP layer
     services/     one file per area (same name as the router), plain functions
     clients/      external API integrations only
-  scripts/        seed.py, reset_db.py
+  data/demo/      PMData demo personas as CSV (seed source)
+  docs/           insights.md (algorithm, data contract), demo.md (demo script), watch-sources.md
+  scripts/        seed.py, reset_db.py, import_days.py (CSV import), import_pmdata.py (PMData -> CSV)
   tests/          pytest, in-memory SQLite per test
 ```
 
@@ -30,8 +36,11 @@ backend/
 - Services are plain functions that take `session: Session` as the first argument. No classes, no abstract interfaces, no repository layer, no DI containers.
 - Routers get the session via `session: SessionDep` (Annotated `Depends(get_session)`).
 - External integrations only in `app/clients/`, called from services.
-- No migrations. Lifespan runs `create_all` and seeds if `Item` is empty. Schema change: `uv run python -m scripts.reset_db`.
-- Build table rows from input via `X.model_validate(x_create)`: `table=True` models skip validation when constructed directly (`Item(name="")` is accepted).
+- Every user-facing text (patterns, reasons, signals, comparisons, screen headlines, feature
+  descriptions) is built in `app/insights/texts.py`, nowhere else. Keep texts short: "Under 7h sleep",
+  "Under 4k steps (day before)", "Sleep -1h43 vs good days".
+- No migrations. Lifespan runs `create_all` and seeds if `Persona` is empty. Schema change: `uv run python -m scripts.reset_db`.
+- Build table rows from input via `X.model_validate(x_create)`: `table=True` models skip validation when constructed directly (`Day(mood=9)` is accepted).
 - Run uvicorn with a single worker: startup seeding is check-then-insert and would duplicate rows with several workers.
 - PATCH: `XUpdate` has all fields optional; apply with `item.sqlmodel_update(data.model_dump(exclude_unset=True))`.
 - Datetimes: store UTC (`datetime.now(UTC)`); `XRead` marks naive values from SQLite as UTC.
