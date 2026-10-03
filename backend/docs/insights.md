@@ -92,9 +92,10 @@ P01 35%, P06 0%). Porównanie z dobrym dniem daje treść w ok. 88% dni.
 
 - Strefa czasowa jest stała (`Europe/Oslo`, jak w PMData). Dla prawdziwych użytkowników trzeba
   ją przechowywać per osoba.
-- Synchronizacji zegarka jeszcze nie ma. Klient Fitbit Web API powinien trafić do `app/clients/`
-  i zapisywać `Day` przez `app/insights/fitbit.py` (te same parsery co dla PMData; klucz
-  `isMainSleep` jest obsłużony).
+- Synchronizacji zegarka jeszcze nie ma. Fitbit Web API zostało wyłączone 30.09.2026, więc
+  `app/insights/fitbit.py` obsługuje już tylko eksporty (PMData). Dla prawdziwych zegarków
+  potrzebny jest nowy adapter, np. Google Health API, Health Connect / HealthKit przez aplikację
+  mobilną albo agregator. Analiza źródeł: [watch-sources.md](watch-sources.md).
 - Brak prognozy dnia (poza zakresem).
 - `PUT /surveys` przyjmuje daty od 2000-01-01 do jutra (UTC), a `survey_at` ustawia tylko przy
   pierwszym wypełnieniu (edycja nie przesuwa czasu ankiety).

@@ -1,7 +1,8 @@
 """Watch data adapter: Fitbit Web API payloads -> normalized per-user frames (no file IO here).
 
-PMData files are exports of the same Fitbit API, so this parser serves both the demo
-(sources/pmdata.py reads files) and the real product (watch sync passes API responses).
+PMData files are exports of the same Fitbit API. The Fitbit Web API itself was turned down on
+2026-09-30 (successor: Google Health API, a different format), so this parser now serves the
+PMData demo and Fitbit data exports; see docs/watch-sources.md for live sources.
 Another watch brand needs its own adapter producing the same frames (see UserData).
 
 Normalized frames:
