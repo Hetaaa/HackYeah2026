@@ -130,6 +130,7 @@ def _deviation(c: dict) -> Deviation:
         difference=c["diff"],
         z=c["z"],
         direction="higher" if c["diff"] > 0 else "lower",
+        leans=c["leans"],
         text=c["text"],
     )
 
@@ -192,6 +193,7 @@ def _features(analysis: dict, entry: dict | None) -> list[FeatureValue]:
             when=v["when"],
             display=v["display"],
             in_patterns=v["feature"] in searched,
+            leans=v["leans"],
         )
         for v in (entry["values"] if entry else [])
     ]

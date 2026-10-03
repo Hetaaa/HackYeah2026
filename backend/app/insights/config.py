@@ -64,6 +64,8 @@ MIN_NORM_DAYS = 10
 COMPARE_MIN_Z = 1.0
 COMPARE_MAX = 2
 STATS_MIN_DAYS = 3  # good/bad day average shown only from 3 days on
+LEAN_MIN_DAYS = 5  # "leans" towards good/bad days needs >= 5 good and >= 5 bad days
+LEAN_MIN_GAP = 0.2  # ...and good and bad day means >= 0.2 SD apart, otherwise no lean
 
 
 @dataclass(frozen=True)

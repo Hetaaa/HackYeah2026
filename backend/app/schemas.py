@@ -7,6 +7,7 @@ from app.models import SurveyBase
 
 Label = Literal["good", "neutral", "bad"]
 Direction = Literal["higher", "lower"]
+Lean = Literal["bad", "good"]
 When = Literal["last_night", "day_before", "last_3_nights", "previous_3_days"]
 InsightStatus = Literal[
     "ok",  # significant patterns found
@@ -95,6 +96,13 @@ class FeatureValue(BaseModel):
     in_patterns: bool = Field(
         default=True, description="False: shown for context only, never used as a reason"
     )
+    leans: Lean | None = Field(
+        default=None,
+        description="bad: differs from the reference in the direction of this user's bad days "
+        "(e.g. their bad days have less sleep and this is less); good: towards their good days. "
+        "From the user's own good vs bad day averages, not health advice. null: fewer than 5 "
+        "good or bad days, or good and bad days look alike for this feature",
+    )
 
 
 class Deviation(BaseModel):
@@ -108,6 +116,13 @@ class Deviation(BaseModel):
     difference: float = Field(description="value - norm.average", examples=[-1.7])
     z: float = Field(description="Signed size in SDs of good days, sorted by abs", examples=[-2.06])
     direction: Direction
+    leans: Lean | None = Field(
+        default=None,
+        description="bad: differs from the reference in the direction of this user's bad days "
+        "(e.g. their bad days have less sleep and this is less); good: towards their good days. "
+        "From the user's own good vs bad day averages, not health advice. null: fewer than 5 "
+        "good or bad days, or good and bad days look alike for this feature",
+    )
     text: str = Field(examples=["You slept 1 h 43 min less than on your average good day."])
 
 

@@ -115,7 +115,7 @@ powyżej 6 h 30 min. Wzorzec złych dni to tylko „Early signal”, bo nie prze
 | Przełącznik person | `GET /api/users` | `name`, `description`, `today`, `demo_answers`, `insights_status` |
 | Today (home) | `GET /api/users/{id}/today` | `outlook`, `summary`, `heads_up[]`, `good_signs[]`, `survey` |
 | Ankieta | `PUT /api/users/{id}/surveys/{today}` | zwraca `label`, `score` |
-| Kalendarz | `GET /api/users/{id}/days?from=&to=` | `label`, `has_reason`, `headline`, `top_deviations` |
+| Kalendarz | `GET /api/users/{id}/days?from=&to=` | `label`, `has_reason`, `headline`, `top_deviations` (`leans`: bad = czerwony, good = zielony, null = neutralny) |
 | Widok dnia | `GET /api/users/{id}/days/{date}` | `summary`, `reasons[]`, `deviations[]`, `features[]` (`display`, `norm`), `timeline[]` (D-3..D, `highlight`) |
 | Onboarding | `POST /api/users` | zwraca nowego użytkownika (`insights_status = insufficient_days`) |
 | Wzorce złych dni | `GET /api/users/{id}/patterns` | `status`, `summary`, `patterns[]` (`text`, `level`, `rate_in`, `rate_out`) |
@@ -130,6 +130,8 @@ powyżej 6 h 30 min. Wzorzec złych dni to tylko „Early signal”, bo nie prze
 - **Daty 2019/2020** to zegar demo. Na scenie warto powiedzieć: „nagrane dane prawdziwych osób”.
 - **Kim (p16)** zasypia rano (*you fell asleep at 09:41 last night*). Opowiadać jako „nocny marek”
   albo pominąć.
+- **Robin (p01) ma 3 dobre dni**: porównania idą do średniego dnia (`norm_reference = all_days`),
+  a `leans` jest zawsze `null`. Na ekranie porównań i w kalendarzu lepiej pokazywać Sama.
 - **Teksty frontendu:** `level = preliminary` oznaczać jako „early signal”; `status != ok` to
   stany puste z gotowym zdaniem w `summary`.
 - **Pierwsze zapytanie po starcie** liczy analizy (~0,4 s), potem odpowiedzi są z cache.

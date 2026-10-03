@@ -59,8 +59,8 @@ def analyze_user(
                 "no_reason_text": texts.NO_REASON
                 if label in ("bad", "good") and not reasons
                 else None,
-                "compare": calendar.compare_day(row, nrm, feats, ref),
-                "values": calendar.values(row, nrm),
+                "compare": calendar.compare_day(row, nrm, feats, ref, stats),
+                "values": calendar.values(row, nrm, stats),
                 "raw": raw.get(row.date, {"night": {}, "activity": {}}),
                 "late_night": bool(row.sleep_after_survey),
             }

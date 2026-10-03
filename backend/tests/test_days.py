@@ -154,3 +154,24 @@ def test_new_user_day_view(client: TestClient, demo: Session) -> None:
 
     assert [p["label"] for p in day["timeline"]] == [None, None, None, "neutral"]
     assert all(p["night"] == [] and p["activity"] == [] for p in day["timeline"])
+
+
+def test_leans_follows_the_users_own_good_and_bad_days(client: TestClient, demo: Session) -> None:
+    stats = {f["feature"]: f for f in client.get("/api/users/p10/stats").json()["features"]}
+    day = client.get("/api/users/p10/days/2020-02-14").json()
+
+    # Sam's bad days have less sleep than good days; 4 h 53 min is below the good-day average
+    assert stats["sleep_h"]["difference"] < 0
+    sleep = next(d for d in day["deviations"] if d["feature"] == "sleep_h")
+    assert (sleep["direction"], sleep["leans"]) == ("lower", "bad")
+    features = {f["feature"]: f for f in day["features"]}
+    assert features["sleep_h"]["leans"] == "bad"
+    # bedtime is about the same on good and bad days: no lean either way
+    assert features["bedtime_h"]["leans"] is None
+
+
+def test_no_leans_with_few_good_days(client: TestClient, demo: Session) -> None:
+    day = client.get("/api/users/p01/days/2020-03-06").json()  # Robin: 3 good days
+
+    assert all(f["leans"] is None for f in day["features"])
+    assert all(d["leans"] is None for d in day["deviations"])
