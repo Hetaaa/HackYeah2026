@@ -128,6 +128,9 @@ powyżej 6 h 30 min. Wzorzec złych dni to tylko „Early signal”, bo nie prze
 ## Na co uważać
 
 - **Daty 2019/2020** to zegar demo. Na scenie warto powiedzieć: „nagrane dane prawdziwych osób”.
+- **Kim (p16) po ankiecie na żywo** dostaje trzeci wzorzec złych dni (czuwanie > 13% nocy), bo
+  nowy dzień przesuwa go poniżej p = 0,05. Zachowanie poprawne, ale lista na ekranie wzorców się
+  zmienia. U pozostałych person wzorce po ankiecie zostają takie same.
 - **Kim (p16)** zasypia rano (*you fell asleep at 09:41 last night*). Opowiadać jako „nocny marek”
   albo pominąć.
 - **Robin (p01) ma 3 dobre dni**: porównania idą do średniego dnia (`norm_reference = all_days`),

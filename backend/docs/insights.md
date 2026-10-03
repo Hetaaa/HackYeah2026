@@ -89,10 +89,12 @@ P01 35%, P06 0%). Porównanie z dobrym dniem daje treść w ok. 88% dni.
 
 | id | Imię | Wzorce |
 | --- | --- | --- |
-| p06 | Alex | sen > 6,5 h → 36% dobrych dni (vs 7%); brak wzorca złych dni |
-| p01 | Robin | > 10 min w strefach cardio/peak dzień wcześniej → 79% złych dni (vs 38%); brak przepisu (3 dobre dni) |
-| p10 | Sam | czuwanie > 12% nocy → 53% złych (vs 15%); lekka aktywność > 320 min → 83% dobrych (vs 38%) |
-| p16 | Kim (zapas) | sen < 6 h → 79% złych (vs 21%); średnio > 3000 kroków → 64% dobrych (vs 21%) |
+| p06 | Alex | sen > 6,5 h → 17 z 48 dni dobre (vs 7%); wzorzec złych dni tylko jako early signal (sen < 6 h) |
+| p01 | Robin | > 10 min w strefach cardio/peak dzień wcześniej → 21 z 27 dni złe (vs 40%); brak przepisu (3 dobre dni) |
+| p10 | Sam | czuwanie > 12% nocy → 15 z 27 dni złe (vs 13%); lekka aktywność > 320 min → 13 z 16 dni dobre (vs 38%) |
+| p16 | Kim (zapas) | sen < 6 h → 10 z 13 dni złe (vs 19%); zaśnięcie po 08:00 → 8 z 12 dni złe (vs 22%); średnio > 3000 kroków → 9 z 14 dni dobre (vs 23%) |
+
+Liczby to odpowiedzi API dla „dziś” person demo przed wpisaniem ankiety (dane do dnia poprzedniego).
 
 ## Ograniczenia i TODO
 
