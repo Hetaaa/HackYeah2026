@@ -59,3 +59,24 @@ def test_new_user_is_collecting_data(client: TestClient, session: Session) -> No
     assert report["status"] == "insufficient_days"
     assert report["summary"].startswith("Keep checking in: insights appear after 60 days")
     assert client.get("/api/users/new").json()["insights_status"] == "insufficient_days"
+
+
+def test_pattern_chart(client: TestClient, demo: Session) -> None:
+    chart = client.get("/api/users/p10/patterns/wake_pct").json()
+    pattern = client.get("/api/users/p10/patterns").json()["patterns"][0]
+
+    assert chart["condition"] == "over 12%" and chart["display_threshold"] == "12%"
+    inside = [p for p in chart["points"] if p["in_condition"]]
+    assert len(inside) == pattern["days_in_condition"] == chart["days_in_condition"]
+    assert sum(p["label"] == "bad" for p in inside) == pattern["target_days_in_condition"]
+    assert all((p["value"] > 12) == p["in_condition"] for p in chart["points"])
+    dates = [p["date"] for p in chart["points"]]
+    assert dates == sorted(dates)
+
+
+def test_recipe_chart_and_missing_pattern(client: TestClient, demo: Session) -> None:
+    recipe = client.get("/api/users/p10/patterns/lightly?kind=good").json()
+
+    assert recipe["kind"] == "good" and recipe["condition"] == "over 320 min"
+    assert client.get("/api/users/p10/patterns/steps").status_code == 404
+    assert client.get("/api/users/p10/patterns/lightly?kind=meh").status_code == 422

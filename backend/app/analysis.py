@@ -28,6 +28,8 @@ from app.schemas import (
     Label,
     NormRange,
     Pattern,
+    PatternChart,
+    PatternPoint,
     PatternReport,
     Reason,
     Recipe,
@@ -396,4 +398,27 @@ def good_day_recipe(analysis: dict) -> Recipe:
         summary=_status_summary(analysis, group["status"], "good", len(ingredients)),
         good_days_count=analysis["info"]["n_good_window"],
         ingredients=ingredients,
+    )
+
+
+def pattern_chart(analysis: dict, feature: str, kind: str) -> PatternChart | None:
+    """The persona's pattern for `feature` of this kind (significant or early signal)."""
+    p = next((p for p in analysis["patterns"][kind]["patterns"] if p["feature"] == feature), None)
+    if p is None:
+        return None
+    return PatternChart(
+        **_stats(p),
+        kind=kind,
+        unit=FEATURES[feature].unit,
+        display_threshold=texts.fmt(feature, p["threshold"]),
+        points=[
+            PatternPoint(
+                date=pt["date"],
+                value=pt["value"],
+                display=texts.fmt(feature, pt["value"]),
+                label=pt["label"],
+                in_condition=pt["in_condition"],
+            )
+            for pt in p["points"]
+        ],
     )

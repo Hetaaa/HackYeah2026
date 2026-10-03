@@ -177,4 +177,12 @@ def _with_shares(p: dict, rows: pd.DataFrame) -> dict:
         )
     hits = rows.date[cond & (rows.label == p["kind"])]
     out["example_dates"] = [str(d.date()) for d in hits.tail(3)]
+    # every analysed day with a value: the pattern chart (value vs threshold, coloured by label)
+    valid = x.notna()
+    out["points"] = [
+        {"date": str(d.date()), "value": round(float(v), 3), "label": lab, "in_condition": bool(c)}
+        for d, v, lab, c in zip(
+            rows.date[valid], x[valid], rows.label[valid], cond[valid], strict=True
+        )
+    ]
     return out

@@ -198,6 +198,27 @@ class Pattern(PatternStats):
     example_dates: list[dt.date]
 
 
+class PatternPoint(BaseModel):
+    date: dt.date
+    value: float = Field(examples=[13.3])
+    display: str = Field(examples=["13.3%"])
+    label: Label
+    in_condition: bool = Field(description="The pattern's condition held on this day")
+
+
+class PatternChart(PatternStats):
+    """Data behind one pattern: every analysed day's value against the threshold."""
+
+    kind: Literal["bad", "good"]
+    feature: str = Field(examples=["wake_pct"])
+    label: str = Field(examples=["Awake at night"])
+    unit: str = Field(examples=["%"])
+    condition: str = Field(examples=["over 12%"])
+    display_threshold: str = Field(examples=["12%"])
+    text: str
+    points: list[PatternPoint] = Field(description="Analysed days (analysis window) in date order")
+
+
 class PatternReport(BaseModel):
     status: InsightStatus = "ok"
     summary: str = Field(examples=["We found 2 possible reasons behind your bad days."])
