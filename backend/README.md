@@ -84,6 +84,8 @@ Brak auth: persona to `user_id` w ścieżce. Szczegóły i przykłady w Swaggerz
 | GET | `/api/features` | katalog cech (nazwy, jednostki, opisy) |
 | POST | `/api/demo/reset` | przywrócenie person demo (tylko z `DEMO_RESET=true`, inaczej 403) |
 
+Frontend: który endpoint pod który ekran, pola i pułapki: [docs/frontend-integration.md](docs/frontend-integration.md).
+
 Demo: persony mają własne „dziś” (`today`, `demo_answers`). Scenariusz prezentacji, odpowiedzi do
 wpisania i mapowanie ekranów: [docs/demo.md](docs/demo.md).
 

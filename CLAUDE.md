@@ -25,7 +25,8 @@ backend/
     services/     one file per area (same name as the router), plain functions
     clients/      external API integrations only
   data/demo/      PMData demo personas as CSV (seed source)
-  docs/           insights.md (algorithm, data contract), demo.md (demo script), watch-sources.md
+  docs/           insights.md (algorithm, data contract), demo.md (demo script), watch-sources.md,
+                  frontend-integration.md (screen -> endpoint guide)
   scripts/        seed.py, reset_db.py, import_days.py (CSV import), import_pmdata.py (PMData -> CSV)
   tests/          pytest, in-memory SQLite per test
 ```
