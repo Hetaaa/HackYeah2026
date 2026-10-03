@@ -6,6 +6,8 @@ a night that ended > survey + 60 min is not available: lag1 = NaN, avg3 from D-1
 activity of a day worn < 12 h between 06:00 and 24:00 is NaN
 """
 
+import warnings
+
 import numpy as np
 import pandas as pd
 
@@ -19,7 +21,8 @@ def _lagged(series: pd.Series, dates: pd.Series, offsets: list[int], min_n: int)
         [series.reindex(dates - pd.Timedelta(days=o)).to_numpy(float) for o in offsets]
     )
     n = np.sum(~np.isnan(vals), axis=1)
-    with np.errstate(all="ignore"):
+    with warnings.catch_warnings():  # all-NaN rows are expected (no data) and become NaN
+        warnings.simplefilter("ignore", RuntimeWarning)
         m = np.nanmean(vals, axis=1) if len(dates) else np.zeros(0)
     m[n < min_n] = np.nan
     return m
@@ -142,11 +145,11 @@ def build_table(
     df["in_analysis_window"] = full & ~df.outside_window
     win = df[df.in_analysis_window]
     n_bad, n_good = int((win.label == "bad").sum()), int((win.label == "good").sum())
-    reasons = []
-    if not label["raw_sd"] >= C.MIN_RAW_SD:
-        reasons.append("insufficient_variation")
+    reasons = []  # most actionable first: a new user is collecting data, not "too uniform"
     if full.sum() < C.MIN_FULL_DAYS:
         reasons.append("insufficient_days")
+    if not label["raw_sd"] >= C.MIN_RAW_SD:
+        reasons.append("insufficient_variation")
     hrz_days = int((win.z_cardio_peak_lag1 > C.E_HRZ_MIN_MIN).sum())
     info = {
         "included": not reasons,

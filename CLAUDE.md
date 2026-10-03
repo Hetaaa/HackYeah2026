@@ -17,13 +17,16 @@ backend/
     db.py         engine, get_session, SessionDep
     models.py     SQLModel tables + shared *Base field classes
     schemas.py    request/response models: XCreate, XUpdate, XRead
-    analysis.py   wellness analysis (labels, norm, deviations, patterns, recipe); owned by the
-                  algorithms team, services only call its functions
+    analysis.py   adapter: Day rows -> app/insights -> API schemas; services only call its functions
+    insights/     wellness algorithm (pandas): cleaning, pattern engine, day texts; owned by the
+                  algorithms team, see backend/docs/insights.md
     deps.py       PersonaDep: resolves {user_id} from the path or returns 404
     routers/      one file per area, thin HTTP layer
     services/     one file per area (same name as the router), plain functions
     clients/      external API integrations only
-  scripts/        seed.py (generated demo personas), reset_db.py, import_days.py (CSV import)
+  data/demo/      PMData demo personas as CSV (seed source)
+  docs/           insights.md (algorithm, data contract, validation)
+  scripts/        seed.py, reset_db.py, import_days.py (CSV import), import_pmdata.py (PMData -> CSV)
   tests/          pytest, in-memory SQLite per test
 ```
 

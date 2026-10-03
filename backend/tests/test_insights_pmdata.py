@@ -19,7 +19,7 @@ CACHE = Path(".cache/insights")
 
 
 def test_reference_row_p01() -> None:
-    """Hand-checked alignment for P01, survey day 2019-11-02 (docs/insights.md)."""
+    """Hand-checked alignment for P01, survey day 2019-11-02."""
     table, _ = cleaning.build_table(pmdata.load_user(ROOT, "p01", CACHE), C.PMDATA_WINDOW_END)
     r = table[table.date == "2019-11-02"].iloc[0]
 

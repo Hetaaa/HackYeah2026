@@ -21,7 +21,7 @@ cp .env.example .env    # opcjonalnie, domyślne wartości działają bez .env
 uv run uvicorn app.main:app --reload
 ```
 
-Przy starcie tworzą się tabele, a jeśli `Persona` jest pusta, ładuje się seed: 3 wygenerowane persony (`p01`–`p03`) po 150 dni, każda z innym wzorcem złych dni.
+Przy starcie tworzą się tabele, a jeśli `Persona` jest pusta, ładuje się seed: 4 persony z PMData (`data/demo/`), a bez tych plików 3 wygenerowane persony (`p01`–`p03`).
 
 - API: <http://localhost:8000/api>
 - Dokumentacja (Swagger): <http://localhost:8000/docs>
@@ -76,35 +76,56 @@ Brak auth: persona to `user_id` w ścieżce. Szczegóły i przykłady w Swaggerz
 | GET | `/api/users/{user_id}/surveys/{date}` | czy ankieta wypełniona (404 jeśli nie) |
 | PUT | `/api/users/{user_id}/surveys/{date}` | zapis ankiety, zwraca etykietę dnia |
 
+Ścieżki i kształty odpowiedzi są stabilne; algorytm tylko dodał pola (np. `reasons`, `status`,
+`has_reason`, `headline`, `insights_status`). Szczegóły i przykłady w Swaggerze.
+
 ## Analiza (zespół od algorytmów)
 
-Cała logika liczenia jest w `app/analysis.py`. Serwisy wołają tylko te funkcje, więc wystarczy
-podmienić ich środek bez zmiany sygnatur:
+Algorytm jest w pakiecie `app/insights/` (pandas/numpy), a `app/analysis.py` to adapter: zamienia
+wiersze `Day` jednej persony na wejście algorytmu i mapuje wynik na schematy API. Serwisy wołają
+`analyze(days, window_end)` raz na zapytanie (ok. 0,1 s, wynik w cache do zmiany danych) i czytają
+z wyniku funkcjami:
 
 | Funkcja | Zwraca |
 | ------- | ------ |
-| `score_day(day)` | wynik dnia z ankiety albo `None` |
-| `label_day(day)` | `"good"` / `"neutral"` / `"bad"` albo `None` |
-| `personal_norm(days)` | `dict[cecha, NormRange]` z dobrych dni |
-| `day_deviations(days, date)` | `list[Deviation]` posortowana od największego odchylenia |
-| `explain_day(days, date)` | zdanie podsumowania dnia |
-| `bad_day_patterns(days)` | `PatternReport` |
-| `good_day_recipe(days)` | `Recipe` |
+| `analyze(days, window_end)` | pełna analiza persony (cache) |
+| `label_day(analysis, date)` / `score_day(...)` | etykieta / osobisty z-score dnia |
+| `day_summary(analysis, date)` | `DaySummary` (kafelek kalendarza) |
+| `day_detail(analysis, day, survey)` | `DayDetail` (widok dnia: przyczyny, porównanie, cechy) |
+| `bad_day_patterns(analysis)` | `PatternReport` |
+| `good_day_recipe(analysis)` | `Recipe` |
+| `insights_status(analysis)` | `ok` albo powód, dla którego wzorców jeszcze nie ma |
 
-`days` to wszystkie dni jednej persony (`app.models.Day`) posortowane po dacie. Typy wyników są
-w `app/schemas.py` i trafiają 1:1 do JSON-a. Lista cech i ich jednostek: `FEATURES` w `analysis.py`.
+Najważniejsze zasady (szczegóły i uzasadnienie: [docs/insights.md](docs/insights.md)):
 
-Obecna implementacja to prosty stub (kwartyle z dobrych dni), żeby frontend miał realistyczne dane.
+- **Etykieta dnia jest osobista**: mood + fatigue + stress względem mediany danej osoby
+  (`sleep_quality` zbieramy, ale nie wchodzi do etykiety). Przy < 14 ankietach: próg 3,5 / 2,5.
+- **Wzorce** to progi typu „sen < 6 h → 11 z 14 dni złych” z testem permutacyjnym (p ≤ 0,05).
+  Wymagają 60 dni z ankietą i danymi z zegarka; wcześniej `status = insufficient_days`.
+- **„Possible reason”** w widoku dnia pojawia się tylko z istotnego wzorca. Pole `deviations`
+  to opisowe porównanie z przeciętnym dobrym dniem, nie przyczyna.
+- Dane dnia `D`: noc zakończona rano `D` + aktywność z kalendarzowego dnia `D`. Algorytm sam
+  bierze aktywność z dnia przed ankietą.
 
-## Import danych
+## Dane demo i import
 
-CSV, jeden wiersz = jeden dzień jednej persony. Kolumny: `user_id, date, sleep_minutes,
-resting_hr, steps, active_minutes, calories, mood, fatigue, sleep_quality, stress`
-(puste komórki dozwolone, istniejące dni są nadpisywane):
+Seed ładuje prawdziwe persony z PMData z `data/demo/*.csv` (p06 Alex, p01 Robin, p10 Sam,
+p16 Kim); bez tych plików generuje 3 syntetyczne persony. CSV powstaje z surowego PMData
+(spoza repo) tym samym adapterem Fitbita, którego użyje synchronizacja zegarka:
 
 ```bash
-uv run python -m scripts.import_days data/days.csv
+uv run python -m scripts.import_pmdata ../../pmdata          # -> data/demo/*.csv
+uv run python -m scripts.reset_db                            # baza od nowa z nowymi CSV
 ```
+
+Własny CSV (jeden wiersz = jeden dzień; kolumny `user_id, date` + dowolne pola `Day`, puste
+komórki dozwolone, istniejące dni są nadpisywane):
+
+```bash
+uv run python -m scripts.import_days data/days.csv [data/personas.csv]
+```
+
+Test regresji na pełnym PMData (pomijany w CI): `PMDATA_DIR=../../pmdata uv run pytest`.
 
 ## Współpraca z frontendem
 
