@@ -1,9 +1,11 @@
-"""Import days from a CSV (one row = one day of one user).
+"""Import personas and days from CSV.
 
-Columns: user_id, date, sleep_minutes, resting_hr, steps, active_minutes, calories,
-mood, fatigue, sleep_quality, stress. Empty cells are allowed. Existing days are overwritten.
+days.csv: one row = one day of one user. Columns: user_id, date + any field of app.models.Day
+(watch data, survey answers, survey_at). Empty cells are allowed. Existing days of the
+same user and date are overwritten.
+personas.csv (optional): id, name, description, analysis_window_end.
 
-Run with: uv run python -m scripts.import_days data/days.csv
+Run with: uv run python -m scripts.import_days data/demo/days.csv [data/demo/personas.csv]
 """
 
 import csv
@@ -12,28 +14,40 @@ from pathlib import Path
 
 from sqlmodel import Session, select
 
-from app.db import engine, init_db
 from app.models import Day, Persona
 
-NUMERIC_COLUMNS = (
-    "sleep_minutes",
-    "resting_hr",
-    "steps",
-    "active_minutes",
-    "calories",
-    "mood",
-    "fatigue",
-    "sleep_quality",
-    "stress",
-)
+TEXT_COLUMNS = {"user_id", "date", "sleep_type", "sleep_start", "sleep_end", "survey_at"}
+DAY_COLUMNS = set(Day.model_fields) - {"id"}
 
 
 def parse_row(row: dict[str, str]) -> dict[str, object]:
-    data: dict[str, object] = {"user_id": row["user_id"], "date": row["date"]}
-    for column in NUMERIC_COLUMNS:
-        value = (row.get(column) or "").strip()
-        data[column] = float(value) if value else None
+    data: dict[str, object] = {}
+    for column, raw in row.items():
+        if column not in DAY_COLUMNS:
+            continue
+        value = (raw or "").strip()
+        if not value:
+            data[column] = None
+        elif column in TEXT_COLUMNS:
+            data[column] = value
+        else:
+            data[column] = float(value)
     return data
+
+
+def import_personas(session: Session, path: Path) -> int:
+    with path.open(newline="", encoding="utf-8") as file:
+        rows = list(csv.DictReader(file))
+    for row in rows:
+        data = {k: (v or None) for k, v in row.items()}
+        persona = session.get(Persona, data["id"])
+        if persona is None:
+            session.add(Persona.model_validate(data))
+        else:
+            persona.sqlmodel_update(Persona.model_validate(data).model_dump())
+            session.add(persona)
+    session.commit()
+    return len(rows)
 
 
 def import_days(session: Session, path: Path) -> int:
@@ -58,7 +72,11 @@ def import_days(session: Session, path: Path) -> int:
 
 
 if __name__ == "__main__":
+    from app.db import engine, init_db
+
     init_db(engine)
     with Session(engine) as session:
+        if len(sys.argv) > 2:
+            print(f"Imported {import_personas(session, Path(sys.argv[2]))} personas")
         count = import_days(session, Path(sys.argv[1]))
     print(f"Imported {count} days into {engine.url}")

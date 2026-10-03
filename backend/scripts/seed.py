@@ -1,11 +1,19 @@
-"""Generated demo data until the PMData import is ready. Run: uv run python -m scripts.seed"""
+"""Demo data. Run: uv run python -m scripts.seed
+
+Real PMData personas from data/demo/*.csv (made by scripts/import_pmdata.py) when present,
+otherwise generated personas with a planted bad-day pattern each.
+"""
 
 import datetime as dt
 import random
+from pathlib import Path
 
 from sqlmodel import Session, func, select
 
 from app.models import Day, Persona
+from scripts.import_days import import_days, import_personas
+
+DEMO_DIR = Path(__file__).resolve().parent.parent / "data" / "demo"
 
 START_DATE = dt.date(2019, 11, 1)
 DAYS_COUNT = 150
@@ -60,6 +68,14 @@ def generate_days(user_id: str, rng: random.Random) -> list[Day]:
 
 
 def seed(session: Session) -> None:
+    if (DEMO_DIR / "days.csv").exists():
+        import_personas(session, DEMO_DIR / "personas.csv")
+        import_days(session, DEMO_DIR / "days.csv")
+        return
+    seed_generated(session)
+
+
+def seed_generated(session: Session) -> None:
     for index, data in enumerate(PERSONAS):
         session.add(Persona.model_validate(data))
         session.add_all(generate_days(data["id"], random.Random(index)))
