@@ -7,15 +7,15 @@ ANSWERS = {"mood": 1, "fatigue": 1, "sleep_quality": 2, "stress": 1}
 
 
 def test_save_survey_returns_personal_label(client: TestClient, demo: Session) -> None:
-    assert client.get("/api/users/p10/surveys/2020-03-05").status_code == 404
+    assert client.get("/api/users/p10/surveys/2020-02-14").status_code == 404
 
-    response = client.put("/api/users/p10/surveys/2020-03-05", json=ANSWERS)
+    response = client.put("/api/users/p10/surveys/2020-02-14", json=ANSWERS)
 
     assert response.status_code == 200
     body = response.json()
     assert body["label"] == "bad" and body["score"] < -0.5
-    assert client.get("/api/users/p10/surveys/2020-03-05").json() == body
-    assert client.get("/api/users/p10/days/2020-03-05").json()["label"] == "bad"
+    assert client.get("/api/users/p10/surveys/2020-02-14").json() == body
+    assert client.get("/api/users/p10/days/2020-02-14").json()["label"] == "bad"
 
 
 def test_first_survey_of_new_user_uses_absolute_label(client: TestClient, session: Session) -> None:
@@ -31,7 +31,7 @@ def test_first_survey_of_new_user_uses_absolute_label(client: TestClient, sessio
 
 
 def test_survey_validation(client: TestClient, demo: Session) -> None:
-    response = client.put("/api/users/p10/surveys/2020-03-05", json=ANSWERS | {"mood": 6})
+    response = client.put("/api/users/p10/surveys/2020-02-14", json=ANSWERS | {"mood": 6})
 
     assert response.status_code == 422
 
@@ -48,11 +48,11 @@ def test_editing_a_survey_keeps_its_time(client: TestClient, demo: Session) -> N
 
     from app.models import Day
 
-    client.put("/api/users/p10/surveys/2020-03-05", json=ANSWERS)
-    first = demo.exec(select(Day).where(Day.user_id == "p10", Day.date == "2020-03-05")).one()
+    client.put("/api/users/p10/surveys/2020-02-14", json=ANSWERS)
+    first = demo.exec(select(Day).where(Day.user_id == "p10", Day.date == "2020-02-14")).one()
     first_at = first.survey_at
 
-    client.put("/api/users/p10/surveys/2020-03-05", json=ANSWERS | {"mood": 2})
+    client.put("/api/users/p10/surveys/2020-02-14", json=ANSWERS | {"mood": 2})
     demo.refresh(first)
 
     assert first.mood == 2 and first.survey_at == first_at
@@ -61,7 +61,7 @@ def test_editing_a_survey_keeps_its_time(client: TestClient, demo: Session) -> N
 def test_new_survey_refits_other_days(client: TestClient, demo: Session) -> None:
     before = client.get("/api/users/p10/days/2019-11-20").json()["score"]
 
-    client.put("/api/users/p10/surveys/2020-02-29", json=ANSWERS)
+    client.put("/api/users/p10/surveys/2020-02-14", json=ANSWERS)
 
     after = client.get("/api/users/p10/days/2019-11-20").json()["score"]
     assert after != before  # labels are relative to the whole personal history

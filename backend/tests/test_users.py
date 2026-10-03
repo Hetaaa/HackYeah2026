@@ -5,10 +5,12 @@ from sqlmodel import Session
 def test_list_demo_personas(client: TestClient, demo: Session) -> None:
     users = client.get("/api/users").json()
 
-    assert [u["id"] for u in users] == ["p01", "p06", "p10", "p16"]
-    assert [u["name"] for u in users] == ["Robin", "Alex", "Sam", "Kim"]
-    assert all(u["insights_status"] == "ok" for u in users)
-    p06 = users[1]
+    assert [u["id"] for u in users] == ["p06", "p01", "p10", "p16"]  # switcher order
+    assert [u["name"] for u in users] == ["Alex", "Robin", "Sam", "Kim"]
+    assert all(u["insights_status"] == "ok" and u["is_demo"] for u in users)
+    p06 = users[0]
+    assert p06["today"] == "2020-03-08"
+    assert p06["demo_answers"] == {"mood": 4, "fatigue": 3, "sleep_quality": 3, "stress": 4}
     assert p06["days_with_data"] == 122 and p06["days_needed"] == 60
     assert p06["first_date"] == "2019-11-01"
 

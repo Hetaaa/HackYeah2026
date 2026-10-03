@@ -31,6 +31,9 @@ from app.schemas import (
     PatternReport,
     Reason,
     Recipe,
+    Signal,
+    SurveyRead,
+    TodayRead,
 )
 
 
@@ -166,32 +169,88 @@ def day_summary(analysis: dict, date: dt.date) -> DaySummary:
     )
 
 
+def _features(analysis: dict, entry: dict | None) -> list[FeatureValue]:
+    searched = engine.search_features(analysis["info"]["group_e_feature"])
+    return [
+        FeatureValue(
+            feature=v["feature"],
+            label=v["label"],
+            unit=v["unit"],
+            value=v["value"],
+            norm=_norm(v["norm"], v["reference"]),
+            when=v["when"],
+            display=v["display"],
+            in_patterns=v["feature"] in searched,
+        )
+        for v in (entry["values"] if entry else [])
+    ]
+
+
 def day_detail(analysis: dict, day: Day, survey: SurveyBase | None) -> DayDetail:
     entry = _entry(analysis, day.date)
-    values = entry["values"] if entry else []
-    searched = engine.search_features(analysis["info"]["group_e_feature"])
     return DayDetail(
         date=day.date,
         label=entry["label"] if entry else None,
         score=entry["score"] if entry else None,
         survey=survey,
-        features=[
-            FeatureValue(
-                feature=v["feature"],
-                label=v["label"],
-                unit=v["unit"],
-                value=v["value"],
-                norm=_norm(v["norm"], v["reference"]),
-                when=v["when"],
-                display=v["display"],
-                in_patterns=v["feature"] in searched,
-            )
-            for v in values
-        ],
+        features=_features(analysis, entry),
         deviations=day_deviations(analysis, day.date),
         summary=explain_day(analysis, day.date),
         reasons=day_reasons(analysis, day.date),
         outside_window=bool(entry and entry["outside_window"]),
+    )
+
+
+# ---------------------------------------------------------------- today (home screen)
+OUTLOOK_SUMMARY = {
+    "tough": "Today may be tougher than usual. Check in to see how you feel.",
+    "promising": "Today looks promising.",
+    "mixed": "Mixed signals for today.",
+    "neutral": "Nothing in last night's sleep or yesterday's activity points either way.",
+    "unknown": "No watch data for today yet.",
+}
+
+
+def _signal(s: dict) -> Signal:
+    lead = "Heads-up" if s["kind"] == "bad" else "Good sign"
+    return Signal(
+        kind=s["kind"],
+        feature=s["feature"],
+        label=FEATURES[s["feature"]].label,
+        value=s["value"],
+        display=texts.fmt(s["feature"], s["value"]),
+        when=_when({"feature": s["feature"], "variant": s["when"]}),
+        text=f"{lead}: {s['value_text']}.",
+        pattern_text=s["pattern_text"],
+    )
+
+
+def today(analysis: dict, date: dt.date, survey: SurveyRead | None, has_row: bool) -> TodayRead:
+    """Signals use only data known before the morning check-in, so they work before it too."""
+    entry = _entry(analysis, date) if has_row else None
+    heads_up = [_signal(s) for s in entry["signals"]["bad"]] if entry else []
+    good_signs = [_signal(s) for s in entry["signals"]["good"]] if entry else []
+    has_watch_data = bool(entry) and any(v["value"] is not None for v in entry["values"])
+    if not has_watch_data:
+        outlook = "unknown"
+    elif heads_up and good_signs:
+        outlook = "mixed"
+    else:
+        outlook = "tough" if heads_up else "promising" if good_signs else "neutral"
+    if survey is not None:
+        summary = explain_day(analysis, date) or "Check-in saved: a typical day for you."
+    else:
+        summary = OUTLOOK_SUMMARY[outlook]
+    return TodayRead(
+        date=date,
+        has_watch_data=has_watch_data,
+        survey=survey,
+        outlook=outlook,
+        summary=summary,
+        heads_up=heads_up,
+        good_signs=good_signs,
+        deviations=[_deviation(c) for c in entry["compare"]] if entry else [],
+        features=_features(analysis, entry),
     )
 
 

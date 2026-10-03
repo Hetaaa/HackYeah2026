@@ -46,6 +46,14 @@ class PersonaRead(BaseModel):
         default="good_days",
         description="What norms and deviations compare with (all_days if < 10 good days)",
     )
+    today: dt.date = Field(
+        description="The persona's 'today' (demo clock for PMData personas, else the real date)",
+        examples=["2020-02-14"],
+    )
+    is_demo: bool = Field(default=False, description="Persona replays recorded demo data")
+    demo_answers: SurveyBase | None = Field(
+        default=None, description="Demo only: the real check-in of `today`, to prefill sliders"
+    )
 
 
 class NormRange(BaseModel):
@@ -196,3 +204,43 @@ class SurveyRead(SurveyBase):
     score: float | None = Field(
         examples=[-1.2], description="Check-in score, 0 = typical day (see PersonaRead.label_mode)"
     )
+
+
+class Signal(BaseModel):
+    """A significant personal pattern already triggered before today's check-in."""
+
+    kind: Literal["bad", "good"] = Field(description="bad = heads-up, good = good sign")
+    feature: str = Field(examples=["wake_pct"])
+    label: str = Field(examples=["Awake at night"])
+    value: float = Field(examples=[13.3])
+    display: str = Field(examples=["13.3%"])
+    when: When
+    text: str = Field(examples=["Heads-up: you were awake 13.3% of last night."])
+    pattern_text: str = Field(
+        examples=[
+            "When you are awake over 12% of the night, 15 of 27 days were bad days "
+            "(vs 15% otherwise)."
+        ]
+    )
+
+
+class TodayRead(BaseModel):
+    """Home screen: what last night and yesterday say about today, before and after check-in."""
+
+    date: dt.date
+    has_watch_data: bool = Field(description="Last night's sleep or yesterday's activity synced")
+    survey: SurveyRead | None = Field(description="null until today's check-in is filled")
+    outlook: Literal["tough", "promising", "mixed", "neutral", "unknown"] = Field(
+        description="tough: only heads-ups; promising: only good signs; mixed: both; "
+        "neutral: none; unknown: no watch data"
+    )
+    summary: str = Field(examples=["Today may be tougher than usual."])
+    heads_up: list[Signal] = Field(description="Bad-day patterns triggered (max 2)")
+    good_signs: list[Signal] = Field(description="Good-day patterns triggered (max 2)")
+    deviations: list[Deviation] = Field(description="Compared with your average good day")
+    features: list[FeatureValue]
+
+
+class DemoReset(BaseModel):
+    personas: int = Field(examples=[4])
+    days: int = Field(examples=[477])
