@@ -224,6 +224,8 @@ class PatternStats(BaseModel):
     threshold: float = Field(
         examples=[6.0], description="Same unit as FeatureValue.value (bedtime: hours since 18:00)"
     )
+    op: Literal["below", "above"] = Field(description="Condition side of the threshold")
+    display_threshold: str = Field(examples=["6h"], description="Threshold formatted for the UI")
     days_in_condition: int = Field(description="Days on which the condition held", examples=[14])
     target_days_in_condition: int = Field(description="...of which bad (good) days", examples=[11])
     rate_in: float = Field(
@@ -264,10 +266,8 @@ class PatternChart(PatternStats):
     feature: str = Field(examples=["wake_pct"])
     label: str = Field(examples=["Awake at night"])
     unit: str = Field(examples=["%"])
-    op: Literal["below", "above"] = Field(description="Condition side of the threshold")
     variant: Literal["lag1", "avg3"] = Field(description="Single night/day or 3-day average")
     condition: str = Field(examples=["Awake over 12% of night"])
-    display_threshold: str = Field(examples=["12%"])
     text: str
     points: list[PatternPoint] = Field(description="Analysed days (analysis window) in date order")
 
@@ -312,6 +312,9 @@ class FeatureStats(BaseModel):
     bad: GroupAverage = Field(description="Average on bad days")
     difference: float | None = Field(
         description="bad.average - good.average (null when either is missing)", examples=[-1.1]
+    )
+    difference_display: str | None = Field(
+        default=None, description="`difference` formatted for the UI", examples=["-1h06"]
     )
 
 

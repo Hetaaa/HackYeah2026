@@ -17,7 +17,7 @@ function ComparisonPanel() {
         <p className={styles.eyebrow}>Full comparison</p>
         <span className={styles.updated}>{updated}</span>
       </div>
-      <h2 className={styles.title}>Your signals across {weeks} weeks</h2>
+      <h2 className={styles.title}>Your signals{weeks > 0 && ` across ${weeks} weeks`}</h2>
 
       <div className={styles.columns}>
         <span>Signal</span>
@@ -29,7 +29,9 @@ function ComparisonPanel() {
           <li key={s.name} className={styles.row}>
             <div>
               <p className={styles.name}>{s.name}</p>
-              <span className={`${styles.badge} ${styles[s.strength]}`}>{STRENGTH_LABEL[s.strength]}</span>
+              {s.strength && (
+                <span className={`${styles.badge} ${styles[s.strength]}`}>{STRENGTH_LABEL[s.strength]}</span>
+              )}
             </div>
             <span className={styles.good}>{s.good}</span>
             <div className={styles.lower}>

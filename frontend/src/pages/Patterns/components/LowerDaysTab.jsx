@@ -7,7 +7,7 @@ import ComparisonPanel from "./ComparisonPanel.jsx";
 import styles from "./LowerDaysTab.module.scss";
 
 function LowerDaysTab() {
-  const { summary, reasons, combination } = useAppStore((s) => s.patterns);
+  const { summary, reasons, combination, statusText } = useAppStore((s) => s.patterns);
   const [showAll, setShowAll] = useState(false);
 
   return (
@@ -30,13 +30,15 @@ function LowerDaysTab() {
           </button>
         </div>
 
+        {reasons.length === 0 && <p className={styles.empty}>{statusText}</p>}
         <ol className={styles.reasons}>
           {reasons.map((r, i) => (
-            <li key={r.title} className={styles.reason}>
+            <li key={r.key} className={styles.reason}>
               <span className={styles.rank}>{String(i + 1).padStart(2, "0")}</span>
               <div className={styles.reasonBody}>
                 <h3 className={styles.reasonTitle}>{r.title}</h3>
                 <p className={styles.reasonSub}>{r.frequency}</p>
+                {r.drivers && <p className={styles.reasonSub}>{r.drivers}</p>}
                 <div className={styles.track}>
                   <motion.span
                     className={styles.fill}
@@ -69,16 +71,18 @@ function LowerDaysTab() {
         )}
       </AnimatePresence>
 
-      <article className={styles.combo}>
-        <span className={styles.multiplier}>
-          ×<CountUp value={combination.multiplier} decimals={1} />
-        </span>
-        <div>
-          <p className={styles.comboEyebrow}>Strongest combination</p>
-          <h3 className={styles.comboTitle}>{combination.title}</h3>
-          <p className={styles.comboText}>{combination.text}</p>
-        </div>
-      </article>
+      {combination && (
+        <article className={styles.combo}>
+          <span className={styles.multiplier}>
+            ×<CountUp value={combination.multiplier} decimals={1} />
+          </span>
+          <div>
+            <p className={styles.comboEyebrow}>Strongest signal</p>
+            <h3 className={styles.comboTitle}>{combination.title}</h3>
+            <p className={styles.comboText}>{combination.text}</p>
+          </div>
+        </article>
+      )}
     </div>
   );
 }

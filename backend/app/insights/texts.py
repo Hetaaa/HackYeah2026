@@ -150,8 +150,8 @@ def compare_ref(norm_source: str) -> str:
     return COMPARE_REF[norm_source]
 
 
-def compare_text(name: str, d: float, ref: str) -> str:
-    """Signed difference from the reference day: "Sleep -1h43 vs good days"."""
+def signed(name: str, d: float) -> str:
+    """Signed difference in the feature's unit: "-1h43", "+15 bpm", "+3%"."""
     a = abs(d)
     unit = C.FEATURES[name].unit
     if unit in ("h", "clock"):
@@ -160,7 +160,12 @@ def compare_text(name: str, d: float, ref: str) -> str:
         size = f"{a:.0f}%"
     else:
         size = amount(name, a)
-    return f"{COMPARE_LABEL[name]} {'+' if d > 0 else '-'}{size} {ref}"
+    return f"{'+' if d > 0 else '-'}{size}"
+
+
+def compare_text(name: str, d: float, ref: str) -> str:
+    """Signed difference from the reference day: "Sleep -1h43 vs good days"."""
+    return f"{COMPARE_LABEL[name]} {signed(name, d)} {ref}"
 
 
 OUTLOOK = {

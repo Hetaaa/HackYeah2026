@@ -1,6 +1,8 @@
 @use "tokens" as *;
 
 .topBar {
+  position: relative;
+  z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -59,4 +61,101 @@
   margin-top: 10px;
   font-size: 13px;
   color: $ink-soft;
+}
+
+.switcher {
+  position: relative;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+}
+
+.menu {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  z-index: 21;
+  width: 270px;
+  padding: 8px;
+  border-radius: $radius-md;
+  background: $surface;
+  list-style: none;
+  @include card-shadow;
+}
+
+.person {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px;
+  border-radius: $radius-sm;
+  text-align: left;
+
+  &:hover {
+    background: $bg;
+  }
+}
+
+.current {
+  background: $bg;
+}
+
+.personAvatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: $plum;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.personText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+
+  strong {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  small {
+    font-size: 11px;
+    color: $muted;
+  }
+}
+
+.check {
+  flex: none;
+  color: $orange;
+}
+
+.menuFooter {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid $line;
+}
+
+.profileLink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-radius: $radius-sm;
+  font-size: 13px;
+  font-weight: 600;
+  color: $ink;
+
+  &:hover {
+    background: $bg;
+  }
 }

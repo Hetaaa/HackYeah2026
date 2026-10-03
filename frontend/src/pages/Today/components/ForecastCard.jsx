@@ -13,7 +13,7 @@ function ForecastCard() {
       <h2 className={styles.title}>
         {lead} <strong>{emphasis}</strong>
       </h2>
-      <p className={styles.reason}>{reason}</p>
+      {reason && <p className={styles.reason}>{reason}</p>}
     </article>
   );
 }

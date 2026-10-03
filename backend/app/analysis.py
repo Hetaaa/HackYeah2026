@@ -295,6 +295,7 @@ def label_stats(analysis: dict) -> StatsReport:
                 good=good,
                 bad=bad,
                 difference=round(bad.average - good.average, 3) if both else None,
+                difference_display=texts.signed(name, bad.average - good.average) if both else None,
             )
         )
     return StatsReport(
@@ -368,6 +369,8 @@ def _stats(p: dict) -> dict:
         "level": p["level"],
         "when": _when(p),
         "threshold": p["threshold"],
+        "op": p["op"],
+        "display_threshold": texts.amount(p["feature"], p["threshold"]),
         "days_in_condition": p["days_in_condition"],
         "target_days_in_condition": p["target_days_in_condition"],
         "rate_in": p["rate_in"],
@@ -427,9 +430,7 @@ def pattern_chart(analysis: dict, feature: str, kind: str) -> PatternChart | Non
         **_stats(p),
         kind=kind,
         unit=FEATURES[feature].unit,
-        op=p["op"],
         variant=p["variant"],
-        display_threshold=texts.fmt(feature, p["threshold"]),
         points=[
             PatternPoint(
                 date=pt["date"],
