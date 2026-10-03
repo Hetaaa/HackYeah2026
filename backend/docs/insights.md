@@ -43,7 +43,8 @@ Zasady, które stosuje algorytm:
 1. **Etykieta dnia**:
    - mood + fatigue + stress, każde pole odchylone od mediany osoby, potem z-score,
    - zły dzień: z < −0,5; dobry: z > +0,5,
-   - przy < 14 ankietach (brak osobistej bazy): średnia ≥ 3,5 to dobry dzień, ≤ 2,5 zły.
+   - przy < 14 ankietach albo identycznych odpowiedziach (brak osobistej bazy): średnia
+     ≥ 3,5 to dobry dzień, ≤ 2,5 zły (`label_mode = absolute`).
 2. **Cechy do szukania wzorców** (po jednej z grupy): sen, pora zaśnięcia, % czuwania w nocy, kroki,
    wysiłek (minuty w strefach cardio i peak albo `active_minutes`), lekka aktywność, % REM, tętno w
    czasie snu.
@@ -95,4 +96,6 @@ P01 35%, P06 0%). Porównanie z dobrym dniem daje treść w ok. 88% dni.
   i zapisywać `Day` przez `app/insights/fitbit.py` (te same parsery co dla PMData; klucz
   `isMainSleep` jest obsłużony).
 - Brak prognozy dnia (poza zakresem).
+- `PUT /surveys` przyjmuje daty od 2000-01-01 do jutra (UTC), a `survey_at` ustawia tylko przy
+  pierwszym wypełnieniu (edycja nie przesuwa czasu ankiety).
 - To korelacje w danych użytkownika, nie diagnoza. Teksty mówią „possible reason”.

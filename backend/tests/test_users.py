@@ -18,3 +18,25 @@ def test_unknown_persona(client: TestClient, demo: Session) -> None:
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Persona p99 not found"}
+
+
+def test_persona_without_days_does_not_break_the_list(client: TestClient, demo: Session) -> None:
+    from app.models import Persona
+
+    demo.add(Persona(id="empty", name="Empty"))
+    demo.commit()
+
+    users = {u["id"]: u for u in client.get("/api/users").json()}
+
+    assert users["empty"]["insights_status"] == "insufficient_days"
+    assert users["empty"]["days_with_data"] == 0
+    assert client.get("/api/users/empty/days").json() == []
+    assert client.get("/api/users/empty/patterns").json()["status"] == "insufficient_days"
+
+
+def test_label_mode_and_norm_reference(client: TestClient, demo: Session) -> None:
+    users = {u["id"]: u for u in client.get("/api/users").json()}
+
+    assert users["p06"]["label_mode"] == "personal"
+    assert users["p06"]["norm_reference"] == "good_days"
+    assert users["p01"]["norm_reference"] == "all_days"  # only 3 good days

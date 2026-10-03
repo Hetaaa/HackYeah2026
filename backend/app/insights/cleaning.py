@@ -102,20 +102,14 @@ def align(
 def add_label(df: pd.DataFrame) -> dict:
     """Median-centred composite of mood/fatigue/stress, fitted on in-window days (in place).
 
-    With fewer than MIN_LABEL_DAYS check-ins there is no personal baseline yet: the label falls
-    back to the plain mean of the three answers (>= 3.5 good, <= 2.5 bad), score = mean - 3.
+    With fewer than MIN_LABEL_DAYS check-ins, or identical answers every day, there is no personal
+    baseline: the label falls back to the plain mean of the three answers (_absolute_label).
     """
     ok = df[C.LABEL_FIELDS].notna().all(axis=1)
     fit = ok & ~df.outside_window
     params: dict = {"label_source": "personal"}
     if fit.sum() < C.MIN_LABEL_DAYS:
-        mean = df[C.LABEL_FIELDS].mean(axis=1).where(ok)
-        df["comp"] = mean
-        df["z"] = mean - 3
-        label = np.select([mean >= 3.5, mean <= 2.5], ["good", "bad"], "neutral")
-        df["label"] = pd.Series(label, index=df.index).where(ok)
-        raw_sd = float(mean[ok].std(ddof=0)) if ok.sum() > 1 else np.nan
-        return {"label_source": "absolute", "raw_sd": raw_sd, "comp_sd": np.nan}
+        return _absolute_label(df, ok)
     dev = pd.DataFrame(index=df.index)
     for f in C.LABEL_FIELDS:
         med = float(df.loc[fit, f].median()) if fit.any() else np.nan
@@ -124,7 +118,9 @@ def add_label(df: pd.DataFrame) -> dict:
         params[f] = {"median": med, "sd": sd}
     comp = dev.mean(axis=1).where(ok)
     comp_sd = float(comp[fit].std(ddof=0)) if fit.any() else np.nan
-    z = comp / comp_sd if comp_sd and comp_sd > 0 else comp * np.nan
+    if not comp_sd > 0:  # identical answers every day: no personal spread to measure against
+        return _absolute_label(df, ok)
+    z = comp / comp_sd
     df["comp"] = comp
     df["z"] = z
     label = np.select([z < -C.DEAD_ZONE, z > C.DEAD_ZONE], ["bad", "good"], "neutral")
@@ -133,6 +129,17 @@ def add_label(df: pd.DataFrame) -> dict:
     raw = df.loc[ok, C.LABEL_FIELDS].mean(axis=1)
     params["raw_sd"] = float(raw.std(ddof=0)) if ok.any() else np.nan
     return params
+
+
+def _absolute_label(df: pd.DataFrame, ok: pd.Series) -> dict:
+    """No personal baseline: mean of the 3 answers, >= 3.5 good, <= 2.5 bad, score = mean - 3."""
+    mean = df[C.LABEL_FIELDS].mean(axis=1).where(ok)
+    df["comp"] = mean
+    df["z"] = mean - 3
+    label = np.select([mean >= 3.5, mean <= 2.5], ["good", "bad"], "neutral")
+    df["label"] = pd.Series(label, index=df.index).where(ok)
+    raw_sd = float(mean[ok].std(ddof=0)) if ok.sum() > 1 else np.nan
+    return {"label_source": "absolute", "raw_sd": raw_sd, "comp_sd": np.nan}
 
 
 def build_table(
@@ -164,6 +171,7 @@ def build_table(
         "n_days": int(df.label.notna().sum()),
         "n_full_days": int(full.sum()),
         "n_full_days_needed": C.MIN_FULL_DAYS,
+        "label_source": label["label_source"],
         "classic_nights": int((user.nights.sleep_type == "classic").sum()),
     }
     return df, info

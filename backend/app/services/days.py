@@ -15,7 +15,7 @@ def get_day(session: Session, user_id: str, date: dt.date) -> Day | None:
     return session.exec(select(Day).where(Day.user_id == user_id, Day.date == date)).first()
 
 
-def analyze_user(session: Session, user_id: str) -> dict:
+def get_analysis(session: Session, user_id: str) -> dict:
     """Analysis of all days of one user (cached in app.analysis until the data changes)."""
     persona = session.get(Persona, user_id)
     window_end = persona.analysis_window_end if persona else None
@@ -25,10 +25,12 @@ def analyze_user(session: Session, user_id: str) -> dict:
 def list_day_summaries(
     session: Session, user_id: str, date_from: dt.date | None, date_to: dt.date | None
 ) -> list[DaySummary]:
-    result = analyze_user(session, user_id)
+    persona = session.get(Persona, user_id)
+    days = list_days(session, user_id)
+    result = analysis.analyze(days, persona.analysis_window_end if persona else None)
     return [
         analysis.day_summary(result, day.date)
-        for day in list_days(session, user_id)
+        for day in days
         if (date_from is None or day.date >= date_from) and (date_to is None or day.date <= date_to)
     ]
 
@@ -37,7 +39,7 @@ def get_day_detail(session: Session, user_id: str, date: dt.date) -> DayDetail |
     day = get_day(session, user_id, date)
     if day is None:
         return None
-    return analysis.day_detail(analyze_user(session, user_id), day, survey_of(day))
+    return analysis.day_detail(get_analysis(session, user_id), day, survey_of(day))
 
 
 def survey_of(day: Day) -> SurveyBase | None:

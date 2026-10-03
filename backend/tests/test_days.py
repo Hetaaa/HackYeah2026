@@ -46,3 +46,19 @@ def test_day_not_found(client: TestClient, demo: Session) -> None:
 
     assert response.status_code == 404
     assert response.json() == {"detail": "No data for 2030-01-01"}
+
+
+def test_in_patterns_follows_group_e_choice(client: TestClient, demo: Session) -> None:
+    day = client.get("/api/users/p01/days/2019-11-20").json()
+    flags = {f["feature"]: f["in_patterns"] for f in day["features"]}
+
+    assert flags["z_cardio_peak"] is True and flags["mvpa"] is False  # p01 uses HR zones
+    assert flags["sleep_eff"] is False  # view-only feature
+
+
+def test_tile_headline_matches_day_summary(client: TestClient, demo: Session) -> None:
+    tiles = client.get("/api/users/p06/days?to=2019-11-30").json()
+    for tile in tiles:
+        if tile["label"] in ("bad", "good"):
+            detail = client.get(f"/api/users/p06/days/{tile['date']}").json()
+            assert tile["headline"] == detail["summary"]

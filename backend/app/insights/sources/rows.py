@@ -28,6 +28,19 @@ ACTIVITY = {  # days column -> Day field
     "z_cardio_peak": "cardio_peak_minutes",
 }
 SURVEY = ["mood", "fatigue", "stress", "sleep_quality"]
+FIELDS = {  # every Day field the algorithm reads (missing ones become empty columns)
+    "sleep_minutes",
+    "sleep_start",
+    "sleep_end",
+    "sleep_type",
+    "time_in_bed_minutes",
+    "wear_minutes",
+    "wear_minutes_day",
+    "survey_at",
+    *NIGHT.values(),
+    *ACTIVITY.values(),
+    *SURVEY,
+}
 DEFAULT_SURVEY_HOUR = 8  # survey time unknown -> assume a morning check-in
 
 
@@ -36,7 +49,7 @@ def _num(rows: pd.DataFrame, field: str) -> pd.Series:
 
 
 def user_from_rows(user_id: str, rows: list[dict]) -> UserData:
-    df = pd.DataFrame(rows, columns=sorted({k for r in rows for k in r} | {"date"}))
+    df = pd.DataFrame(rows, columns=sorted({k for r in rows for k in r} | FIELDS | {"date"}))
     df["date"] = pd.to_datetime(df.date)
     df = df.drop_duplicates("date", keep="last").set_index("date").sort_index()
 
@@ -48,11 +61,12 @@ def user_from_rows(user_id: str, rows: list[dict]) -> UserData:
     nights["sleep_h"] = _num(n, "sleep_minutes") / 60
     nights["time_in_bed_h"] = _num(n, "time_in_bed_minutes") / 60
     start = pd.to_datetime(n.get("sleep_start"), format="ISO8601")
-    nights["bedtime_h"] = (start - (n.index - pd.Timedelta(hours=6))).dt.total_seconds() / 3600
+    bedtime = (start - (n.index - pd.Timedelta(hours=6))).dt.total_seconds() / 3600
+    nights["bedtime_h"] = bedtime.where(bedtime.between(0, 18))  # 18:00 (D-1) .. 12:00 (D)
     for col, field in NIGHT.items():
         nights[col] = _num(n, field)
-    stages = nights.sleep_type == "stages"
-    nights.loc[~stages, ["wake_pct", "rem_pct", "deep_pct"]] = np.nan
+    classic = nights.sleep_type == "classic"  # no sleep stages; unknown type keeps the values
+    nights.loc[classic, ["wake_pct", "rem_pct", "deep_pct"]] = np.nan
     for col, (lo, hi) in C.VALID.items():
         if col in nights:
             nights[col] = nights[col].where(nights[col].between(lo, hi))
@@ -63,7 +77,7 @@ def user_from_rows(user_id: str, rows: list[dict]) -> UserData:
     days["wear_min"] = _num(df, "wear_minutes").fillna(24 * 60)
     days["wear_day"] = _num(df, "wear_minutes_day").fillna(18 * 60)
 
-    s = df[df[SURVEY[:3]].notna().any(axis=1)] if set(SURVEY[:3]) <= set(df) else df.iloc[:0]
+    s = df[df[SURVEY[:3]].notna().any(axis=1)]
     local_8am = (s.index + pd.Timedelta(hours=DEFAULT_SURVEY_HOUR)).tz_localize(C.TZ)
     ts = pd.Series(local_8am.tz_convert("UTC"), index=s.index)
     if "survey_at" in s:

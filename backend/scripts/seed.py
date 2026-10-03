@@ -24,29 +24,38 @@ PERSONAS: list[dict[str, str]] = [
     {
         "id": "p03",
         "name": "Jordan",
-        "description": "Bad days come with a raised resting HR.",
+        "description": "Bad days come with a raised heart rate during sleep.",
     },
 ]
 
 
 def generate_days(user_id: str, rng: random.Random) -> list[Day]:
+    """Days with a planted cause of bad days, aligned like real data: last night's sleep or
+    sleep heart rate (p01, p03) and the previous day's activity (p02) shape the morning check-in.
+    Uses normalvariate: gauss caches Box-Muller pairs, which couples unrelated draws."""
+    normal = rng.normalvariate
+    triggered, state = [], False
+    for _ in range(DAYS_COUNT + 1):
+        state = rng.random() < (0.45 if state else 0.2)
+        triggered.append(state)
     days: list[Day] = []
-    triggered = False
     for offset in range(DAYS_COUNT):
-        triggered = rng.random() < (0.45 if triggered else 0.2)
-        sleep = rng.gauss(450, 30)
-        resting_hr = rng.gauss(58, 1.5)
-        steps = rng.gauss(9000, 1800)
-        active = rng.gauss(50, 12)
-        if triggered and user_id == "p01":
-            sleep -= rng.gauss(110, 20)
-        if triggered and user_id == "p02":
-            steps, active = rng.gauss(3000, 700), rng.gauss(10, 4)
-        if triggered and user_id == "p03":
-            resting_hr += rng.gauss(7, 1.5)
-        wellness = rng.gauss(3.9, 0.35) - (1.7 if triggered else 0)
+        bad = triggered[offset]
+        sleep = normal(450, 30)
+        resting_hr = normal(58, 1.5)
+        sleep_hr = resting_hr + normal(4, 1)
+        steps = normal(9000, 1800)
+        active = normal(50, 12)
+        if bad and user_id == "p01":
+            sleep -= normal(110, 20)
+        if triggered[offset + 1] and user_id == "p02":  # low activity the day before a bad day
+            steps, active = normal(3000, 700), normal(10, 4)
+        if bad and user_id == "p03":
+            resting_hr += normal(7, 1.5)
+            sleep_hr += normal(7, 1.5)
+        wellness = normal(3.9, 0.35) - (1.7 if bad else 0)
         survey = {
-            name: min(5, max(1, round(rng.gauss(wellness, 0.5))))
+            name: min(5, max(1, round(normal(wellness, 0.5))))
             for name in ("mood", "fatigue", "sleep_quality", "stress")
         }
         has_survey = offset < DAYS_COUNT - 1 and rng.random() > 0.05
@@ -57,6 +66,7 @@ def generate_days(user_id: str, rng: random.Random) -> list[Day]:
                     "date": START_DATE + dt.timedelta(days=offset),
                     "sleep_minutes": round(sleep),
                     "resting_hr": round(resting_hr),
+                    "sleep_hr_mean": round(sleep_hr, 1),
                     "steps": round(max(steps, 300)),
                     "active_minutes": round(max(active, 0)),
                     "calories": round(1900 + 0.045 * steps + 4 * active),

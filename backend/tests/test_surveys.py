@@ -34,3 +34,45 @@ def test_survey_validation(client: TestClient, demo: Session) -> None:
     response = client.put("/api/users/p10/surveys/2020-03-05", json=ANSWERS | {"mood": 6})
 
     assert response.status_code == 422
+
+
+def test_survey_date_out_of_range(client: TestClient, demo: Session) -> None:
+    for date in ("1677-01-01", "1999-12-31", "2300-01-01"):
+        response = client.put(f"/api/users/p10/surveys/{date}", json=ANSWERS)
+        assert response.status_code == 422, date
+    assert client.get("/api/users").status_code == 200
+
+
+def test_editing_a_survey_keeps_its_time(client: TestClient, demo: Session) -> None:
+    from sqlmodel import select
+
+    from app.models import Day
+
+    client.put("/api/users/p10/surveys/2020-03-05", json=ANSWERS)
+    first = demo.exec(select(Day).where(Day.user_id == "p10", Day.date == "2020-03-05")).one()
+    first_at = first.survey_at
+
+    client.put("/api/users/p10/surveys/2020-03-05", json=ANSWERS | {"mood": 2})
+    demo.refresh(first)
+
+    assert first.mood == 2 and first.survey_at == first_at
+
+
+def test_new_survey_refits_other_days(client: TestClient, demo: Session) -> None:
+    before = client.get("/api/users/p10/days/2019-11-20").json()["score"]
+
+    client.put("/api/users/p10/surveys/2020-02-29", json=ANSWERS)
+
+    after = client.get("/api/users/p10/days/2019-11-20").json()["score"]
+    assert after != before  # labels are relative to the whole personal history
+
+
+def test_identical_answers_keep_labels(client: TestClient, session: Session) -> None:
+    session.add(Persona(id="flat", name="Flat"))
+    session.commit()
+    same = {"mood": 3, "fatigue": 3, "sleep_quality": 3, "stress": 3}
+    for day in range(1, 17):  # crosses the 14 check-in boundary
+        body = client.put(f"/api/users/flat/surveys/2024-01-{day:02d}", json=same).json()
+        assert body["label"] == "neutral", day
+
+    assert client.get("/api/users/flat").json()["label_mode"] == "absolute"

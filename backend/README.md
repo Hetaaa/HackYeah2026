@@ -76,8 +76,22 @@ Brak auth: persona to `user_id` w ścieżce. Szczegóły i przykłady w Swaggerz
 | GET | `/api/users/{user_id}/surveys/{date}` | czy ankieta wypełniona (404 jeśli nie) |
 | PUT | `/api/users/{user_id}/surveys/{date}` | zapis ankiety, zwraca etykietę dnia |
 
-Ścieżki i kształty odpowiedzi są stabilne; algorytm tylko dodał pola (np. `reasons`, `status`,
-`has_reason`, `headline`, `insights_status`). Szczegóły i przykłady w Swaggerze.
+Ścieżki się nie zmieniły. Algorytm dodał pola (`reasons`, `status`, `has_reason`, `headline`,
+`insights_status`, `label_mode`, `norm_reference`, statystyki wzorców), ale **zmienił też znaczenie
+kilku istniejących** względem stuba:
+
+| Pole | Było (stub) | Jest |
+| ---- | ----------- | ---- |
+| `feature` (klucze cech) | `sleep_minutes`, `resting_hr`, `steps`, `active_minutes`, `calories` | `sleep_h`, `bedtime_h`, `wake_pct`, `steps`, `z_cardio_peak` / `mvpa`, `lightly`, `rem_pct`, `hr_sleep_mean` + cechy tylko do widoku; lista: `FEATURES` w `app/insights/config.py` |
+| `unit` | `min`, `bpm`, ... | `h`, `clock`, `%`, `bpm`, `steps`, `min`, `pts`; `clock` = godziny od 18:00 poprzedniego dnia (5.5 = 23:30), do wyświetlania jest `display` |
+| `score` | średnia 4 odpowiedzi 1–5 | 0 = typowy dzień osoby, może być ujemny (`label_mode` mówi, czy to osobisty z-score, czy średnia − 3) |
+| `label` | średnia 4 odpowiedzi, progi 3,5 / 2,5 | osobisty, z mood + fatigue + stress (bez `sleep_quality`) |
+| `Deviation.difference` / `z` | od mediany, skala IQR | od średniej dobrych dni, skala SD dobrych dni |
+| `NormRange` | dobre dni | dobre dni, a przy < 10 dobrych dniach wszystkie dni (`norm_reference`) |
+| `PatternReport` / `Recipe` | progi z kwartyli, bez testu | tylko istotne wzorce (`status`, `level`, `p_value`) |
+
+Po zmianie schematu bazy: `uv run python -m scripts.reset_db` (bez tego stara `app.db` nie ma
+nowych kolumn, a seed się nie uruchomi, bo `Persona` nie jest pusta). Szczegóły w Swaggerze.
 
 ## Analiza (zespół od algorytmów)
 
@@ -99,7 +113,8 @@ z wyniku funkcjami:
 Najważniejsze zasady (szczegóły i uzasadnienie: [docs/insights.md](docs/insights.md)):
 
 - **Etykieta dnia jest osobista**: mood + fatigue + stress względem mediany danej osoby
-  (`sleep_quality` zbieramy, ale nie wchodzi do etykiety). Przy < 14 ankietach: próg 3,5 / 2,5.
+  (`sleep_quality` zbieramy, ale nie wchodzi do etykiety). Przy < 14 ankietach albo identycznych
+  odpowiedziach: próg 3,5 / 2,5 (`label_mode = absolute`).
 - **Wzorce** to progi typu „sen < 6 h → 11 z 14 dni złych” z testem permutacyjnym (p ≤ 0,05).
   Wymagają 60 dni z ankietą i danymi z zegarka; wcześniej `status = insufficient_days`.
 - **„Possible reason”** w widoku dnia pojawia się tylko z istotnego wzorca. Pole `deviations`
@@ -110,7 +125,8 @@ Najważniejsze zasady (szczegóły i uzasadnienie: [docs/insights.md](docs/insig
 ## Dane demo i import
 
 Seed ładuje prawdziwe persony z PMData z `data/demo/*.csv` (p06 Alex, p01 Robin, p10 Sam,
-p16 Kim); bez tych plików generuje 3 syntetyczne persony. CSV powstaje z surowego PMData
+p16 Kim); bez tych plików generuje 3 syntetyczne persony z zaplanowanym wzorcem (krótki sen,
+mało ruchu dzień wcześniej, wysokie tętno w nocy). CSV powstaje z surowego PMData
 (spoza repo) tym samym adapterem Fitbita, którego użyje synchronizacja zegarka:
 
 ```bash

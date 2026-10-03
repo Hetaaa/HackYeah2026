@@ -37,6 +37,15 @@ class PersonaRead(BaseModel):
         default=0, description="Days with a check-in and watch data", examples=[133]
     )
     days_needed: int = Field(default=60, description="Days needed for insights", examples=[60])
+    label_mode: Literal["personal", "absolute"] = Field(
+        default="personal",
+        description="personal: labels and scores relative to the user's history; absolute: "
+        "fewer than 14 check-ins (or identical answers), score = mean of mood/fatigue/stress - 3",
+    )
+    norm_reference: Literal["good_days", "all_days"] = Field(
+        default="good_days",
+        description="What norms and deviations compare with (all_days if < 10 good days)",
+    )
 
 
 class NormRange(BaseModel):
@@ -52,7 +61,11 @@ class FeatureValue(BaseModel):
     feature: str = Field(examples=["sleep_h"])
     label: str = Field(examples=["Sleep"])
     unit: str = Field(examples=["h"], description="h, clock, %, bpm, steps, min, pts")
-    value: float | None = Field(examples=[5.9])
+    value: float | None = Field(
+        examples=[5.9],
+        description="In `unit`; unit 'clock' (bedtime) = hours since 18:00 the evening before "
+        "(5.5 = 23:30). Use `display` for text.",
+    )
     norm: NormRange | None
     when: When = Field(default="last_night", description="Which data the value describes")
     display: str | None = Field(default=None, examples=["5 h 54 min"])
@@ -92,7 +105,8 @@ class DaySummary(BaseModel):
     date: dt.date
     label: Label | None = Field(description="null when the survey is missing")
     score: float | None = Field(
-        examples=[-1.2], description="Personal z-score of the check-in (0 = typical day)"
+        examples=[-1.2],
+        description="Check-in score, 0 = typical day (see PersonaRead.label_mode)",
     )
     top_deviations: list[Deviation] = Field(description="Up to 2 biggest deviations")
     has_reason: bool = Field(default=False, description="A possible reason exists for this day")
@@ -121,7 +135,9 @@ class PatternStats(BaseModel):
         description="preliminary = early signal, show with care"
     )
     when: When
-    threshold: float = Field(examples=[6.0])
+    threshold: float = Field(
+        examples=[6.0], description="Same unit as FeatureValue.value (bedtime: hours since 18:00)"
+    )
     days_in_condition: int = Field(description="Days on which the condition held", examples=[14])
     target_days_in_condition: int = Field(description="...of which bad (good) days", examples=[11])
     rate_in: float = Field(
@@ -177,4 +193,6 @@ class SurveyCreate(SurveyBase):
 class SurveyRead(SurveyBase):
     date: dt.date
     label: Label | None
-    score: float | None = Field(examples=[-1.2], description="Personal z-score of the check-in")
+    score: float | None = Field(
+        examples=[-1.2], description="Check-in score, 0 = typical day (see PersonaRead.label_mode)"
+    )

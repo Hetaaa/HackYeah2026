@@ -5,7 +5,7 @@ from sqlmodel import Session
 from app import analysis
 from app.models import Day
 from app.schemas import SurveyCreate, SurveyRead
-from app.services.days import analyze_user, get_day, survey_of
+from app.services.days import get_analysis, get_day, survey_of
 
 
 def get_survey(session: Session, user_id: str, date: dt.date) -> SurveyRead | None:
@@ -17,7 +17,10 @@ def get_survey(session: Session, user_id: str, date: dt.date) -> SurveyRead | No
 
 def save_survey(session: Session, user_id: str, date: dt.date, data: SurveyCreate) -> SurveyRead:
     day = get_day(session, user_id, date)
-    answers = data.model_dump() | {"survey_at": dt.datetime.now(dt.UTC)}
+    answers = data.model_dump()
+    if day is None or day.survey_at is None:
+        # first fill only: editing an old survey must not move its time past that night's sleep
+        answers["survey_at"] = dt.datetime.now(dt.UTC)
     if day is None:
         day = Day.model_validate({"user_id": user_id, "date": date, **answers})
     else:
@@ -30,7 +33,7 @@ def save_survey(session: Session, user_id: str, date: dt.date, data: SurveyCreat
 
 def to_read(session: Session, day: Day) -> SurveyRead:
     """The label is personal (relative to the user's history), so it needs all their days."""
-    result = analyze_user(session, day.user_id)
+    result = get_analysis(session, day.user_id)
     return SurveyRead(
         date=day.date,
         mood=day.mood,

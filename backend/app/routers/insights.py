@@ -20,7 +20,7 @@ def get_patterns(persona: PersonaDep, session: SessionDep) -> PatternReport:
 @router.get(
     "/recipe",
     summary="Good day recipe",
-    description="3-5 things the user's good days have in common.",
+    description="Up to 3 things the user's good days have in common (significant patterns).",
 )
 def get_recipe(persona: PersonaDep, session: SessionDep) -> Recipe:
     return insights_service.get_recipe(session, persona.id)

@@ -7,13 +7,14 @@ so the calendar does not recompute per day and a saved survey is picked up immed
 """
 
 import datetime as dt
+import threading
 from collections import OrderedDict
 from dataclasses import dataclass
 
 import pandas as pd
 
 from app.insights import config as C
-from app.insights import texts
+from app.insights import engine, texts
 from app.insights.analyze import analyze_user
 from app.insights.sources.rows import user_from_rows
 from app.models import Day, SurveyBase
@@ -42,23 +43,26 @@ class FeatureInfo:
 FEATURES: dict[str, FeatureInfo] = {n: FeatureInfo(f.label, f.unit) for n, f in C.FEATURES.items()}
 CACHE_SIZE = 32
 _cache: OrderedDict[tuple, dict] = OrderedDict()
+_lock = threading.Lock()  # sync routes run in a threadpool: compute each version once
 
 
 def analyze(days: list[Day], window_end: dt.date | None = None) -> dict:
     """Full analysis of one user's days (all rows of that user, any order)."""
     rows = [day.model_dump(exclude={"id"}) for day in days]
     key = (window_end, tuple(tuple(sorted(row.items(), key=lambda kv: kv[0])) for row in rows))
-    if key in _cache:
-        _cache.move_to_end(key)
-        return _cache[key]
-    user_id = rows[0]["user_id"] if rows else ""
-    end = pd.Timestamp(window_end) if window_end else None
-    result = analyze_user(user_from_rows(user_id, rows), end, all_dates=True)
-    result["by_date"] = {entry["date"]: entry for entry in result["days"]}
-    _cache[key] = result
-    if len(_cache) > CACHE_SIZE:
-        _cache.popitem(last=False)
-    return result
+    with _lock:
+        cached = _cache.get(key)
+        if cached is not None:
+            _cache.move_to_end(key)
+            return cached
+        user_id = rows[0]["user_id"] if rows else ""
+        end = pd.Timestamp(window_end) if window_end else None
+        result = analyze_user(user_from_rows(user_id, rows), end, all_dates=True)
+        result["by_date"] = {entry["date"]: entry for entry in result["days"]}
+        _cache[key] = result
+        if len(_cache) > CACHE_SIZE:
+            _cache.popitem(last=False)
+        return result
 
 
 # ---------------------------------------------------------------- user level
@@ -70,6 +74,16 @@ def insights_status(analysis: dict) -> InsightStatus:
 def days_with_data(analysis: dict) -> tuple[int, int]:
     """(days with a check-in and watch data, days needed before insights appear)."""
     return analysis["info"]["n_full_days"], analysis["info"]["n_full_days_needed"]
+
+
+def label_mode(analysis: dict) -> str:
+    """'personal' (relative to the user's history) or 'absolute' (< 14 check-ins / no spread)."""
+    return analysis["info"]["label_source"]
+
+
+def norm_reference(analysis: dict) -> str:
+    """'good_days', or 'all_days' when the user has fewer than 10 good days."""
+    return analysis["info"]["norm_source"]
 
 
 # ---------------------------------------------------------------- day level
@@ -139,20 +153,23 @@ def explain_day(analysis: dict, date: dt.date) -> str | None:
 def day_summary(analysis: dict, date: dt.date) -> DaySummary:
     entry = _entry(analysis, date) or {"label": None, "score": None, "reasons": [], "compare": []}
     deviations = [_deviation(c) for c in entry["compare"]]
-    headline = entry["reasons"][0]["text"] if entry["reasons"] else None
+    # same line as the day view: reason, else "no clear pattern" on good/bad days, else (neutral
+    # or no check-in) the biggest difference from the average good day
+    headline = explain_day(analysis, date) or (deviations[0].text if deviations else None)
     return DaySummary(
         date=date,
         label=entry["label"],
         score=entry["score"],
         top_deviations=deviations[:2],
         has_reason=bool(entry["reasons"]),
-        headline=headline or (deviations[0].text if deviations else None),
+        headline=headline,
     )
 
 
 def day_detail(analysis: dict, day: Day, survey: SurveyBase | None) -> DayDetail:
     entry = _entry(analysis, day.date)
     values = entry["values"] if entry else []
+    searched = engine.search_features(analysis["info"]["group_e_feature"])
     return DayDetail(
         date=day.date,
         label=entry["label"] if entry else None,
@@ -167,7 +184,7 @@ def day_detail(analysis: dict, day: Day, survey: SurveyBase | None) -> DayDetail
                 norm=_norm(v["norm"], v["reference"]),
                 when=v["when"],
                 display=v["display"],
-                in_patterns=v["mode"] == "search",
+                in_patterns=v["feature"] in searched,
             )
             for v in values
         ],
@@ -204,7 +221,8 @@ def _stats(p: dict) -> dict:
         "target_days_in_condition": p["target_days_in_condition"],
         "rate_in": p["rate_in"],
         "rate_out": p["rate_out"],
-        "p_value": p["p_global"],
+        # significant: tested against all features; preliminary: against its own feature only
+        "p_value": p["p_global"] if p["level"] == "significant" else p["p_feature"],
         "feature": p["feature"],
         "label": FEATURES[p["feature"]].label,
         "condition": _condition(p),
@@ -242,10 +260,6 @@ def _status_summary(analysis: dict, status: str, kind: str, n: int) -> str:
     }[status]
 
 
-def _count(analysis: dict, label: str) -> int:
-    return sum(entry["label"] == label for entry in analysis["days"])
-
-
 def bad_day_patterns(analysis: dict) -> PatternReport:
     group = analysis["patterns"]["bad"]
     patterns = [
@@ -260,7 +274,7 @@ def bad_day_patterns(analysis: dict) -> PatternReport:
     return PatternReport(
         status=group["status"],
         summary=_status_summary(analysis, group["status"], "bad", len(patterns)),
-        bad_days_count=_count(analysis, "bad"),
+        bad_days_count=analysis["info"]["n_bad_window"],
         patterns=patterns,
     )
 
@@ -271,6 +285,6 @@ def good_day_recipe(analysis: dict) -> Recipe:
     return Recipe(
         status=group["status"],
         summary=_status_summary(analysis, group["status"], "good", len(ingredients)),
-        good_days_count=_count(analysis, "good"),
+        good_days_count=analysis["info"]["n_good_window"],
         ingredients=ingredients,
     )
