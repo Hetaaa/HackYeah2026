@@ -2,6 +2,8 @@
 
 Raw PMData stays outside the repo; this turns the Fitbit export + wellness answers of the
 chosen participants into Day rows through the same Fitbit adapter the real watch sync uses.
+Each persona gets a demo "today" (see pick_today): days after it are dropped and its
+check-in is left empty so it can be filled live; the real answers go to demo_answers.
 
 Run with: uv run python -m scripts.import_pmdata ../../pmdata [--all]
   --all  export every participant, not only the personas
@@ -15,11 +17,14 @@ import pandas as pd
 
 from app.insights import cleaning
 from app.insights import config as C
+from app.insights.analyze import analyze_user
 from app.insights.sources import pmdata
+from app.insights.sources.rows import user_from_rows
 
 OUT_DIR = Path(__file__).resolve().parent.parent / "data" / "demo"
 CACHE = Path(".cache/insights")
 SURVEY = ["mood", "fatigue", "sleep_quality", "stress"]
+MIN_HISTORY_DAYS = 90  # "today" late enough for a rich calendar
 NIGHT = {  # Day column -> nights column
     "sleep_end": "end",
     "sleep_type": "sleep_type",
@@ -89,6 +94,51 @@ def day_rows(root: Path, pid: str) -> list[dict[str, str]]:
     return rows
 
 
+def _analyze(pid: str, rows: list[dict[str, str]]) -> dict:
+    data = [{k: (v or None) for k, v in r.items()} for r in rows]
+    return analyze_user(user_from_rows(pid, data), C.PMDATA_WINDOW_END, all_dates=True)
+
+
+def _story_kind(result: dict) -> str | None:
+    """The persona's story: bad-day patterns if it has significant ones, else the recipe."""
+    for kind in ("bad", "good"):
+        if any(p["level"] == "significant" for p in result["patterns"][kind]["patterns"]):
+            return kind
+    return None
+
+
+def pick_today(pid: str, rows: list[dict[str, str]]) -> tuple[str, dict[str, str]] | None:
+    """Latest day that tells the persona's story live (scanned from the end, stop at first hit):
+
+    - before its check-in, last night / the day before already trigger a significant pattern
+      (the "Today" heads-up),
+    - its real answers, filled in during the demo, give the matching label and a reason,
+    - the persona keeps that pattern once the day is added.
+    Returns (date, real answers) or None.
+    """
+    kind = _story_kind(_analyze(pid, rows))
+    if kind is None:
+        return None
+    min_date = (pd.Timestamp(rows[0]["date"]) + pd.Timedelta(days=MIN_HISTORY_DAYS)).date()
+    end = (C.PMDATA_WINDOW_END - pd.Timedelta(days=1)).date().isoformat()
+    for i in range(len(rows) - 1, -1, -1):
+        today = rows[i]
+        if today["date"] > end or today["date"] < min_date.isoformat():
+            continue
+        if not all(today[f] for f in SURVEY):
+            continue
+        answers = {f: today[f] for f in SURVEY}
+        before = rows[:i] + [today | dict.fromkeys([*SURVEY, "survey_at"], "")]
+        entry = _analyze(pid, before)["days"][-1]
+        if not entry["signals"][kind]:
+            continue
+        after = _analyze(pid, rows[: i + 1])
+        day = after["days"][-1]
+        if day["label"] == kind and day["reasons"] and _story_kind(after) == kind:
+            return today["date"], answers
+    return None
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("pmdata", type=Path)
@@ -96,22 +146,39 @@ def main() -> None:
     args = parser.parse_args()
     pids = pmdata.PIDS if args.all else list(C.PERSONAS)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    personas, days = [], []
+    for position, pid in enumerate(pids):
+        rows = day_rows(args.pmdata, pid)
+        picked = pick_today(pid, rows)
+        today, answers = picked if picked else (rows[-1]["date"], None)
+        # the demo ends "today": later days are dropped, today's check-in is left to fill live
+        rows = [r for r in rows if r["date"] <= today]
+        if answers:
+            rows[-1] |= dict.fromkeys([*SURVEY, "survey_at"], "")
+        days += rows
+        persona = C.PERSONAS.get(pid)
+        name, description = (persona.name, persona.tagline) if persona else (pid.upper(), "")
+        personas.append(
+            {
+                "id": pid,
+                "name": name,
+                "description": description,
+                "analysis_window_end": C.PMDATA_WINDOW_END.date().isoformat(),
+                "demo_today": today,
+                "demo_answers": ",".join(answers[f] for f in SURVEY) if answers else "",
+                "position": position,
+            }
+        )
+        print(f"{pid}: today {today}, answers {answers}, {len(rows)} days")
     with (OUT_DIR / "personas.csv").open("w", newline="", encoding="utf-8") as file:
-        writer = csv.writer(file, lineterminator="\n")
-        writer.writerow(["id", "name", "description", "analysis_window_end"])
-        for pid in pids:
-            persona = C.PERSONAS.get(pid)
-            name, description = (persona.name, persona.tagline) if persona else (pid.upper(), "")
-            writer.writerow([pid, name, description, C.PMDATA_WINDOW_END.date().isoformat()])
+        writer = csv.DictWriter(file, fieldnames=list(personas[0]), lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(personas)
     with (OUT_DIR / "days.csv").open("w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=COLUMNS, lineterminator="\n")
         writer.writeheader()
-        total = 0
-        for pid in pids:
-            rows = day_rows(args.pmdata, pid)
-            writer.writerows(rows)
-            total += len(rows)
-    print(f"Wrote {len(pids)} personas, {total} days to {OUT_DIR}")
+        writer.writerows(days)
+    print(f"Wrote {len(pids)} personas, {len(days)} days to {OUT_DIR}")
 
 
 if __name__ == "__main__":

@@ -38,9 +38,8 @@ def analyze_user(
     days = []
     for _, row in table.iterrows():
         label = row.label if isinstance(row.label, str) else None
-        reasons = []
-        if label in ("bad", "good"):
-            reasons = calendar.day_reasons(row, patterns[label]["patterns"], nrm)
+        signals = {k: calendar.day_reasons(row, patterns[k]["patterns"], nrm) for k in patterns}
+        reasons = signals[label] if label in ("bad", "good") else []
         days.append(
             {
                 "date": str(row.date.date()),
@@ -49,6 +48,7 @@ def analyze_user(
                 "outside_window": bool(row.outside_window),
                 "survey": {f: _num(row[f]) for f in C.SURVEY_RAW},
                 "reasons": reasons,
+                "signals": signals,
                 "no_reason_text": texts.NO_REASON
                 if label in ("bad", "good") and not reasons
                 else None,

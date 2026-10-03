@@ -9,7 +9,7 @@ def test_list_demo_personas(client: TestClient, demo: Session) -> None:
     assert [u["name"] for u in users] == ["Robin", "Alex", "Sam", "Kim"]
     assert all(u["insights_status"] == "ok" for u in users)
     p06 = users[1]
-    assert p06["days_with_data"] == 144 and p06["days_needed"] == 60
+    assert p06["days_with_data"] == 122 and p06["days_needed"] == 60
     assert p06["first_date"] == "2019-11-01"
 
 

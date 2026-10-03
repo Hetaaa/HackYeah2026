@@ -13,6 +13,15 @@ class Persona(SQLModel, table=True):
         description="Days from this date on are shown but not used to find patterns "
         "(PMData demo: 2020-03-12, COVID lockdown). None for real users.",
     )
+    demo_today: dt.date | None = Field(
+        default=None, description="Demo clock: the persona's 'today'. None = the real date"
+    )
+    demo_answers: str | None = Field(
+        default=None,
+        max_length=20,
+        description="Demo only: real check-in of demo_today, 'mood,fatigue,sleep_quality,stress'",
+    )
+    position: int = Field(default=0, description="Order in the persona switcher")
 
 
 class FitbitBase(SQLModel):

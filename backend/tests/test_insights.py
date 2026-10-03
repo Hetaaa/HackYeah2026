@@ -14,7 +14,7 @@ def test_bad_day_patterns(client: TestClient, demo: Session) -> None:
     pattern = report["patterns"][0]
     assert pattern["feature"] == "wake_pct" and pattern["condition"] == "over 12%"
     assert pattern["level"] == "significant" and pattern["p_value"] <= 0.05
-    assert (pattern["days_in_condition"], pattern["target_days_in_condition"]) == (30, 16)
+    assert (pattern["days_in_condition"], pattern["target_days_in_condition"]) == (27, 15)
     assert pattern["bad_share"] > pattern["good_share"]
     assert len(pattern["example_dates"]) == 3
 

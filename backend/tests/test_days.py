@@ -37,8 +37,11 @@ def test_bad_day_without_pattern(client: TestClient, demo: Session) -> None:
     assert day["summary"] == "No clear pattern explains this day."
 
 
-def test_day_after_window_is_flagged(client: TestClient, demo: Session) -> None:
-    assert client.get("/api/users/p06/days/2020-03-20").json()["outside_window"] is True
+def test_demo_data_ends_today_with_an_empty_check_in(client: TestClient, demo: Session) -> None:
+    days = client.get("/api/users/p10/days").json()
+
+    assert days[-1]["date"] == "2020-02-14" and days[-1]["label"] is None
+    assert client.get("/api/users/p10/days/2020-02-15").status_code == 404
 
 
 def test_day_not_found(client: TestClient, demo: Session) -> None:

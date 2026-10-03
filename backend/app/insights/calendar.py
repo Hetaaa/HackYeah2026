@@ -66,7 +66,10 @@ def day_reasons(row: pd.Series, patterns: list[dict], nrm: dict) -> list[dict]:
                 "column": p["column"],
                 "value": round(float(x), 3),
                 "z": round(float(z), 2) if np.isfinite(z) else None,
+                "kind": p["kind"],
+                "when": p["variant"],
                 "pattern_text": p["text"],
+                "value_text": texts.value_text(p["feature"], p["variant"], x),
                 "text": texts.reason_text(p["feature"], p["variant"], x),
                 "_score": p["score"],
             }
