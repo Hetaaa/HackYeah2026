@@ -37,4 +37,8 @@ Przy włączonym serwerze:
 - **ReDoc** (wersja do czytania): <http://localhost:8000/redoc>
 - **Schemat OpenAPI** (np. do generowania typów TS): <http://localhost:8000/openapi.json>
 
+## Deploy
+
+Za darmo: backend na Render, frontend na Vercel. Krok po kroku: [DEPLOY.md](DEPLOY.md).
+
 Konwencje dla agentów AI: [CLAUDE.md](CLAUDE.md).
