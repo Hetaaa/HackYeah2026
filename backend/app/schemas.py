@@ -149,7 +149,11 @@ class DaySummary(BaseModel):
     )
     top_deviations: list[Deviation] = Field(description="Up to 2 biggest deviations")
     has_reason: bool = Field(default=False, description="A possible reason exists for this day")
-    headline: str | None = Field(default=None, description="Reason text, else first deviation")
+    headline: str | None = Field(
+        default=None,
+        description="Possible reason, else the biggest difference from the average good day "
+        "(descriptive, not a cause), else 'No clear reason' on good/bad days",
+    )
 
 
 class TimelineValue(BaseModel):

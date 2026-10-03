@@ -168,9 +168,10 @@ def explain_day(analysis: dict, date: dt.date) -> str | None:
 def day_summary(analysis: dict, date: dt.date) -> DaySummary:
     entry = _entry(analysis, date) or {"label": None, "score": None, "reasons": [], "compare": []}
     deviations = [_deviation(c) for c in entry["compare"]]
-    # same line as the day view: reason, else "no clear pattern" on good/bad days, else (neutral
-    # or no check-in) the biggest difference from the average good day
-    headline = explain_day(analysis, date) or (deviations[0].text if deviations else None)
+    # tile line: the reason, else the biggest difference from the average good day (descriptive),
+    # else "no clear reason" on good/bad days; the day view keeps "no clear reason" as summary
+    reason = entry["reasons"][0]["text"] if entry["reasons"] else None
+    headline = reason or (deviations[0].text if deviations else None) or explain_day(analysis, date)
     return DaySummary(
         date=date,
         label=entry["label"],

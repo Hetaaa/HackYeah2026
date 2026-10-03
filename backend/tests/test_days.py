@@ -57,12 +57,21 @@ def test_in_patterns_follows_group_e_choice(client: TestClient, demo: Session) -
     assert flags["sleep_eff"] is False  # view-only feature
 
 
-def test_tile_headline_matches_day_summary(client: TestClient, demo: Session) -> None:
+def test_tile_headline_reason_else_difference(client: TestClient, demo: Session) -> None:
     tiles = client.get("/api/users/p06/days?to=2019-11-30").json()
+    without_reason = 0
     for tile in tiles:
-        if tile["label"] in ("bad", "good"):
-            detail = client.get(f"/api/users/p06/days/{tile['date']}").json()
+        detail = client.get(f"/api/users/p06/days/{tile['date']}").json()
+        if tile["has_reason"]:
             assert tile["headline"] == detail["summary"]
+        elif tile["top_deviations"]:
+            without_reason += 1
+            assert tile["headline"] == tile["top_deviations"][0]["text"]
+            if tile["label"] in ("bad", "good"):
+                assert detail["summary"] == "No clear reason"  # the day view stays honest
+        elif tile["label"] in ("bad", "good"):
+            assert tile["headline"] == "No clear reason"
+    assert without_reason > 0
 
 
 def test_timeline_highlights_where_the_reason_comes_from(client: TestClient, demo: Session) -> None:

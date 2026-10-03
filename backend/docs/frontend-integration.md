@@ -246,7 +246,10 @@ mogą linkować do widoku dnia.
 
 - Kolor kafelka bierzemy z `label`. `null` = brak ankiety, kafelek szary.
 - `has_reason` = ikonka „jest możliwy powód”.
-- `headline` to jedno zdanie do tooltipa lub podglądu.
+- `headline` to jedno zdanie na kafelek: możliwy powód („Possible reason: …”), a gdy go nie ma,
+  największa różnica od średniego dobrego dnia (np. „Sleep -1h06 vs good days”, kolor z
+  `top_deviations[0].leans`). „No clear reason” tylko, gdy nie ma ani powodu, ani wyraźnej różnicy.
+  Odróżniaj wizualnie powód (`has_reason = true`) od samego porównania.
 - Lista cech lepiej / gorzej niż średni dobry dzień: `top_deviations[]` (do 2 na dzień), czyli
   `label` + strzałka z `direction` + kolor z `leans` + `text`. Dzień bez wyraźnych różnic ma
   pustą listę.
