@@ -7,6 +7,7 @@ from app.models import SurveyBase
 
 Label = Literal["good", "neutral", "bad"]
 Direction = Literal["higher", "lower"]
+Lean = Literal["bad", "good"]
 When = Literal["last_night", "day_before", "last_3_nights", "previous_3_days"]
 InsightStatus = Literal[
     "ok",  # significant patterns found
@@ -72,6 +73,8 @@ class PersonaRead(BaseModel):
 
 
 class NormRange(BaseModel):
+    """Reference days: good days, or all days with < 10 good days (PersonaRead.norm_reference)."""
+
     median: float = Field(description="Median on good days", examples=[455])
     low: float = Field(description="25th percentile on good days", examples=[430])
     high: float = Field(description="75th percentile on good days", examples=[480])
@@ -95,10 +98,18 @@ class FeatureValue(BaseModel):
     in_patterns: bool = Field(
         default=True, description="False: shown for context only, never used as a reason"
     )
+    leans: Lean | None = Field(
+        default=None,
+        description="bad: differs from the reference in the direction of this user's bad days "
+        "(e.g. their bad days have less sleep and this is less); good: towards their good days. "
+        "From the user's own good vs bad day averages, not health advice. null: fewer than 5 "
+        "good or bad days, or good and bad days look alike for this feature",
+    )
 
 
 class Deviation(BaseModel):
-    """Descriptive comparison with the average good day (not a cause)."""
+    """Descriptive comparison with the average good day, or the average day with < 10 good
+    days (PersonaRead.norm_reference). Not a cause."""
 
     feature: str = Field(examples=["sleep_h"])
     label: str = Field(examples=["Sleep"])
@@ -108,6 +119,13 @@ class Deviation(BaseModel):
     difference: float = Field(description="value - norm.average", examples=[-1.7])
     z: float = Field(description="Signed size in SDs of good days, sorted by abs", examples=[-2.06])
     direction: Direction
+    leans: Lean | None = Field(
+        default=None,
+        description="bad: differs from the reference in the direction of this user's bad days "
+        "(e.g. their bad days have less sleep and this is less); good: towards their good days. "
+        "From the user's own good vs bad day averages, not health advice. null: fewer than 5 "
+        "good or bad days, or good and bad days look alike for this feature",
+    )
     text: str = Field(examples=["Sleep -1h43 vs good days"])
 
 
@@ -246,6 +264,38 @@ class Recipe(BaseModel):
     summary: str = Field(examples=["3 things your good days share"])
     good_days_count: int = Field(examples=[90])
     ingredients: list[Ingredient]
+
+
+class GroupAverage(BaseModel):
+    average: float | None = Field(
+        description="Mean in the feature's unit; null with fewer than 3 days", examples=[7.4]
+    )
+    display: str | None = Field(examples=["7 h 24 min"])
+    days: int = Field(description="Days with a value", examples=[24])
+
+
+class FeatureStats(BaseModel):
+    feature: str = Field(examples=["sleep_h"])
+    label: str = Field(examples=["Sleep"])
+    unit: str = Field(examples=["h"])
+    when: When = Field(description="Which data the averages describe")
+    in_patterns: bool = Field(description="False: shown for context only, never a reason")
+    good: GroupAverage = Field(description="Average on good days")
+    bad: GroupAverage = Field(description="Average on bad days")
+    difference: float | None = Field(
+        description="bad.average - good.average (null when either is missing)", examples=[-1.1]
+    )
+
+
+class StatsReport(BaseModel):
+    """Every feature's average on good vs bad days: descriptive, no significance test."""
+
+    analysed_days: int = Field(description="Days with a check-in and watch data", examples=[68])
+    date_from: dt.date | None = Field(description="First analysed day", examples=["2019-11-05"])
+    date_to: dt.date | None = Field(description="Last analysed day", examples=["2020-02-14"])
+    good_days_count: int = Field(examples=[22])
+    bad_days_count: int = Field(examples=[20])
+    features: list[FeatureStats]
 
 
 class SurveyCreate(SurveyBase):

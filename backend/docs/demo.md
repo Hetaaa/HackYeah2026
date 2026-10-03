@@ -115,20 +115,26 @@ powyżej 6 h 30 min. Wzorzec złych dni to tylko „Early signal”, bo nie prze
 | Przełącznik person | `GET /api/users` | `name`, `description`, `today`, `demo_answers`, `insights_status` |
 | Today (home) | `GET /api/users/{id}/today` | `outlook`, `summary`, `heads_up[]`, `good_signs[]`, `survey` |
 | Ankieta | `PUT /api/users/{id}/surveys/{today}` | zwraca `label`, `score` |
-| Kalendarz | `GET /api/users/{id}/days?from=&to=` | `label`, `has_reason`, `headline`, `top_deviations` |
+| Kalendarz | `GET /api/users/{id}/days?from=&to=` | `label`, `has_reason`, `headline`, `top_deviations` (`leans`: bad = czerwony, good = zielony, null = neutralny) |
 | Widok dnia | `GET /api/users/{id}/days/{date}` | `summary`, `reasons[]`, `deviations[]`, `features[]` (`display`, `norm`), `timeline[]` (D-3..D, `highlight`) |
 | Onboarding | `POST /api/users` | zwraca nowego użytkownika (`insights_status = insufficient_days`) |
 | Wzorce złych dni | `GET /api/users/{id}/patterns` | `status`, `summary`, `patterns[]` (`text`, `level`, `rate_in`, `rate_out`) |
 | Wykres wzorca | `GET /api/users/{id}/patterns/{feature}?kind=` | `points[]` (`value`, `label`, `in_condition`), `threshold`, `op` |
 | Legenda / opisy cech | `GET /api/features` | `label`, `unit`, `description`, `tested_direction` |
 | Przepis | `GET /api/users/{id}/recipe` | `status`, `summary`, `ingredients[]` |
+| Tabela dobre vs złe dni | `GET /api/users/{id}/stats` | `features[]` (`good`, `bad`: `average`, `display`, `days`), `analysed_days`, `date_from`, `date_to` |
 | Reset demo | `POST /api/demo/reset` | |
 
 ## Na co uważać
 
 - **Daty 2019/2020** to zegar demo. Na scenie warto powiedzieć: „nagrane dane prawdziwych osób”.
+- **Kim (p16) po ankiecie na żywo** dostaje trzeci wzorzec złych dni (czuwanie > 13% nocy), bo
+  nowy dzień przesuwa go poniżej p = 0,05. Zachowanie poprawne, ale lista na ekranie wzorców się
+  zmienia. U pozostałych person wzorce po ankiecie zostają takie same.
 - **Kim (p16)** zasypia rano (*you fell asleep at 09:41 last night*). Opowiadać jako „nocny marek”
   albo pominąć.
+- **Robin (p01) ma 3 dobre dni**: porównania idą do średniego dnia (`norm_reference = all_days`),
+  a `leans` jest zawsze `null`. Na ekranie porównań i w kalendarzu lepiej pokazywać Sama.
 - **Teksty frontendu:** `level = preliminary` oznaczać jako „early signal”; `status != ok` to
   stany puste z gotowym zdaniem w `summary`.
 - **Pierwsze zapytanie po starcie** liczy analizy (~0,4 s), potem odpowiedzi są z cache.

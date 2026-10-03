@@ -77,11 +77,14 @@ Brak auth: persona to `user_id` w ścieżce. Szczegóły i przykłady w Swaggerz
 | GET | `/api/users/{user_id}/patterns` | wzorce złych dni |
 | GET | `/api/users/{user_id}/patterns/{feature}?kind=bad\|good` | wykres wzorca (wartości dzień po dniu) |
 | GET | `/api/users/{user_id}/recipe` | przepis na dobry dzień |
+| GET | `/api/users/{user_id}/stats` | tabela: średnia każdej cechy w dobre vs złe dni |
 | GET | `/api/users/{user_id}/surveys/{date}` | czy ankieta wypełniona (404 jeśli nie) |
 | PUT | `/api/users/{user_id}/surveys/{date}` | zapis ankiety, zwraca etykietę dnia |
 | GET | `/api/users/{user_id}/today` | ekran główny: heads-up / good signs na dziś |
 | GET | `/api/features` | katalog cech (nazwy, jednostki, opisy) |
 | POST | `/api/demo/reset` | przywrócenie person demo (tylko z `DEMO_RESET=true`, inaczej 403) |
+
+Frontend: który endpoint pod który ekran, pola i pułapki: [docs/frontend-integration.md](docs/frontend-integration.md).
 
 Demo: persony mają własne „dziś” (`today`, `demo_answers`). Scenariusz prezentacji, odpowiedzi do
 wpisania i mapowanie ekranów: [docs/demo.md](docs/demo.md).
@@ -118,6 +121,7 @@ z wyniku funkcjami:
 | `day_detail(analysis, day, survey)` | `DayDetail` (widok dnia: przyczyny, porównanie, cechy) |
 | `bad_day_patterns(analysis)` | `PatternReport` |
 | `good_day_recipe(analysis)` | `Recipe` |
+| `label_stats(analysis)` | `StatsReport` (średnie w dobre vs złe dni) |
 | `insights_status(analysis)` | `ok` albo powód, dla którego wzorców jeszcze nie ma |
 
 Najważniejsze zasady (szczegóły i uzasadnienie: [docs/insights.md](docs/insights.md)):

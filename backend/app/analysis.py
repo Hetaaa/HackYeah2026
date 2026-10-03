@@ -22,7 +22,9 @@ from app.schemas import (
     DayDetail,
     DaySummary,
     Deviation,
+    FeatureStats,
     FeatureValue,
+    GroupAverage,
     Ingredient,
     InsightStatus,
     Label,
@@ -34,6 +36,7 @@ from app.schemas import (
     Reason,
     Recipe,
     Signal,
+    StatsReport,
     SurveyRead,
     TimelinePoint,
     TimelineValue,
@@ -127,6 +130,7 @@ def _deviation(c: dict) -> Deviation:
         difference=c["diff"],
         z=c["z"],
         direction="higher" if c["diff"] > 0 else "lower",
+        leans=c["leans"],
         text=c["text"],
     )
 
@@ -189,6 +193,7 @@ def _features(analysis: dict, entry: dict | None) -> list[FeatureValue]:
             when=v["when"],
             display=v["display"],
             in_patterns=v["feature"] in searched,
+            leans=v["leans"],
         )
         for v in (entry["values"] if entry else [])
     ]
@@ -257,6 +262,47 @@ def timeline(analysis: dict, date: dt.date) -> list[TimelinePoint]:
             )
         )
     return points
+
+
+def label_stats(analysis: dict) -> StatsReport:
+    """Average of every feature on good vs bad days (the days patterns are searched on)."""
+    info = analysis["info"]
+    searched = engine.search_features(info["group_e_feature"])
+    empty = {"n": 0, "mean": None}
+
+    def group(name: str, g: dict) -> GroupAverage:
+        mean = g["mean"]
+        return GroupAverage(
+            average=round(mean, 3) if mean is not None else None,
+            display=texts.fmt(name, mean) if mean is not None else None,
+            days=g["n"],
+        )
+
+    features = []
+    for name, f in C.FEATURES.items():
+        s = analysis["stats"].get(name, {"good": empty, "bad": empty})
+        good, bad = group(name, s["good"]), group(name, s["bad"])
+        both = good.average is not None and bad.average is not None
+        features.append(
+            FeatureStats(
+                feature=name,
+                label=f.label,
+                unit=f.unit,
+                when="last_night" if f.night else "day_before",
+                in_patterns=name in searched,
+                good=good,
+                bad=bad,
+                difference=round(bad.average - good.average, 3) if both else None,
+            )
+        )
+    return StatsReport(
+        analysed_days=info["n_window_days"],
+        date_from=info["window_first_date"],
+        date_to=info["window_last_date"],
+        good_days_count=info["n_good_window"],
+        bad_days_count=info["n_bad_window"],
+        features=features,
+    )
 
 
 # ---------------------------------------------------------------- today (home screen)

@@ -1,7 +1,7 @@
 from sqlmodel import Session
 
 from app import analysis
-from app.schemas import PatternChart, PatternReport, Recipe
+from app.schemas import PatternChart, PatternReport, Recipe, StatsReport
 from app.services.days import get_analysis
 
 
@@ -17,3 +17,7 @@ def get_pattern_chart(
     session: Session, user_id: str, feature: str, kind: str
 ) -> PatternChart | None:
     return analysis.pattern_chart(get_analysis(session, user_id), feature, kind)
+
+
+def get_stats(session: Session, user_id: str) -> StatsReport:
+    return analysis.label_stats(get_analysis(session, user_id))
