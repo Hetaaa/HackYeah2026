@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useSearchParams } from "react-router";
 import PageHeader from "../../components/PageHeader/PageHeader.jsx";
+import Disclaimer from "../../components/Disclaimer/Disclaimer.jsx";
 import SegmentedControl from "../../components/SegmentedControl/SegmentedControl.jsx";
 import LowerDaysTab from "./components/LowerDaysTab.jsx";
 import RecipeTab from "./components/RecipeTab.jsx";
@@ -53,6 +54,7 @@ function Patterns() {
           {tab === "recipe" ? <RecipeTab /> : <LowerDaysTab />}
         </motion.div>
       </AnimatePresence>
+      <Disclaimer />
     </div>
   );
 }

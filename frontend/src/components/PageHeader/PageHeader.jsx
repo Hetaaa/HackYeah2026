@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import logo from "../../assets/logo.svg";
 import { useAppStore } from "../../store/useAppStore.js";
 import styles from "./PageHeader.module.scss";
@@ -10,9 +11,12 @@ function PageHeader({ eyebrow, title, subtitle, description }) {
     <header className={styles.header}>
       <div className={styles.topBar}>
         <img src={logo} alt="why." className={styles.logo} />
-        <button className={styles.avatar} aria-label="Profile">
-          {user.initials}
-        </button>
+        <Link to="/you" className={styles.profile} aria-label="Profile">
+          <span className={styles.name}>
+            {user.firstName} {user.lastName}
+          </span>
+          <span className={styles.avatar}>{user.initials}</span>
+        </Link>
       </div>
       <p className={styles.eyebrow}>{eyebrow}</p>
       <h1 className={styles.title}>

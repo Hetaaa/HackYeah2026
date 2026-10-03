@@ -1,4 +1,5 @@
 import PageHeader from "../../components/PageHeader/PageHeader.jsx";
+import Disclaimer from "../../components/Disclaimer/Disclaimer.jsx";
 import { useAppStore } from "../../store/useAppStore.js";
 import HeartHero from "./components/HeartHero.jsx";
 import ForecastCard from "./components/ForecastCard.jsx";
@@ -24,6 +25,7 @@ function Today() {
         <RecipeCard />
       </div>
       <Evidence />
+      <Disclaimer />
     </div>
   );
 }

@@ -6,7 +6,8 @@ import BottomNav from "./components/BottomNav/BottomNav.jsx";
 import CheckInSheet from "./components/CheckInSheet/CheckInSheet.jsx";
 import Today from "./pages/Today/Today.jsx";
 import Patterns from "./pages/Patterns/Patterns.jsx";
-import Placeholder from "./pages/Placeholder/Placeholder.jsx";
+import Days from "./pages/Days/Days.jsx";
+import Profile from "./pages/Profile/Profile.jsx";
 import styles from "./App.module.scss";
 
 function App() {
@@ -27,9 +28,9 @@ function App() {
           >
             <Routes location={location}>
               <Route path="/" element={<Today />} />
-              <Route path="/days" element={<Placeholder title="Days" />} />
+              <Route path="/days" element={<Days />} />
               <Route path="/patterns" element={<Patterns />} />
-              <Route path="/you" element={<Placeholder title="You" />} />
+              <Route path="/you" element={<Profile />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </motion.div>

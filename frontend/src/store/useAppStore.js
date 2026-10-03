@@ -1,7 +1,14 @@
 import { create } from "zustand";
 
 // Mock data shaped like the Figma screens. Swap for /api calls later.
-const user = { initials: "AM" };
+const user = {
+  firstName: "Alex",
+  lastName: "Morgan",
+  initials: "AM",
+  email: "alex.morgan@example.com",
+  memberSince: "Aug 2024",
+  stats: { daysTracked: 81, checkIns: 76, streak: 12 },
+};
 
 const today = {
   date: "Sunday, Oct 20",
@@ -112,4 +119,7 @@ export const useAppStore = create((set) => ({
   openCheckIn: () => set({ isCheckInOpen: true }),
   closeCheckIn: () => set({ isCheckInOpen: false }),
   saveCheckIn: (checkIn) => set({ checkIn }),
+  // Mock Apple Health sync: nothing is fetched, only the "last synced" label changes.
+  lastHealthSync: "Today, 07:42",
+  markHealthSynced: () => set({ lastHealthSync: "Just now" }),
 }));

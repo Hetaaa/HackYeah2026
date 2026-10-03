@@ -11,6 +11,18 @@
   height: 33px;
 }
 
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
 .avatar {
   display: grid;
   place-items: center;
