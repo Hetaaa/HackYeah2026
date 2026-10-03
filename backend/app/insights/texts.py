@@ -114,6 +114,24 @@ def signal_text(kind: str, value: str) -> str:
 
 NO_REASON = "No clear reason"
 
+# survey items that move with a pattern (worse on bad-day patterns, better on good-day ones)
+DRIVER = {
+    "mood": {"bad": "lower mood", "good": "better mood"},
+    "fatigue": {"bad": "more tired", "good": "more rested"},
+    "stress": {"bad": "more stressed", "good": "less stressed"},
+}
+
+
+def driver_text(item: str, kind: str) -> str:
+    return DRIVER[item][kind]
+
+
+def drivers_text(drivers: list[dict]) -> str | None:
+    """What changes on those days: "Mostly: more tired, more stressed"."""
+    if not drivers:
+        return None
+    return "Mostly: " + ", ".join(d["text"] for d in drivers)
+
 
 COMPARE_LABEL = {
     "sleep_h": "Sleep",

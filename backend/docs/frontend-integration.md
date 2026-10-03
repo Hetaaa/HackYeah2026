@@ -106,7 +106,12 @@ kalendarzu, `/patterns`, `/recipe`, `/stats`.
 }
 ```
 
-Na karcie wystarczą `label`, `condition` i porównanie `rate_in` z `rate_out`. Pełne zdanie (`text`)
+Na karcie wystarczą `label`, `condition`, porównanie `rate_in` z `rate_out` i `drivers_text`.
+`drivers_text` (np. „Mostly: more tired”) mówi, które odpowiedzi z ankiety faktycznie się
+zmieniają w te dni. To ważne przy aktywności: u Robina po treningu rośnie tylko zmęczenie, a
+nastrój i stres się nie zmieniają, więc to nie jest „trening psuje dzień”. `drivers[]` ma te same
+dane per pytanie (`item`, `difference` w punktach 1–5). `null` = żadna odpowiedź nie odstaje.
+To samo pole jest w `heads_up[]`, `good_signs[]`, `reasons[]` i na wykresie wzorca. Pełne zdanie (`text`)
 i liczby dni dajemy w szczegółach na ekranie 2. Maksymalnie 3 wzorce, posortowane od
 najsilniejszego.
 

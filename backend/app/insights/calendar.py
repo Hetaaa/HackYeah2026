@@ -60,6 +60,28 @@ def label_stats(rows: pd.DataFrame) -> dict:
     return out
 
 
+def drivers(rows: pd.DataFrame, p: dict) -> list[dict]:
+    """Label items (mood, fatigue, stress) that move with a pattern: mean answer on days with the
+    condition minus days without it. Bad patterns keep items that are worse by >= 0.3 points,
+    good patterns items that are better; sorted by size. Descriptive, no significance test."""
+    x = rows[p["column"]]
+    inside = x.lt(p["threshold"]) if p["op"] == "below" else x.gt(p["threshold"])
+    outside = x.notna() & ~inside
+    sign = -1 if p["kind"] == "bad" else 1
+    found = []
+    for item in C.LABEL_FIELDS:
+        diff = rows.loc[inside, item].mean() - rows.loc[outside, item].mean()
+        if pd.notna(diff) and sign * diff >= C.DRIVER_MIN_DIFF:
+            found.append(
+                {
+                    "item": item,
+                    "difference": round(float(diff), 2),
+                    "text": texts.driver_text(item, p["kind"]),
+                }
+            )
+    return sorted(found, key=lambda d: -abs(d["difference"]))
+
+
 def leans(stats: dict, name: str, diff: float) -> str | None:
     """'bad' when a value differs from the reference (`diff` = value - reference) in the
     direction of the person's bad days, 'good' when in the direction of their good days.
@@ -106,6 +128,7 @@ def day_reasons(row: pd.Series, patterns: list[dict], nrm: dict) -> list[dict]:
                 "kind": p["kind"],
                 "when": p["variant"],
                 "pattern_text": p["text"],
+                "drivers_text": p["drivers_text"],
                 "value_text": texts.value_text(p["feature"], p["variant"], x),
                 "text": texts.reason_text(p["feature"], p["variant"], x),
                 "_score": p["score"],

@@ -68,7 +68,11 @@ Zasady, które stosuje algorytm:
    złych, czy dobrych dni **tej osoby** (kierunek z różnicy średnich w złe i dobre dni). Brak
    (`null`) przy < 5 dobrych lub złych dniach albo gdy średnie różnią się o < 0,2 SD. Służy do
    kolorowania w kalendarzu, a nie jest poradą typu „więcej snu = lepiej”.
-7. **Tabela dobre vs złe dni** (`/stats`): średnia każdej cechy (lag1) w dobre i w złe dni okna
+7. **`drivers`** wzorca: które pytania etykiety (mood, fatigue, stress) faktycznie się ruszają.
+   Średnia odpowiedź w dni z warunkiem minus bez niego; zostają odpowiedzi gorsze (wzorce złych
+   dni) lub lepsze (przepis) o ≥ 0,3 punktu. Opis bez testu istotności. Chroni przed antyporadą:
+   „po treningu: mostly more tired” zamiast „trening psuje dzień”.
+8. **Tabela dobre vs złe dni** (`/stats`): średnia każdej cechy (lag1) w dobre i w złe dni okna
    analizy, od 3 dni w grupie. Opis bez testu istotności: różnica w tabeli nie jest wzorcem.
 
 Parametry są zamrożone w `app/insights/config.py`. Zmiana wymaga powtórzenia walidacji (skrypty w

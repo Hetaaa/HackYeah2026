@@ -24,12 +24,14 @@ def analyze_user(
     """
     table, info = cleaning.build_table(user, window_end, all_dates)
     patterns = engine.find_patterns(table, info)
+    table = table.sort_values("date")
+    window = table[table.in_analysis_window]
     for kind in patterns.values():
         for p in kind["patterns"]:
             p["text"] = texts.pattern_text(p)
+            p["drivers"] = calendar.drivers(window, p)
+            p["drivers_text"] = texts.drivers_text(p["drivers"])
 
-    table = table.sort_values("date")
-    window = table[table.in_analysis_window]
     nrm, source = calendar.norms(window)
     stats = calendar.label_stats(window)
     info["norm_source"] = source

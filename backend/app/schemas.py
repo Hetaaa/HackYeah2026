@@ -138,6 +138,9 @@ class Reason(BaseModel):
     display: str = Field(examples=["5h19"])
     text: str = Field(examples=["Possible reason: 5h19 sleep"])
     pattern_text: str = Field(examples=["Under 6h sleep: 11 of 14 days bad"])
+    drivers_text: str | None = Field(
+        default=None, description="The pattern's drivers_text", examples=["Mostly: more tired"]
+    )
 
 
 class DaySummary(BaseModel):
@@ -198,6 +201,18 @@ class DayDetail(BaseModel):
     )
 
 
+class Driver(BaseModel):
+    """A check-in answer that moves with a pattern (descriptive, no significance test)."""
+
+    item: Literal["mood", "fatigue", "stress"]
+    difference: float = Field(
+        description="Mean answer on days with the condition minus days without it (1-5 scale; "
+        "all scales: higher = better)",
+        examples=[-0.52],
+    )
+    text: str = Field(examples=["more tired"])
+
+
 class PatternStats(BaseModel):
     level: Literal["significant", "preliminary"] = Field(
         description="preliminary = early signal, show with care"
@@ -213,6 +228,12 @@ class PatternStats(BaseModel):
     )
     rate_out: float = Field(description="Bad (good) day rate otherwise", examples=[0.21])
     p_value: float = Field(description="Permutation p-value", examples=[0.02])
+    drivers: list[Driver] = Field(
+        default_factory=list,
+        description="What changes on those days: answers worse (bad patterns) or better (good "
+        "patterns) by >= 0.3 points, biggest first. Empty: no single answer stands out",
+    )
+    drivers_text: str | None = Field(default=None, examples=["Mostly: more tired"])
 
 
 class Pattern(PatternStats):
@@ -325,6 +346,11 @@ class Signal(BaseModel):
     when: When
     text: str = Field(examples=["Heads-up: awake 13.3% of night"])
     pattern_text: str = Field(examples=["Awake over 12% of night: 15 of 27 days bad"])
+    drivers_text: str | None = Field(
+        default=None,
+        description="The pattern's drivers_text",
+        examples=["Mostly: lower mood, more tired, more stressed"],
+    )
 
 
 class TodayRead(BaseModel):

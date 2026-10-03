@@ -121,3 +121,24 @@ def test_stats_without_check_ins(client: TestClient, session: Session) -> None:
     sleep = next(f for f in report["features"] if f["feature"] == "sleep_h")
     assert sleep["good"] == {"average": None, "display": None, "days": 0}
     assert sleep["difference"] is None
+
+
+def test_drivers_say_what_changes(client: TestClient, demo: Session) -> None:
+    pattern = client.get("/api/users/p01/patterns").json()["patterns"][0]
+
+    # Robin after hard exercise: only tiredness moves, mood and stress stay put
+    assert [d["item"] for d in pattern["drivers"]] == ["fatigue"]
+    assert pattern["drivers"][0]["difference"] <= -0.3
+    assert pattern["drivers_text"] == "Mostly: more tired"
+
+
+def test_drivers_on_recipe_and_signals(client: TestClient, demo: Session) -> None:
+    ingredient = client.get("/api/users/p10/recipe").json()["ingredients"][0]
+    assert all(d["difference"] >= 0.3 for d in ingredient["drivers"])
+    assert ingredient["drivers_text"].startswith("Mostly: more rested")
+
+    today = client.get("/api/users/p10/today").json()
+    pattern = client.get("/api/users/p10/patterns").json()["patterns"][0]
+    assert today["heads_up"][0]["drivers_text"] == pattern["drivers_text"]
+    reason = client.get("/api/users/p10/days/2019-11-20").json()["reasons"][0]
+    assert reason["drivers_text"] == pattern["drivers_text"]

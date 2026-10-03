@@ -143,6 +143,7 @@ def _reason(r: dict) -> Reason:
         display=texts.fmt(r["feature"], r["value"]),
         text=r["text"],
         pattern_text=r["pattern_text"],
+        drivers_text=r["drivers_text"],
     )
 
 
@@ -317,6 +318,7 @@ def _signal(s: dict) -> Signal:
         when=_when({"feature": s["feature"], "variant": s["when"]}),
         text=texts.signal_text(s["kind"], s["value_text"]),
         pattern_text=s["pattern_text"],
+        drivers_text=s["drivers_text"],
     )
 
 
@@ -376,6 +378,8 @@ def _stats(p: dict) -> dict:
         "label": FEATURES[p["feature"]].label,
         "condition": texts.pattern_condition(p),
         "text": p["text"],
+        "drivers": p["drivers"],
+        "drivers_text": p["drivers_text"],
     }
 
 
