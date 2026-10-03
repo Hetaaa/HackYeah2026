@@ -33,6 +33,8 @@ from app.schemas import (
     Recipe,
     Signal,
     SurveyRead,
+    TimelinePoint,
+    TimelineValue,
     TodayRead,
 )
 
@@ -198,7 +200,51 @@ def day_detail(analysis: dict, day: Day, survey: SurveyBase | None) -> DayDetail
         summary=explain_day(analysis, day.date),
         reasons=day_reasons(analysis, day.date),
         outside_window=bool(entry and entry["outside_window"]),
+        timeline=timeline(analysis, day.date),
     )
+
+
+# offsets (relative to the viewed day) whose data a reason with this window uses
+WINDOW_OFFSETS = {
+    "lag1": {True: [0], False: [-1]},
+    "avg3": {True: [-2, -1, 0], False: [-3, -2, -1]},
+}
+
+
+def timeline(analysis: dict, date: dt.date) -> list[TimelinePoint]:
+    entry = _entry(analysis, date)
+    highlight: dict[int, set[str]] = {}
+    for r in entry["reasons"] if entry else []:
+        for offset in WINDOW_OFFSETS[r["when"]][C.FEATURES[r["feature"]].night]:
+            highlight.setdefault(offset, set()).add(r["feature"])
+    points = []
+    for offset in range(-3, 1):
+        d = date + dt.timedelta(days=offset)
+        e = _entry(analysis, d)
+        raw = e["raw"] if e else {"night": {}, "activity": {}}
+
+        def values(part: str, offset: int = offset, raw: dict = raw) -> list[TimelineValue]:
+            return [
+                TimelineValue(
+                    feature=name,
+                    label=FEATURES[name].label,
+                    value=value,
+                    display=texts.fmt(name, value),
+                    highlight=name in highlight.get(offset, set()),
+                )
+                for name, value in raw[part].items()
+            ]
+
+        points.append(
+            TimelinePoint(
+                date=d,
+                offset=offset,
+                label=e["label"] if e else None,
+                night=values("night"),
+                activity=values("activity"),
+            )
+        )
+    return points
 
 
 # ---------------------------------------------------------------- today (home screen)

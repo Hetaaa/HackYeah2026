@@ -65,3 +65,33 @@ def test_tile_headline_matches_day_summary(client: TestClient, demo: Session) ->
         if tile["label"] in ("bad", "good"):
             detail = client.get(f"/api/users/p06/days/{tile['date']}").json()
             assert tile["headline"] == detail["summary"]
+
+
+def test_timeline_highlights_where_the_reason_comes_from(client: TestClient, demo: Session) -> None:
+    day = client.get("/api/users/p01/days/2020-02-28").json()
+
+    assert [p["offset"] for p in day["timeline"]] == [-3, -2, -1, 0]
+    assert [p["date"] for p in day["timeline"]] == [
+        "2020-02-25",
+        "2020-02-26",
+        "2020-02-27",
+        "2020-02-28",
+    ]
+    highlighted = [
+        (p["offset"], v["feature"], v["display"])
+        for p in day["timeline"]
+        for v in p["night"] + p["activity"]
+        if v["highlight"]
+    ]
+    assert highlighted == [(-1, "z_cardio_peak", "68 min")]  # "the day before"
+    night = {v["feature"] for v in day["timeline"][-1]["night"]}
+    assert night == {"sleep_h", "bedtime_h", "wake_pct", "rem_pct", "hr_sleep_mean"}
+
+
+def test_timeline_for_last_night_reason(client: TestClient, demo: Session) -> None:
+    day = client.get("/api/users/p10/days/2020-02-10").json()
+    highlighted = {
+        (p["offset"], v["feature"]) for p in day["timeline"] for v in p["night"] if v["highlight"]
+    }
+
+    assert highlighted == {(0, "wake_pct")}

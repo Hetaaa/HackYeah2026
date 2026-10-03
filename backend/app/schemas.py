@@ -128,6 +128,24 @@ class DaySummary(BaseModel):
     headline: str | None = Field(default=None, description="Reason text, else first deviation")
 
 
+class TimelineValue(BaseModel):
+    feature: str = Field(examples=["sleep_h"])
+    label: str = Field(examples=["Sleep"])
+    value: float = Field(examples=[5.3])
+    display: str = Field(examples=["5 h 19 min"])
+    highlight: bool = Field(description="Used by this day's possible reason")
+
+
+class TimelinePoint(BaseModel):
+    """One of the 4 days D-3..D in the day view."""
+
+    date: dt.date
+    offset: int = Field(description="-3..0, 0 = the viewed day", examples=[-1])
+    label: Label | None
+    night: list[TimelineValue] = Field(description="Sleep that ended on the morning of `date`")
+    activity: list[TimelineValue] = Field(description="Activity of the calendar day `date`")
+
+
 class DayDetail(BaseModel):
     date: dt.date
     label: Label | None
@@ -142,6 +160,12 @@ class DayDetail(BaseModel):
     reasons: list[Reason] = Field(default_factory=list, description="Up to 2 possible reasons")
     outside_window: bool = Field(
         default=False, description="Day after the analysis window (shown, not used for patterns)"
+    )
+    timeline: list[TimelinePoint] = Field(
+        default_factory=list,
+        description="D-3..D: nights and activity behind this day; `highlight` marks the data "
+        "the possible reason comes from (last night = night of D, the day before = activity "
+        "of D-1, 3-day averages = 3 points)",
     )
 
 

@@ -32,6 +32,7 @@ def analyze_user(
     info["norm_source"] = source
     ref = "on your average good day" if source == "good_days" else "on your average day"
     feats = list(engine.search_features(info["group_e_feature"]))
+    raw = _raw_values(user, feats)
     info["first_date"] = str(table.date.min().date()) if len(table) else None
     info["last_date"] = str(table.date.max().date()) if len(table) else None
 
@@ -54,6 +55,22 @@ def analyze_user(
                 else None,
                 "compare": calendar.compare_day(row, nrm, feats, ref),
                 "values": calendar.values(row, nrm),
+                "raw": raw.get(row.date, {"night": {}, "activity": {}}),
             }
         )
     return {"info": info, "patterns": patterns, "days": days}
+
+
+def _raw_values(user: UserData, feats: list[str]) -> dict:
+    """Per date: the night that ended that morning and that calendar day's activity (search
+    features only, worn-day filter applied) - the building blocks of the day-view timeline."""
+    nights = user.nights
+    days = cleaning.activity(user.days)
+    out: dict = {}
+    for name in feats:
+        f = C.FEATURES[name]
+        series = nights[name] if f.night else days[name]
+        for date, value in pd.to_numeric(series, errors="coerce").dropna().items():
+            part = "night" if f.night else "activity"
+            out.setdefault(date, {"night": {}, "activity": {}})[part][name] = round(float(value), 3)
+    return out
