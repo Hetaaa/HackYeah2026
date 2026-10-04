@@ -31,6 +31,7 @@ async function orNull(promise) {
 export const api = {
   users: () => request("GET", "/users"),
   today: (id) => request("GET", `/users/${id}/today`),
+  prediction: (id) => request("GET", `/users/${id}/today/prediction`).catch(() => null),
   patterns: (id) => request("GET", `/users/${id}/patterns`),
   recipe: (id) => request("GET", `/users/${id}/recipe`),
   stats: (id) => request("GET", `/users/${id}/stats`),

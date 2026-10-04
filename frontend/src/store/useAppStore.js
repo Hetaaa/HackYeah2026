@@ -70,6 +70,7 @@ export const useAppStore = create((set, get) => ({
   today: null,
   patterns: null,
   checkIn: null,
+  prediction: null,
   isCheckInOpen: false,
 
   init: async () => {
@@ -89,14 +90,17 @@ export const useAppStore = create((set, get) => ({
     const persona = get().users.find((u) => u.id === id);
     if (!persona) return;
     savePersona(id);
-    set({ persona, user: userOf(persona) });
+    set({ persona, user: userOf(persona), prediction: null });
     try {
       const data = await loadPersona(persona);
       if (get().persona?.id !== id) return;
       set({ ...data, status: "ready", error: null });
     } catch (error) {
       if (get().persona?.id === id) set({ status: "error", error: error.message });
+      return;
     }
+    const prediction = await api.prediction(id);
+    if (get().persona?.id === id) set({ prediction });
   },
 
   refresh: () => get().selectUser(get().persona.id),

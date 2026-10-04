@@ -164,6 +164,14 @@ def compare_text(name: str, d: float, ref: str) -> str:
     return f"{COMPARE_LABEL[name]} {difference_text(name, d, ref)}"
 
 
+PREDICTED_DAY = {"bad": "tougher day", "neutral": "typical day", "good": "good day"}
+
+
+def prediction_text(label: str, probability: float) -> str:
+    """Morning prediction: "74% chance of a tougher day"."""
+    return f"{probability:.0%} chance of a {PREDICTED_DAY[label]}"
+
+
 OUTLOOK = {
     "tough": "Tougher day possible",
     "promising": "Looks like a good day",

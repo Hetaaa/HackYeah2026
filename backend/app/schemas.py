@@ -376,6 +376,11 @@ class PredictionRead(BaseModel):
     p_bad: float | None = Field(default=None, ge=0, le=1)
     p_neutral: float | None = Field(default=None, ge=0, le=1)
     p_good: float | None = Field(default=None, ge=0, le=1)
+    text: str | None = Field(
+        default=None,
+        description="Chance of the predicted label; null without a prediction",
+        examples=["74% chance of a tougher day"],
+    )
 
 
 class TodayRead(BaseModel):
