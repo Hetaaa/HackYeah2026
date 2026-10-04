@@ -1,0 +1,17 @@
+# Render Blueprint: the backend API as a free Docker web service. Step by step: DEPLOY.md.
+services:
+  - type: web
+    name: whytoday-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: main
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: DEMO_RESET # POST /api/demo/reset restores the demo personas between runs
+        value: "true"
+      - key: CORS_ORIGINS # the Vercel frontend URL, asked for when the Blueprint is created
+        sync: false

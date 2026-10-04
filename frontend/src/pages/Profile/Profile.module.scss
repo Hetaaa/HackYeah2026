@@ -1,0 +1,280 @@
+@use "tokens" as *;
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 $gutter;
+}
+
+.userCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+  padding: 18px;
+  border-radius: $radius-lg;
+  background: $surface;
+}
+
+.bigAvatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: $plum;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.userName {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.userMeta {
+  font-size: 12.5px;
+  color: $ink-soft;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0;
+  padding: 16px 0;
+  border-radius: 18px;
+  background: $plum;
+  color: #fff;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+
+  & + & {
+    border-left: 1.5px solid rgba(#fff, 0.2);
+  }
+
+  dd {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  dt {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #c9bfc4;
+  }
+}
+
+// ---- Apple Health card ----
+
+.health {
+  padding: 18px;
+  border-radius: $radius-lg;
+  background: $surface;
+}
+
+.healthHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.healthIcon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px $line;
+}
+
+.healthTitle {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.connected {
+  flex: none;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: $sage-soft;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: $sage-ink;
+}
+
+.syncRow {
+  display: flex;
+  justify-content: space-between;
+  margin: 16px 0 14px;
+  padding-top: 14px;
+  border-top: 1.5px solid #f1eeee;
+  font-size: 13px;
+  color: $ink-soft;
+
+  strong {
+    font-weight: 700;
+    color: $ink;
+  }
+}
+
+.syncButton {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 50px;
+  border-radius: 16px;
+  background: $plum;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.syncIcon {
+  display: flex;
+}
+
+.progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: $orange;
+  transform-origin: left;
+}
+
+// ---- lists ----
+
+.sectionLabel {
+  @include eyebrow;
+  margin: 8px 0 10px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: $muted;
+}
+
+.list {
+  margin: 0;
+  padding: 0 16px;
+  list-style: none;
+  border-radius: 22px;
+  background: $surface;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+
+  & + & {
+    border-top: 1.5px solid #f1eeee;
+  }
+}
+
+.rowIcon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: $bg;
+}
+
+.rowText {
+  flex: 1;
+  min-width: 0;
+}
+
+.rowTitle {
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.rowNote {
+  font-size: 12px;
+  color: $muted;
+}
+
+.soon {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: $bg;
+  font-size: 11px;
+  font-weight: 700;
+  color: $muted;
+}
+
+.chevron {
+  color: $muted;
+}
+
+.toggle {
+  flex: none;
+  display: flex;
+  width: 46px;
+  height: 28px;
+  padding: 3px;
+  border-radius: 999px;
+  background: #e3dede;
+  transition:
+    background 0.2s,
+    scale 0.15s;
+}
+
+.toggleOn {
+  justify-content: flex-end;
+  background: $orange;
+}
+
+.knob {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.signOut {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  margin-top: 8px;
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1.5px $line;
+  font-size: 14px;
+  font-weight: 600;
+  color: $copper;
+}
+
+.version {
+  font-size: 11px;
+  text-align: center;
+  color: $muted;
+}

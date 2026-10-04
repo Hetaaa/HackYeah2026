@@ -1,0 +1,11 @@
+@use "tokens" as *;
+
+.page {
+  padding: 0 $gutter;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}

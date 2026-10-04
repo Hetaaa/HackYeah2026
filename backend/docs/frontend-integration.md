@@ -58,14 +58,18 @@ Kierunek pochodzi z danych tej osoby. Nie zakładaj na froncie, że „więcej s
 | `status` | Kiedy | Co pokazać |
 | --- | --- | --- |
 | `ok` | są istotne wzorce | listę |
-| `preliminary` | tylko wczesne sygnały | listę z etykietą „Early signal” |
+| `preliminary` | tylko wzorce słabsze (przeszły test tylko dla swojej cechy) | listę, tak samo jak przy `ok` |
 | `insufficient_days` | nowy użytkownik | `summary` + pasek postępu `days_with_data / days_needed` z persony |
 | `insufficient_bad_days` / `insufficient_good_days` | za mało złych / dobrych dni | `summary` |
 | `not_enough_evidence` | dane są, wzorca brak | `summary` |
 | `insufficient_variation` | ankiety prawie zawsze takie same | `summary` |
 
-**7. Poziom wzorca:** `level = "significant"` to „Strong pattern”, a `"preliminary"` to „Early
-signal”. Nie pokazujemy `p_value`.
+**7. Poziom wzorca:** listy `/patterns` i `/recipe` mają do 3 pozycji: najpierw istotne
+(`level = "significant"`), potem dopełnienie słabszymi (`"preliminary"`, a dalej
+`"exploratory"`). Wyświetlamy je tak samo,
+bez etykiety. Różnica dla frontendu: „Possible reason” w kalendarzu i ostrzeżenia rano powstają
+tylko z istotnych wzorców, więc słabszy wzorzec może nie mieć żadnego dnia z powodem. Nie
+pokazujemy `p_value`.
 
 **8. Po zapisaniu ankiety odśwież dane.** Algorytm liczy wszystko od nowa (wynik jest w cache po
 stronie backendu, więc to szybkie). Po `PUT /surveys` pobierz ponownie: `today`, dzień w

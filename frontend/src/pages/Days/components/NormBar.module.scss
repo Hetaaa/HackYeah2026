@@ -1,0 +1,60 @@
+@use "tokens" as *;
+
+.bar {
+  position: relative;
+  height: 14px;
+  margin-top: 8px;
+
+  // the track
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 4px;
+    border-radius: 2px;
+    background: #f3f0f0;
+    translate: 0 -50%;
+  }
+}
+
+.band {
+  position: absolute;
+  top: 50%;
+  height: 8px;
+  border-radius: 4px;
+  background: #e4dfe0;
+  translate: 0 -50%;
+}
+
+.average {
+  position: absolute;
+  left: 50%;
+  top: 1px;
+  bottom: 1px;
+  width: 2px;
+  border-radius: 1px;
+  background: $ink-soft;
+  translate: -50% 0;
+}
+
+.dot {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border: 2.5px solid $surface;
+  border-radius: 50%;
+  background: $ink;
+  box-shadow: 0 2px 6px rgba(40, 20, 30, 0.25);
+  translate: -50% -50%;
+}
+
+.bad {
+  background: $copper;
+}
+
+.good {
+  background: $sage;
+}

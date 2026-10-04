@@ -1,0 +1,182 @@
+@use "tokens" as *;
+
+.tab {
+  display: flex;
+  flex-direction: column;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0 0 22px;
+  padding: 16px 0;
+  border-radius: 18px;
+  background: $plum;
+  color: #fff;
+}
+
+.stat {
+  padding: 0 18px;
+
+  & + & {
+    border-left: 1.5px solid rgba(#fff, 0.85);
+  }
+
+  dt {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #c9bfc4;
+    white-space: nowrap;
+  }
+
+  dd {
+    margin: 4px 0 0;
+    font-size: 16px;
+    font-weight: 700;
+  }
+}
+
+.eyebrow {
+  @include eyebrow;
+  color: $muted;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 6px 0 12px;
+}
+
+.sectionTitle {
+  font-size: 21px;
+  font-weight: 400;
+  letter-spacing: -0.05em;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: $orange;
+}
+
+.chevron {
+  display: flex;
+}
+
+.reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reason {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px 14px 14px;
+  border-radius: 18px;
+  background: $surface;
+}
+
+.rank {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: $orange;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.reasonBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.reasonTitle {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.reasonSub {
+  font-size: 12px;
+  color: $ink-soft;
+}
+
+.track {
+  height: 3px;
+  margin-top: 6px;
+  border-radius: 2px;
+  background: #ebe6e7;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: $orange;
+}
+
+.share {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.collapse {
+  overflow: hidden;
+}
+
+.combo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: #efe9f3;
+}
+
+.multiplier {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: $lavender;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.comboEyebrow {
+  @include eyebrow;
+  font-size: 8px;
+  color: $lavender-ink;
+}
+
+.comboTitle {
+  margin: 2px 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.comboText {
+  font-size: 9px;
+  color: $ink-soft;
+}

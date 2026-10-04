@@ -1,0 +1,263 @@
+@use "tokens" as *;
+
+.card {
+  padding: 20px 18px 18px;
+  border-radius: $radius-lg;
+  background: $surface;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.eyebrow {
+  @include eyebrow;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: $orange;
+}
+
+.title {
+  margin-top: 4px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.045em;
+}
+
+.pill {
+  flex: none;
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.good {
+  background: $sage-soft;
+  color: $sage-ink;
+}
+
+.neutral {
+  background: #f1eeee;
+  color: $ink-soft;
+}
+
+.bad {
+  background: $copper;
+  color: #fff;
+}
+
+.empty {
+  box-shadow: inset 0 0 0 1.5px $line;
+  color: $muted;
+}
+
+.summary {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: $bg;
+}
+
+.summaryReason {
+  background: $copper-soft;
+
+  .summaryEyebrow {
+    color: $copper-ink;
+  }
+}
+
+.summaryEyebrow {
+  @include eyebrow;
+  font-size: 10px;
+  font-weight: 700;
+  color: $muted;
+}
+
+.summaryText {
+  margin-top: 4px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+.summaryNote {
+  margin-top: 2px;
+  font-size: 12px;
+  color: $ink-soft;
+}
+
+.section {
+  margin-top: 20px;
+}
+
+.sectionLabel {
+  @include eyebrow;
+  margin-bottom: 10px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: $muted;
+}
+
+.checkInCta {
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 16px;
+  background: $orange;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 10px 24px rgba($orange, 0.3);
+}
+
+.noCheckIn {
+  margin-top: 14px;
+  font-size: 13px;
+  color: $muted;
+}
+
+.answers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.answer {
+  padding: 10px 10px 11px;
+  border-radius: 14px;
+  background: $bg;
+}
+
+.answerLabel {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: $ink-soft;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.answerValue {
+  margin: 2px 0 6px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+
+  small {
+    font-size: 11px;
+    font-weight: 600;
+    color: $muted;
+  }
+}
+
+.dots {
+  display: flex;
+  gap: 3px;
+
+  span {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: #e3dede;
+  }
+
+  .dotOn {
+    background: $ink;
+  }
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.feature {
+  padding: 12px 0;
+
+  & + & {
+    border-top: 1.5px solid #f1eeee;
+  }
+}
+
+.featureTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.featureLabel {
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.when {
+  font-size: 11px;
+  color: $muted;
+}
+
+.featureValues {
+  text-align: right;
+}
+
+.value {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.diff {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: $muted;
+}
+
+.leans_bad {
+  color: $copper;
+}
+
+.leans_good {
+  color: $sage;
+}
+
+.key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: $ink-soft;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  i {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+  }
+}
+
+.keyBad {
+  background: $copper;
+}
+
+.keyGood {
+  background: $sage;
+}
+
+.keyBand {
+  width: 16px !important;
+  border-radius: 4px !important;
+  background: #e4dfe0;
+}

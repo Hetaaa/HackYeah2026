@@ -93,10 +93,9 @@ def pattern_condition(p: dict) -> str:
 
 
 def pattern_text(p: dict) -> str:
-    early = "" if p["level"] == "significant" else " (early signal)"
     return (
         f"{pattern_condition(p)}: {p['target_days_in_condition']} of "
-        f"{p['days_in_condition']} days {p['kind']}{early}"
+        f"{p['days_in_condition']} days {p['kind']}"
     )
 
 
@@ -183,10 +182,11 @@ def status_summary(status: str, kind: str, n: int, have: int, needed: int) -> st
     common = {
         "insufficient_days": f"Keep checking in: {have}/{needed} days",
         "insufficient_variation": "Check-ins too similar to compare",
-        "preliminary": f"{_plural(n, 'early signal')}, no clear pattern yet",
     }
     if status in common:
         return common[status]
+    if status == "preliminary":  # shown like significant patterns (level tells them apart)
+        status = "ok"
     if kind == "bad":
         return {
             "ok": f"{_plural(n, 'possible reason')} for bad days",

@@ -372,7 +372,7 @@ def _stats(p: dict) -> dict:
         "target_days_in_condition": p["target_days_in_condition"],
         "rate_in": p["rate_in"],
         "rate_out": p["rate_out"],
-        # significant: tested against all features; preliminary: against its own feature only
+        # significant: tested against all features; preliminary / exploratory: own feature only
         "p_value": p["p_global"] if p["level"] == "significant" else p["p_feature"],
         "feature": p["feature"],
         "label": FEATURES[p["feature"]].label,
@@ -419,7 +419,7 @@ def good_day_recipe(analysis: dict) -> Recipe:
 
 
 def pattern_chart(analysis: dict, feature: str, kind: str) -> PatternChart | None:
-    """The persona's pattern for `feature` of this kind (significant or early signal)."""
+    """The persona's pattern for `feature` of this kind (any level)."""
     p = next((p for p in analysis["patterns"][kind]["patterns"] if p["feature"] == feature), None)
     if p is None:
         return None

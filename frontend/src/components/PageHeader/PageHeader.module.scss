@@ -1,0 +1,62 @@
+@use "tokens" as *;
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0 22px;
+}
+
+.logo {
+  height: 33px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: $plum;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.eyebrow {
+  @include eyebrow;
+  font-size: 11px;
+  color: $orange;
+}
+
+.title {
+  margin-top: 10px;
+  font-size: 33px;
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+}
+
+.subtitle {
+  display: block;
+  font-weight: 300;
+  color: $muted;
+}
+
+.description {
+  margin-top: 10px;
+  font-size: 13px;
+  color: $ink-soft;
+}

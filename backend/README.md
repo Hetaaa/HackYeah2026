@@ -241,3 +241,5 @@ Baza tworzy się i seeduje sama przy starcie.
 > SQLite na Render/Railway leży na efemerycznym dysku: każdy redeploy i restart przywraca bazę do stanu seeda.
 > Na demo to wystarcza; jeśli dane mają przetrwać, podepnij dysk (volume) albo ustaw `DATABASE_URL` na Postgres.
 > Darmowy Render usypia instancję po bezczynności, więc pierwsze zapytanie trwa ok. 30 s. Obudź ją przed prezentacją.
+
+Deploy na Render + Vercel krok po kroku: [../DEPLOY.md](../DEPLOY.md) (konfiguracja: `render.yaml`, `frontend/vercel.json`).

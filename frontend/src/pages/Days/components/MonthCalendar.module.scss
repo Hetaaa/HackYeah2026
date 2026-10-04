@@ -1,0 +1,160 @@
+@use "tokens" as *;
+
+.card {
+  padding: 18px 16px 16px;
+  border-radius: $radius-lg;
+  background: $surface;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+.nav {
+  display: flex;
+  gap: 6px;
+
+  button {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: $bg;
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+  }
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 12px 0 16px;
+  padding: 0 4px;
+  list-style: none;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: $ink-soft;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  strong {
+    font-weight: 800;
+    color: $ink;
+  }
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.legendDot {
+  width: 6px;
+  height: 6px;
+  margin: 0 2px;
+  border-radius: 50%;
+  background: $copper;
+}
+
+.weekdays,
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.weekdays {
+  margin-bottom: 6px;
+
+  span {
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    color: $muted;
+  }
+}
+
+.tile {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: $ink;
+}
+
+// Day tones; also used by the legend swatches.
+.good {
+  background: $sage-soft;
+  color: $sage-ink;
+}
+
+.neutral {
+  background: #f1eeee;
+}
+
+.bad {
+  background: $copper;
+  color: #fff;
+
+  .reasonDot {
+    background: #fff;
+  }
+}
+
+.empty {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px $line;
+  color: $muted;
+}
+
+.future {
+  color: rgba($muted, 0.5);
+  cursor: default;
+}
+
+.swatch.neutral {
+  box-shadow: inset 0 0 0 1px $line;
+}
+
+.today {
+  font-weight: 800;
+  color: $orange;
+}
+
+.ring {
+  position: absolute;
+  inset: -3px;
+  border: 2.5px solid $plum;
+  border-radius: 14px;
+}
+
+.reasonDot {
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: $copper;
+  translate: -50% 0;
+}
