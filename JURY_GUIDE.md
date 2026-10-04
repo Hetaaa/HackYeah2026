@@ -1,66 +1,85 @@
-# why. — 2-minute guide for the jury
+# why. – przewodnik dla jury (2 minuty)
 
-**Open:** <https://hack-yeah2026.vercel.app>
+**Otwórz:** <https://hack-yeah2026.vercel.app>
 
-> **Before you start**
-> - **Real people, real data.** The four users (Sam, Kim, Robin, Alex) are real, anonymous
->   participants of the public research dataset
->   [PMData](https://datasets.simula.no/pmdata/): Fitbit watch data + a daily wellness check-in,
->   recorded in 2019–2020. Each user's **"today"** is a day from that recording.
-> - **Switching users is a demo-only feature.** Tap the **name in the top-right corner** to switch
->   at any time. It exists only so you can compare people; a real user sees only their own data.
-> - **Fullscreen works best** (`F11`, or `Ctrl`+`Cmd`+`F` on Mac). If something is too small, zoom in
->   with `Ctrl` + `+` (`Cmd` + `+` on Mac), and `Ctrl` + `0` to reset.
-> - The very first load can take up to a minute (the free server wakes up). After that it is fast.
+> **Zanim zaczniesz**
+> - **Prawdziwi ludzie, prawdziwe dane.** Czterej użytkownicy (Sam, Kim, Robin, Alex) to prawdziwi,
+>   anonimowi uczestnicy publicznego zbioru badawczego [PMData](https://datasets.simula.no/pmdata/):
+>   dane z zegarka Fitbit i codzienna ankieta samopoczucia z lat 2019–2020. „Dziś” każdej osoby to
+>   jeden dzień z tego nagrania.
+> - **Przełączanie użytkownika jest tylko na potrzeby demo.** Kliknij **imię w prawym górnym rogu**.
+>   Możesz przełączać w każdej chwili, żeby porównać osoby. Prawdziwy użytkownik widzi tylko swoje
+>   dane.
+> - **Najlepiej na pełnym ekranie:** `F11`, na Macu `Ctrl` + `Cmd` + `F`.
+> - **Jeśli coś jest za małe:** powiększ przez `Ctrl` + `+` (Mac: `Cmd` + `+`), a wróć do normalnego
+>   rozmiaru przez `Ctrl` + `0`.
+> - **Pierwsze ładowanie** może potrwać do minuty, bo darmowy serwer się wybudza. Potem działa
+>   szybko.
 
-## The main catch
+## Główna idea
 
-Your watch counts your sleep and steps, but nobody tells you **why** you feel bad. **why.** learns
-from **your own** days which watch signals come before **your** tough days. It warns you in the
-morning, before you even say how you feel, and explains each day afterwards. No averages from
-other people, no generic advice.
+Zegarek liczy sen i kroki, ale nikt nie mówi, **dlaczego** czujesz się gorzej.
 
-## 1. Sam: the morning warning (≈ 45 s)
+**why.** uczy się na **twoich własnych** dniach, które sygnały z zegarka poprzedzają **twoje**
+gorsze dni:
+- ostrzega rano, zanim powiesz, jak się czujesz;
+- potem wyjaśnia każdy dzień.
 
-First tap the name in the top-right corner → **Sam Carter**.
+Bez średnich z populacji i bez ogólnych porad.
 
-| Click | Notice |
+## 1. Sam: poranne ostrzeżenie (ok. 45 s)
+
+Najpierw kliknij imię w prawym górnym rogu → **Sam Carter**.
+
+| Kliknij | Zwróć uwagę |
 | --- | --- |
-| **Today** (start screen) | Sam's top 3 personal patterns around the heart, e.g. **"Awake over 12% of night: 15 of 27 days were tough"**. |
-| Scroll to the dark card | **"Today you may feel a little under the weather"** plus **"Heads-up: awake 12.5% of night"**. This is a warning **before** the check-in, from last night's watch data only. |
-| **Tell us how you feel today** → **Mood 3, Fatigue 1, Sleep quality 2, Stress 2** → **Save check-in** | The day is confirmed as tougher, with **"Possible reason: awake 12.5% of night"**. The morning warning was right, and the reason is Sam's own pattern. |
+| **Today** (ekran startowy) | 3 osobiste wzorce Sama wokół serca, np. **„Awake over 12% of night: 15 of 27 days were tough”**. |
+| Przewiń do ciemnej karty | **„Today you may feel a little under the weather”** i **„Heads-up: awake 12.5% of night”**. To ostrzeżenie **przed** ankietą, tylko z danych zegarka z ostatniej nocy. |
+| **Tell us how you feel today** → **Mood 3, Fatigue 1, Sleep quality 2, Stress 2** → **Save check-in** | Dzień potwierdza się jako gorszy, z **„Possible reason: awake 12.5% of night”**. Poranne ostrzeżenie się sprawdziło, a powód to własny wzorzec Sama. |
 
-## 2. Sam: why we believe it (≈ 30 s)
+## 2. Sam: dlaczego temu wierzyć (ok. 30 s)
 
-| Click | Notice |
+| Kliknij | Zwróć uwagę |
 | --- | --- |
-| **Patterns** (bottom bar) | **Strongest signal ×4.3**: after a restless night, a tough day is 4.3× more likely **for Sam**. |
-| Under each pattern | **"Mostly: more tired, lower mood, more stressed"** shows what actually changes on those days. |
-| **View all data** (under Strongest signal) | Every watch signal, Sam's good days vs lower days, side by side. |
-| **Good-day recipe** tab | What Sam's good days share, e.g. **over 5h20 of light activity the day before**. |
+| **Patterns** (dolny pasek) | **Strongest signal ×4.3**: po niespokojnej nocy gorszy dzień jest 4,3 razy bardziej prawdopodobny, **u Sama**. |
+| Pod każdym wzorcem | **„Mostly: more tired, lower mood, more stressed”**: co faktycznie zmienia się w te dni. |
+| **View all data** (pod Strongest signal) | Wszystkie sygnały z zegarka: dobre dni Sama obok gorszych. |
+| Zakładka **Good-day recipe** | Co łączy dobre dni Sama, np. **ponad 5h20 lekkiej aktywności dzień wcześniej**. |
 
-## 3. Every day explained (≈ 20 s)
+## 3. Każdy dzień wyjaśniony (ok. 20 s)
 
-| Click | Notice |
+| Kliknij | Zwróć uwagę |
 | --- | --- |
-| **Days** (bottom bar) | Calendar coloured by how Sam felt. |
-| Tap **Feb 3** | A tough day with **"Possible reason: awake 15.2% of night"**. Below it, every signal compared with Sam's **average good day**, coloured toward lower / good days. |
-| Tap a day **without** a reason | The app shows only the biggest difference and says it is **"not necessarily a cause"**. It does not invent reasons. |
+| **Days** (dolny pasek) | Kalendarz pokolorowany według samopoczucia Sama. |
+| Kliknij **3 lutego** | Gorszy dzień z **„Possible reason: awake 15.2% of night”**. Pod spodem każdy sygnał porównany z **przeciętnym dobrym dniem** Sama, z kolorem w stronę gorszych albo dobrych dni. |
+| Kliknij dzień **bez** powodu | Aplikacja pokazuje tylko największą różnicę i pisze, że to **„not necessarily a cause”**. Nie wymyśla powodów. |
 
-## 4. Different person, different reason (≈ 25 s)
+## 4. Inna osoba, inny powód (ok. 25 s)
 
-| Click | Notice |
+| Kliknij | Zwróć uwagę |
 | --- | --- |
-| Name (top right) → **Kim Lee** → **Patterns** | Kim's tough days follow **short sleep: "Under 6h sleep: 10 of 13 days were tough", ×4**, and very late sleep (Kim is a night owl). Same app, completely different story. |
-| Name → **Robin Hayes** → **Patterns** | After hard training Robin is **"Mostly: more tired"**, not in a worse mood. That is recovery, so the app does not say "stop training". The **Good-day recipe** tab is empty: with only 3 good days, the app says so instead of guessing. |
+| Imię → **Kim Lee** → **Patterns** | Gorsze dni Kim idą za **krótkim snem: „Under 6h sleep: 10 of 13 days were tough”, ×4** oraz bardzo późnym zasypianiem (Kim to nocny marek). Ta sama aplikacja, zupełnie inna historia. |
+| Imię → **Robin Hayes** → **Patterns** | Po ciężkim treningu Robin jest **„Mostly: more tired”**, ale nie ma gorszego nastroju. To regeneracja, więc aplikacja nie mówi „przestań trenować”. Zakładka **Good-day recipe** jest pusta: przy 3 dobrych dniach aplikacja mówi to wprost, zamiast zgadywać. |
 
-## What to look for
+## Na co zwrócić uwagę
 
-- **Personal, not generic:** every number comes from the user's own history.
-- **Warns before, explains after:** a morning heads-up from watch data, and a "possible reason" after
-  the check-in.
-- **Honest:** patterns are tested against shuffled data (about 5% false alarms). Where there is no
-  clear pattern, the app says so. A pattern is a correlation, not medical advice.
+- **Osobiste, nie ogólne:** każda liczba pochodzi z historii danej osoby.
+- **Ostrzega przed, wyjaśnia po:** rano ostrzeżenie z danych zegarka, po ankiecie „possible reason”.
+- **Uczciwe:**
+  - wzorce są testowane na losowo przemieszanych danych (ok. 5% fałszywych alarmów);
+  - gdy nie ma wyraźnego wzorca, aplikacja to mówi;
+  - wzorzec to korelacja, nie porada medyczna.
 
-Optional, under **You**: **24-hour format** switch (all times become AM/PM) and **Privacy**
-(what data is used and how).
+## Co jeszcze warto zobaczyć
+
+- **Prognoza dnia (Today, ciemna karta).** Szansa na gorszy, typowy albo dobry dzień, np. **„77% chance of a tougher day”**. Liczy ją model XGBoost na przeszłych dniach, bez dzisiejszej ankiety.
+- **Ostatnie 7 dni (Today, na dole).** Średni sen i kroki z ostatniego tygodnia na tle dobrych dni.
+- **Przepis na dobry dzień (Today, karta „What helps you feel good”).** Skrót przepisu: składniki i jak często dni z nimi są dobre.
+- **Cofnięcie ankiety.** W oknie ankiety przycisk **„Reset today’s check-in”** pozwala wypełnić ją jeszcze raz, np. inaczej, żeby zobaczyć inny wynik.
+- **Historia w kalendarzu (Days).** Strzałki przy nazwie miesiąca prowadzą aż do listopada 2019. Pod miesiącem jest liczba dobrych, typowych i gorszych dni. Kliknięty dzień z przeszłości pokazuje też odpowiedzi z ankiety tamtego dnia.
+- **Alex: przepis zamiast problemu.** Imię → **Alex Morgan** → **Patterns** → **Good-day recipe**: dobre dni Alexa idą za snem **powyżej 6h30**.
+- **Ustawienia (You):**
+  - przełącznik **24-hour format** zmienia wszystkie godziny w aplikacji na AM/PM;
+  - **Privacy** wyjaśnia, jakie dane są używane i jak.
+- **Integracje (You).** Karta Apple Health i lista „Other sources” to w demo **makiety**. Dane pochodzą z nagranego zbioru PMData. Jak podłączyć prawdziwe zegarki, opisujemy w `backend/docs/watch-sources.md`.
+- **Dla technicznych:** dokumentacja API (Swagger) jest pod <https://whytoday-api.onrender.com/docs>.
