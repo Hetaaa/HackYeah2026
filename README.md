@@ -41,6 +41,10 @@ Przy włączonym serwerze:
 
 Za darmo: backend na Render, frontend na Vercel. Krok po kroku: [DEPLOY.md](DEPLOY.md).
 
+## Dla jury
+
+Scenariusz na 2 minuty (co kliknąć, na co zwrócić uwagę): [JURY_GUIDE.md](JURY_GUIDE.md).
+
 ## AI, dane i biblioteki
 
 Użycie AI (Claude), zbiór danych PMData (CC BY 4.0), modele, usługi i biblioteki z licencjami i
