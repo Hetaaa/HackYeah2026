@@ -183,6 +183,13 @@ def day_summary(analysis: dict, date: dt.date) -> DaySummary:
     )
 
 
+def _difference_text(analysis: dict, v: dict) -> str | None:
+    if v["value"] is None or v["reference"] is None:
+        return None
+    ref = texts.compare_ref(norm_reference(analysis))
+    return texts.difference_text(v["feature"], v["value"] - v["reference"], ref)
+
+
 def _features(analysis: dict, entry: dict | None) -> list[FeatureValue]:
     searched = engine.search_features(analysis["info"]["group_e_feature"])
     return [
@@ -194,6 +201,7 @@ def _features(analysis: dict, entry: dict | None) -> list[FeatureValue]:
             norm=_norm(v["norm"], v["reference"]),
             when=v["when"],
             display=v["display"],
+            difference_text=_difference_text(analysis, v),
             in_patterns=v["feature"] in searched,
             leans=v["leans"],
         )
@@ -295,6 +303,7 @@ def label_stats(analysis: dict) -> StatsReport:
                 good=good,
                 bad=bad,
                 difference=round(bad.average - good.average, 3) if both else None,
+                difference_display=texts.signed(name, bad.average - good.average) if both else None,
             )
         )
     return StatsReport(
@@ -368,6 +377,8 @@ def _stats(p: dict) -> dict:
         "level": p["level"],
         "when": _when(p),
         "threshold": p["threshold"],
+        "op": p["op"],
+        "display_threshold": texts.amount(p["feature"], p["threshold"]),
         "days_in_condition": p["days_in_condition"],
         "target_days_in_condition": p["target_days_in_condition"],
         "rate_in": p["rate_in"],
@@ -427,9 +438,7 @@ def pattern_chart(analysis: dict, feature: str, kind: str) -> PatternChart | Non
         **_stats(p),
         kind=kind,
         unit=FEATURES[feature].unit,
-        op=p["op"],
         variant=p["variant"],
-        display_threshold=texts.fmt(feature, p["threshold"]),
         points=[
             PatternPoint(
                 date=pt["date"],

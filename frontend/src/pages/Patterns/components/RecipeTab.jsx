@@ -4,27 +4,29 @@ import CountUp from "../../../components/CountUp/CountUp.jsx";
 import styles from "./RecipeTab.module.scss";
 
 function RecipeTab() {
-  const { goodDayRate, items, tryToday } = useAppStore((s) => s.patterns.recipe);
+  const { goodDayRate, items, statusText } = useAppStore((s) => s.patterns.recipe);
 
   return (
     <div className={styles.tab}>
       <article className={styles.formula}>
         <p className={styles.eyebrow}>Your personal formula</p>
-        <h2 className={styles.formulaTitle}>Three things your best days share.</h2>
-        <p className={styles.rate}>
-          <strong>
-            <CountUp value={goodDayRate} />
-            <small>%</small>
-          </strong>
-          <span>of days with this mix feel good</span>
-        </p>
+        <h2 className={styles.formulaTitle}>{statusText}</h2>
+        {goodDayRate !== null && (
+          <p className={styles.rate}>
+            <strong>
+              <CountUp value={goodDayRate} />
+              <small>%</small>
+            </strong>
+            <span>of days with your top ingredient feel good</span>
+          </p>
+        )}
         <span className={styles.ring} />
       </article>
 
       <ol className={styles.items}>
         {items.map((item, i) => (
           <motion.li
-            key={item.area}
+            key={item.key}
             className={styles.item}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -41,11 +43,6 @@ function RecipeTab() {
         ))}
       </ol>
 
-      <article className={styles.tryToday}>
-        <p className={styles.tryEyebrow}>Try today</p>
-        <h3 className={styles.tryTitle}>{tryToday.title}</h3>
-        <p className={styles.tryText}>{tryToday.text}</p>
-      </article>
     </div>
   );
 }

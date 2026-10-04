@@ -5,7 +5,11 @@ import WalkIcon from "../../../components/icons/WalkIcon.jsx";
 import { useAppStore } from "../../../store/useAppStore.js";
 import styles from "./Evidence.module.scss";
 
-const average = (values) => values.reduce((a, b) => a + b, 0) / values.length;
+const present = (values) => values.filter((v) => v !== null);
+const average = (values) => {
+  const known = present(values);
+  return known.length ? known.reduce((a, b) => a + b, 0) / known.length : null;
+};
 
 // Bars start at 4h, not 0, so a 45-minute gap is actually visible.
 const SLEEP_AXIS_MIN = 4;
@@ -25,15 +29,21 @@ function formatPercentDelta(ratio) {
 }
 
 function Evidence() {
-  const { days, sleep, movement } = useAppStore((s) => s.today.evidence);
+  const { days, reference, sleep, movement } = useAppStore((s) => s.today.evidence);
 
-  const avgSleepMin = Math.round(average(sleep.hours) * 60);
-  const sleepDelta = formatMinutesDelta(avgSleepMin - sleep.usualHours * 60);
-  const maxNight = Math.max(...sleep.hours, sleep.usualHours);
-  const barHeight = (hours) => `${((hours - SLEEP_AXIS_MIN) / (maxNight - SLEEP_AXIS_MIN)) * 100}%`;
+  const avgSleep = average(sleep.hours);
+  const avgSleepMin = avgSleep === null ? null : Math.round(avgSleep * 60);
+  const sleepDelta =
+    avgSleepMin !== null && sleep.usualHours !== null
+      ? formatMinutesDelta(avgSleepMin - sleep.usualHours * 60)
+      : null;
+  const maxNight = Math.max(...present(sleep.hours), sleep.usualHours ?? 0, SLEEP_AXIS_MIN + 1);
+  const barHeight = (hours) => `${(Math.max(hours - SLEEP_AXIS_MIN, 0) / (maxNight - SLEEP_AXIS_MIN)) * 100}%`;
 
-  const avgSteps = Math.round(average(movement.steps));
-  const stepsDelta = formatPercentDelta(avgSteps / movement.usualSteps - 1);
+  const avgStepsRaw = average(movement.steps);
+  const avgSteps = avgStepsRaw === null ? null : Math.round(avgStepsRaw);
+  const stepsDelta =
+    avgSteps !== null && movement.usualSteps ? formatPercentDelta(avgSteps / movement.usualSteps - 1) : null;
 
   return (
     <section className={styles.section}>
@@ -44,7 +54,7 @@ function Evidence() {
           View patterns
         </Link>
       </div>
-      <p className={styles.subtitle}>Daily averages compared with your usual days.</p>
+      <p className={styles.subtitle}>Daily averages compared with {reference}.</p>
 
       <div className={styles.grid}>
         <Link to="/patterns" className={`${styles.card} ${styles.sleep}`}>
@@ -55,23 +65,33 @@ function Evidence() {
             <span className={styles.metric}>Avg sleep</span>
           </div>
           <p className={styles.value}>
-            <CountUp value={Math.floor(avgSleepMin / 60)} />
-            <small>h</small> <CountUp value={avgSleepMin % 60} />
-            <small>m</small>
+            {avgSleepMin === null ? (
+              "–"
+            ) : (
+              <>
+                <CountUp value={Math.floor(avgSleepMin / 60)} />
+                <small>h</small> <CountUp value={avgSleepMin % 60} />
+                <small>m</small>
+              </>
+            )}
           </p>
-          <p className={styles.delta}>
-            <strong>{sleepDelta}</strong> vs your usual
-          </p>
+          {sleepDelta && (
+            <p className={styles.delta}>
+              <strong>{sleepDelta}</strong> vs {reference}
+            </p>
+          )}
           <div className={styles.chart}>
             <div className={styles.bars}>
               {sleep.hours.map((hours, i) => (
                 <span
                   key={i}
                   className={i === sleep.hours.length - 1 ? styles.barToday : styles.bar}
-                  style={{ height: barHeight(hours) }}
+                  style={{ height: hours === null ? 0 : barHeight(hours) }}
                 />
               ))}
-              <span className={styles.usualLine} style={{ bottom: barHeight(sleep.usualHours) }} />
+              {sleep.usualHours !== null && (
+                <span className={styles.usualLine} style={{ bottom: barHeight(sleep.usualHours) }} />
+              )}
             </div>
             <div className={styles.days}>
               {days.map((day, i) => (
@@ -90,13 +110,12 @@ function Evidence() {
             </span>
             <span className={styles.metric}>Avg steps</span>
           </div>
-          <p className={styles.value}>
-            <CountUp value={avgSteps} />
-          </p>
-          <p className={styles.delta}>
-            <strong>{stepsDelta}</strong> vs your usual
-          </p>
-          <p className={styles.note}>{movement.note}</p>
+          <p className={styles.value}>{avgSteps === null ? "–" : <CountUp value={avgSteps} />}</p>
+          {stepsDelta && (
+            <p className={styles.delta}>
+              <strong>{stepsDelta}</strong> vs {reference}
+            </p>
+          )}
           <span className={styles.ring} />
         </Link>
       </div>

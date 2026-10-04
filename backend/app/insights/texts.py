@@ -77,19 +77,10 @@ VALUE = {
 SIGNAL_LEAD = {"bad": "Heads-up", "good": "Good sign"}
 
 
-def window(name: str, variant: str) -> str:
-    night = C.FEATURES[name].night
-    if variant == "avg3":
-        return " (3-night avg)" if night else " (3-day avg)"
-    return "" if night else " (day before)"
-
-
 def pattern_condition(p: dict) -> str:
-    """Short condition of a pattern: "Under 6h sleep", "Under 4k steps (day before)"."""
+    """Short condition of a pattern: "Under 6h sleep", "Under 4k steps"."""
     phrase = CONDITION[p["feature"]][p["op"] == "above"]
-    return phrase.format(v=amount(p["feature"], p["threshold"])) + window(
-        p["feature"], p["variant"]
-    )
+    return phrase.format(v=amount(p["feature"], p["threshold"]))
 
 
 def pattern_text(p: dict) -> str:
@@ -100,7 +91,7 @@ def pattern_text(p: dict) -> str:
 
 
 def value_text(name: str, variant: str, x: float) -> str:
-    return VALUE[name].format(v=amount(name, x)) + window(name, variant)
+    return VALUE[name].format(v=amount(name, x))
 
 
 def reason_text(name: str, variant: str, x: float) -> str:
@@ -138,10 +129,10 @@ COMPARE_LABEL = {
     "wake_pct": "Awake at night",
     "rem_pct": "REM",
     "hr_sleep_mean": "Sleep HR",
-    "steps": "Steps (day before)",
-    "mvpa": "Brisk activity (day before)",
-    "z_cardio_peak": "Hard exercise (day before)",
-    "lightly": "Light activity (day before)",
+    "steps": "Steps",
+    "mvpa": "Brisk activity",
+    "z_cardio_peak": "Hard exercise",
+    "lightly": "Light activity",
 }
 COMPARE_REF = {"good_days": "vs good days", "all_days": "vs usual"}
 
@@ -150,8 +141,8 @@ def compare_ref(norm_source: str) -> str:
     return COMPARE_REF[norm_source]
 
 
-def compare_text(name: str, d: float, ref: str) -> str:
-    """Signed difference from the reference day: "Sleep -1h43 vs good days"."""
+def signed(name: str, d: float) -> str:
+    """Signed difference in the feature's unit: "-1h43", "+15 bpm", "+3%"."""
     a = abs(d)
     unit = C.FEATURES[name].unit
     if unit in ("h", "clock"):
@@ -160,7 +151,17 @@ def compare_text(name: str, d: float, ref: str) -> str:
         size = f"{a:.0f}%"
     else:
         size = amount(name, a)
-    return f"{COMPARE_LABEL[name]} {'+' if d > 0 else '-'}{size} {ref}"
+    return f"{'+' if d > 0 else '-'}{size}"
+
+
+def difference_text(name: str, d: float, ref: str) -> str:
+    """Signed difference without the feature name: "-1h43 vs good days"."""
+    return f"{signed(name, d)} {ref}"
+
+
+def compare_text(name: str, d: float, ref: str) -> str:
+    """Signed difference from the reference day: "Sleep -1h43 vs good days"."""
+    return f"{COMPARE_LABEL[name]} {difference_text(name, d, ref)}"
 
 
 OUTLOOK = {
@@ -212,19 +213,19 @@ GROUPS = {
 }
 DESCRIPTIONS = {
     "sleep_h": "Time asleep during the main sleep that ended this morning.",
-    "bedtime_h": "When you fell asleep (hours after 18:00 the evening before).",
+    "bedtime_h": "When you fell asleep.",
     "wake_pct": "Share of time in bed spent awake during the night.",
     "steps": "Steps during the day.",
-    "z_cardio_peak": "Minutes in the cardio and peak heart-rate zones (hard exercise).",
+    "z_cardio_peak": "Minutes in the cardio and peak heart-rate zones.",
     "mvpa": "Minutes of moderate and vigorous activity.",
     "lightly": "Minutes of light activity such as walking around or chores.",
     "rem_pct": "Share of sleep spent in REM, the dream stage.",
     "hr_sleep_mean": "Average heart rate while asleep; higher than usual can mean strain.",
-    "sleep_eff": "The watch's sleep efficiency score (shown for context only).",
-    "rhr_night": "Resting heart rate measured overnight (shown for context only).",
-    "time_in_bed_h": "Time from lying down to getting up (shown for context only).",
-    "sedentary": "Minutes spent sitting or lying while awake (shown for context only).",
-    "wake_min": "Minutes awake during the night (shown for context only).",
-    "deep_pct": "Share of sleep in deep sleep (shown for context only).",
-    "ss_overall": "The watch's overall sleep score (shown for context only).",
+    "sleep_eff": "The watch's sleep efficiency score.",
+    "rhr_night": "Resting heart rate measured overnight.",
+    "time_in_bed_h": "Time from lying down to getting up.",
+    "sedentary": "Minutes spent sitting or lying while awake.",
+    "wake_min": "Minutes awake during the night.",
+    "deep_pct": "Share of sleep in deep sleep.",
+    "ss_overall": "The watch's overall sleep score.",
 }

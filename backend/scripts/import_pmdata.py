@@ -193,11 +193,14 @@ def main() -> None:
             rows[-1] |= dict.fromkeys([*SURVEY, "survey_at"], "")
         days += rows
         persona = C.PERSONAS.get(pid)
-        name, description = (persona.name, persona.tagline) if persona else (pid.upper(), "")
+        name, last_name, description = (
+            (persona.name, persona.last_name, persona.tagline) if persona else (pid.upper(), "", "")
+        )
         personas.append(
             {
                 "id": pid,
                 "name": name,
+                "last_name": last_name,
                 "description": description,
                 "analysis_window_end": C.PMDATA_WINDOW_END.date().isoformat(),
                 "demo_today": today,

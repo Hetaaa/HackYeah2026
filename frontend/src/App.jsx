@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Navigate, Route, Routes, useLocation } from "react-router";
 import PhoneFrame from "./components/PhoneFrame/PhoneFrame.jsx";
@@ -8,11 +8,27 @@ import Today from "./pages/Today/Today.jsx";
 import Patterns from "./pages/Patterns/Patterns.jsx";
 import Days from "./pages/Days/Days.jsx";
 import Profile from "./pages/Profile/Profile.jsx";
+import StatusScreen from "./components/StatusScreen/StatusScreen.jsx";
+import { useAppStore } from "./store/useAppStore.js";
 import styles from "./App.module.scss";
 
 function App() {
   const location = useLocation();
   const scrollRef = useRef(null);
+  const status = useAppStore((s) => s.status);
+  const init = useAppStore((s) => s.init);
+
+  useEffect(() => {
+    init();
+  }, [init]);
+
+  if (status !== "ready") {
+    return (
+      <PhoneFrame>
+        <StatusScreen />
+      </PhoneFrame>
+    );
+  }
 
   return (
     <PhoneFrame>

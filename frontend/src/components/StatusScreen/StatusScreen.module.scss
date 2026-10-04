@@ -1,0 +1,43 @@
+@use "tokens" as *;
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+  padding: 0 $gutter;
+  text-align: center;
+}
+
+.logo {
+  height: 40px;
+  margin-bottom: 14px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.text {
+  font-size: 13px;
+  color: $ink-soft;
+}
+
+.hint {
+  font-size: 12px;
+  color: $muted;
+}
+
+.retry {
+  margin-top: 12px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: $plum;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}

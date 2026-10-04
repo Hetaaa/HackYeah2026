@@ -1,20 +1,33 @@
 import { AnimatePresence, motion } from "motion/react";
-import { TODAY } from "../../../mocks/days.js";
 import { CHECK_IN_METRICS, useAppStore } from "../../../store/useAppStore.js";
 import NormBar from "./NormBar.jsx";
 import styles from "./DayDetail.module.scss";
 
 const LABEL_TEXT = { good: "Good day", neutral: "Typical day", bad: "Lower day" };
 const WHEN_TEXT = { last_night: "last night", day_before: "day before" };
-// Backend survey uses snake_case.
-const SURVEY_KEY = { mood: "mood", fatigue: "fatigue", sleepQuality: "sleep_quality", stress: "stress" };
 
 function formatDate(date) {
   const [y, m, d] = date.split("-").map(Number);
   return new Date(y, m - 1, d).toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
 }
 
-function DayDetail({ day }) {
+function DayDetail({ date, day, today, reference, isLoading, error }) {
+  if (!day) {
+    return (
+      <section className={styles.card}>
+        <div className={styles.head}>
+          <div>
+            <p className={styles.eyebrow}>{date === today ? "Today" : "Day view"}</p>
+            <h2 className={styles.title}>{formatDate(date)}</h2>
+          </div>
+        </div>
+        <p className={styles.noCheckIn}>
+          {isLoading ? "Loading…" : (error ?? "No watch data or check-in for this day.")}
+        </p>
+      </section>
+    );
+  }
+
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.section
@@ -27,19 +40,19 @@ function DayDetail({ day }) {
       >
         <div className={styles.head}>
           <div>
-            <p className={styles.eyebrow}>{day.date === TODAY ? "Today" : "Day view"}</p>
+            <p className={styles.eyebrow}>{day.date === today ? "Today" : "Day view"}</p>
             <h2 className={styles.title}>{formatDate(day.date)}</h2>
           </div>
           <span className={`${styles.pill} ${styles[day.label ?? "empty"]}`}>
-            {LABEL_TEXT[day.label] ?? (day.date === TODAY ? "Check-in pending" : "No check-in")}
+            {LABEL_TEXT[day.label] ?? (day.date === today ? "Check-in pending" : "No check-in")}
           </span>
         </div>
 
         <Summary day={day} />
-        <CheckIn day={day} />
+        <CheckIn day={day} today={today} />
 
         <div className={styles.section}>
-          <p className={styles.sectionLabel}>vs your average good day</p>
+          <p className={styles.sectionLabel}>vs {reference}</p>
           <ul className={styles.features}>
             {day.features.map((f, i) => (
               <motion.li
@@ -57,7 +70,7 @@ function DayDetail({ day }) {
                   <div className={styles.featureValues}>
                     <p className={styles.value}>{f.display}</p>
                     <p className={`${styles.diff} ${styles[`leans_${f.leans}`] ?? ""}`}>
-                      {f.text.replace(`${f.label} `, "")}
+                      {f.difference_text}
                     </p>
                   </div>
                 </div>
@@ -84,7 +97,7 @@ function DayDetail({ day }) {
 
 /** Possible reason > biggest difference > neutral text, as in backend `headline`. */
 function Summary({ day }) {
-  if (day.has_reason) {
+  if (day.reasons.length) {
     const reason = day.reasons[0];
     return (
       <div className={`${styles.summary} ${styles.summaryReason}`}>
@@ -105,16 +118,16 @@ function Summary({ day }) {
   }
   return (
     <div className={styles.summary}>
-      <p className={styles.summaryText}>{day.headline ?? "Typical day for you"}</p>
+      <p className={styles.summaryText}>{day.summary ?? "Typical day for you"}</p>
     </div>
   );
 }
 
-function CheckIn({ day }) {
+function CheckIn({ day, today }) {
   const openCheckIn = useAppStore((s) => s.openCheckIn);
 
   if (!day.survey) {
-    return day.date === TODAY ? (
+    return day.date === today ? (
       <button className={styles.checkInCta} onClick={openCheckIn}>
         Check in to see how today compares
       </button>
@@ -128,7 +141,7 @@ function CheckIn({ day }) {
       <p className={styles.sectionLabel}>Your check-in</p>
       <div className={styles.answers}>
         {CHECK_IN_METRICS.map((m) => {
-          const value = day.survey[SURVEY_KEY[m.key]];
+          const value = day.survey[m.key];
           return (
             <div key={m.key} className={styles.answer}>
               <p className={styles.answerLabel}>{m.label}</p>

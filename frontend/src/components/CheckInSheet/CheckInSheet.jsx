@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import confetti from "canvas-confetti";
 import { X } from "lucide-react";
+import { fromApiAnswers } from "../../api/adapters.js";
 import { CHECK_IN_METRICS, useAppStore } from "../../store/useAppStore.js";
 import styles from "./CheckInSheet.module.scss";
 
@@ -81,19 +82,31 @@ function SheetBody({ onSaved }) {
   const saved = useAppStore((s) => s.checkIn);
   const saveCheckIn = useAppStore((s) => s.saveCheckIn);
   const close = useAppStore((s) => s.closeCheckIn);
+  const persona = useAppStore((s) => s.persona);
   const [draft, setDraft] = useState(saved ?? {});
   const [isDone, setIsDone] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState(null);
   const closeTimer = useRef(null);
 
   useEffect(() => () => clearTimeout(closeTimer.current), []);
 
   const isComplete = CHECK_IN_METRICS.every((m) => draft[m.key]);
+  const demoAnswers = fromApiAnswers(persona.demo_answers);
 
-  const handleSave = () => {
-    saveCheckIn(draft);
-    setIsDone(true);
-    onSaved();
-    closeTimer.current = setTimeout(close, CLOSE_AFTER_SUCCESS_MS);
+  const handleSave = async () => {
+    setIsSaving(true);
+    setError(null);
+    try {
+      await saveCheckIn(draft);
+      setIsDone(true);
+      onSaved();
+      closeTimer.current = setTimeout(close, CLOSE_AFTER_SUCCESS_MS);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -131,13 +144,20 @@ function SheetBody({ onSaved }) {
               ))}
             </div>
 
+            {demoAnswers && (
+              <button className={styles.demo} onClick={() => setDraft(demoAnswers)}>
+                Fill in {persona.name}’s real answers
+              </button>
+            )}
+            {error && <p className={styles.error}>{error}</p>}
+
             <motion.button
               className={styles.save}
-              disabled={!isComplete}
+              disabled={!isComplete || isSaving}
               onClick={handleSave}
-              animate={{ opacity: isComplete ? 1 : 0.45 }}
+              animate={{ opacity: isComplete && !isSaving ? 1 : 0.45 }}
             >
-              Save check-in
+              {isSaving ? "Saving…" : "Save check-in"}
             </motion.button>
           </motion.div>
         )}

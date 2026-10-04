@@ -7,6 +7,7 @@ from sqlmodel import Field, SQLModel, UniqueConstraint
 class Persona(SQLModel, table=True):
     id: str = Field(primary_key=True, max_length=20)
     name: str = Field(max_length=100)
+    last_name: str | None = Field(default=None, max_length=100)
     description: str = Field(default="", max_length=500)
     analysis_window_end: dt.date | None = Field(
         default=None,
