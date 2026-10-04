@@ -4,6 +4,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router";
 import PhoneFrame from "./components/PhoneFrame/PhoneFrame.jsx";
 import BottomNav from "./components/BottomNav/BottomNav.jsx";
 import CheckInSheet from "./components/CheckInSheet/CheckInSheet.jsx";
+import PrivacySheet from "./components/PrivacySheet/PrivacySheet.jsx";
 import Today from "./pages/Today/Today.jsx";
 import Patterns from "./pages/Patterns/Patterns.jsx";
 import Days from "./pages/Days/Days.jsx";
@@ -54,6 +55,7 @@ function App() {
       </main>
       <BottomNav />
       <CheckInSheet />
+      <PrivacySheet />
     </PhoneFrame>
   );
 }

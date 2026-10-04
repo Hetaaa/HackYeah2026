@@ -194,6 +194,15 @@
   }
 }
 
+// Clickable row (Privacy): the whole row is one button with the same layout as .row.
+.rowButton {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
 .rowIcon {
   flex: none;
   display: grid;

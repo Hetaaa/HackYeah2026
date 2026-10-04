@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Bell, ChevronRight, Heart, Lock, LogOut, RefreshCw, Ruler, Watch } from "lucide-react";
+import { Bell, ChevronRight, Clock, Heart, Lock, LogOut, RefreshCw, Watch } from "lucide-react";
 import PageHeader from "../../components/PageHeader/PageHeader.jsx";
 import Disclaimer from "../../components/Disclaimer/Disclaimer.jsx";
 import { useAppStore } from "../../store/useAppStore.js";
+import { useClockText } from "../../utils/time.js";
 import styles from "./Profile.module.scss";
 
-// Everything here is a mock: no real integration, settings only toggle locally.
+// Mostly a mock: no real integration. Working settings: 24-hour format (stored in the browser)
+// and the privacy sheet.
 const HEALTH_DATA = ["Sleep", "steps", "heart rate", "workouts"];
 const OTHER_SOURCES = [
   { name: "Fitbit", note: "Sleep stages, heart rate" },
@@ -17,6 +19,10 @@ const SYNC_MS = 1800;
 
 function Profile() {
   const user = useAppStore((s) => s.user);
+  const clockFormat = useAppStore((s) => s.clockFormat);
+  const setClockFormat = useAppStore((s) => s.setClockFormat);
+  const openPrivacy = useAppStore((s) => s.openPrivacy);
+  const clock = useClockText();
 
   return (
     <div className={styles.page}>
@@ -62,27 +68,26 @@ function Profile() {
       <section>
         <p className={styles.sectionLabel}>Settings</p>
         <ul className={styles.list}>
-          <ToggleRow icon={Bell} title="Daily check-in reminder" note="Every day at 08:00" defaultOn />
+          <ToggleRow icon={Bell} title="Daily check-in reminder" note={`Every day at ${clock("08:00")}`} defaultOn />
           <ToggleRow icon={RefreshCw} title="Weekly summary" note="Sunday evening" defaultOn={false} />
+          <ToggleRow
+            icon={Clock}
+            title="24-hour format"
+            note={`Bedtime ${clock("00:20")}`}
+            on={clockFormat === "24h"}
+            onChange={(on) => setClockFormat(on ? "24h" : "12h")}
+          />
           <li className={styles.row}>
-            <span className={styles.rowIcon}>
-              <Ruler size={18} />
-            </span>
-            <div className={styles.rowText}>
-              <p className={styles.rowTitle}>Units</p>
-              <p className={styles.rowNote}>Metric</p>
-            </div>
-            <ChevronRight size={18} className={styles.chevron} />
-          </li>
-          <li className={styles.row}>
-            <span className={styles.rowIcon}>
-              <Lock size={18} />
-            </span>
-            <div className={styles.rowText}>
-              <p className={styles.rowTitle}>Privacy</p>
-              <p className={styles.rowNote}>Patterns use only your own data</p>
-            </div>
-            <ChevronRight size={18} className={styles.chevron} />
+            <button className={styles.rowButton} onClick={openPrivacy}>
+              <span className={styles.rowIcon}>
+                <Lock size={18} />
+              </span>
+              <div className={styles.rowText}>
+                <p className={styles.rowTitle}>Privacy</p>
+                <p className={styles.rowNote}>Patterns use only your own data</p>
+              </div>
+              <ChevronRight size={18} className={styles.chevron} />
+            </button>
           </li>
         </ul>
       </section>
@@ -108,6 +113,7 @@ function Stat({ label, value }) {
 
 function HealthSync() {
   const lastSync = useAppStore((s) => s.lastHealthSync);
+  const clock = useClockText();
   const markSynced = useAppStore((s) => s.markHealthSynced);
   const [isSyncing, setIsSyncing] = useState(false);
 
@@ -134,7 +140,7 @@ function HealthSync() {
 
       <div className={styles.syncRow}>
         <span>Last synced</span>
-        <strong>{lastSync}</strong>
+        <strong>{clock(lastSync)}</strong>
       </div>
 
       <button className={styles.syncButton} onClick={sync} disabled={isSyncing}>
@@ -169,8 +175,11 @@ function HealthSync() {
   );
 }
 
-function ToggleRow({ icon: Icon, title, note, defaultOn }) {
-  const [on, setOn] = useState(defaultOn);
+/** Uncontrolled (defaultOn, local state) unless `on` + `onChange` are given. */
+function ToggleRow({ icon: Icon, title, note, defaultOn, on: controlledOn, onChange }) {
+  const [localOn, setLocalOn] = useState(defaultOn);
+  const on = controlledOn ?? localOn;
+  const toggle = () => (onChange ? onChange(!on) : setLocalOn(!on));
 
   return (
     <li className={styles.row}>
@@ -183,7 +192,7 @@ function ToggleRow({ icon: Icon, title, note, defaultOn }) {
       </div>
       <button
         className={`${styles.toggle} ${on ? styles.toggleOn : ""}`}
-        onClick={() => setOn((v) => !v)}
+        onClick={toggle}
         role="switch"
         aria-checked={on}
         aria-label={title}

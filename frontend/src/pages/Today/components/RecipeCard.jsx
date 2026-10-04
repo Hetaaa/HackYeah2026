@@ -2,10 +2,12 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router";
 import { useAppStore } from "../../../store/useAppStore.js";
 import CountUp from "../../../components/CountUp/CountUp.jsx";
+import { useClockText } from "../../../utils/time.js";
 import styles from "./RecipeCard.module.scss";
 
 function RecipeCard() {
   const { items, goodDayRate, statusText } = useAppStore((s) => s.today.recipe);
+  const clock = useClockText();
 
   return (
     <article className={styles.card}>
@@ -19,7 +21,7 @@ function RecipeCard() {
           <ul className={styles.tiles}>
             {items.map((item) => (
               <li key={item.key} className={styles.tile}>
-                <span className={styles.value}>{item.value}</span>
+                <span className={styles.value}>{clock(item.value)}</span>
                 <span className={styles.label}>{item.label}</span>
               </li>
             ))}
@@ -31,7 +33,7 @@ function RecipeCard() {
           </p>
         </>
       ) : (
-        <p className={styles.summary}>{statusText}</p>
+        <p className={styles.summary}>{clock(statusText)}</p>
       )}
       <Link to="/patterns?tab=recipe" className={styles.link}>
         See your full recipe <ArrowRight size={16} strokeWidth={1.8} />

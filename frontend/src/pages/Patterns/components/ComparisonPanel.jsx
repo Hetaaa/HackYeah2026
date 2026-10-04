@@ -1,5 +1,6 @@
 import { Info } from "lucide-react";
 import { useAppStore } from "../../../store/useAppStore.js";
+import { useClockText } from "../../../utils/time.js";
 import styles from "./ComparisonPanel.module.scss";
 
 const STRENGTH_LABEL = {
@@ -10,6 +11,7 @@ const STRENGTH_LABEL = {
 
 function ComparisonPanel() {
   const { weeks, updated, signals } = useAppStore((s) => s.patterns.comparison);
+  const clock = useClockText();
 
   return (
     <section className={styles.panel}>
@@ -33,9 +35,9 @@ function ComparisonPanel() {
                 <span className={`${styles.badge} ${styles[s.strength]}`}>{STRENGTH_LABEL[s.strength]}</span>
               )}
             </div>
-            <span className={styles.good}>{s.good}</span>
+            <span className={styles.good}>{clock(s.good)}</span>
             <div className={styles.lower}>
-              <span className={styles.lowerValue}>{s.lower}</span>
+              <span className={styles.lowerValue}>{clock(s.lower)}</span>
               <span className={styles.delta}>{s.delta}</span>
             </div>
           </li>

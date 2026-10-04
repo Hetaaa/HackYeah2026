@@ -1,11 +1,13 @@
 import { withPrediction } from "../../../api/adapters.js";
 import { useAppStore } from "../../../store/useAppStore.js";
+import { useClockText } from "../../../utils/time.js";
 import styles from "./ForecastCard.module.scss";
 
 function ForecastCard() {
   const forecast = useAppStore((s) => s.today.forecast);
   const prediction = useAppStore((s) => s.prediction);
   const { lead, emphasis, chance, reason } = withPrediction(forecast, prediction);
+  const clock = useClockText();
 
   return (
     <article className={styles.card}>
@@ -14,10 +16,10 @@ function ForecastCard() {
         Don't be caught off guard
       </p>
       <h2 className={styles.title}>
-        {lead} <strong>{emphasis}</strong>
+        {clock(lead)} <strong>{clock(emphasis)}</strong>
       </h2>
-      {chance && <p className={styles.chance}>{chance}</p>}
-      {reason && <p className={styles.reason}>{reason}</p>}
+      {chance && <p className={styles.chance}>{clock(chance)}</p>}
+      {reason && <p className={styles.reason}>{clock(reason)}</p>}
     </article>
   );
 }
