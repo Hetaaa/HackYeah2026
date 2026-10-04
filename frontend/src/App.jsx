@@ -4,6 +4,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router";
 import PhoneFrame from "./components/PhoneFrame/PhoneFrame.jsx";
 import BottomNav from "./components/BottomNav/BottomNav.jsx";
 import CheckInSheet from "./components/CheckInSheet/CheckInSheet.jsx";
+import PrivacySheet from "./components/PrivacySheet/PrivacySheet.jsx";
 import Today from "./pages/Today/Today.jsx";
 import Patterns from "./pages/Patterns/Patterns.jsx";
 import Days from "./pages/Days/Days.jsx";
@@ -36,12 +37,24 @@ function App() {
       <main ref={scrollRef} className={styles.scroll}>
         {/* Keyed by pathname only, so ?tab= changes inside a page don't replay the transition.
             Scroll resets after the old page has faded out, not mid-animation. */}
-        <AnimatePresence mode="wait" initial={false} onExitComplete={() => scrollRef.current?.scrollTo(0, 0)}>
+        <AnimatePresence
+          mode="wait"
+          initial={false}
+          onExitComplete={() => scrollRef.current?.scrollTo(0, 0)}
+        >
           <motion.div
             key={location.pathname}
             initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0, transition: { duration: 0.28, ease: "easeOut" } }}
-            exit={{ opacity: 0, y: -6, transition: { duration: 0.15, ease: "easeIn" } }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.28, ease: "easeOut" },
+            }}
+            exit={{
+              opacity: 0,
+              y: -6,
+              transition: { duration: 0.15, ease: "easeIn" },
+            }}
           >
             <Routes location={location}>
               <Route path="/" element={<Today />} />

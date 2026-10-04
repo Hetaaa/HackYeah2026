@@ -44,9 +44,6 @@
 }
 
 .sectionHead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
   margin: 6px 0 12px;
 }
 
@@ -56,11 +53,17 @@
   letter-spacing: -0.05em;
 }
 
-.toggle {
+// Full-width text button at the end of the tab (under "Strongest signal" when there is one);
+// the comparison opens right below it. Shown even without patterns: the table is still useful.
+.viewAll {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
-  font-size: 12px;
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px 0;
+  font-size: 13px;
   font-weight: 600;
   color: $orange;
 }

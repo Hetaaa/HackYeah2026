@@ -1,16 +1,18 @@
 import { motion } from "motion/react";
 import { useAppStore } from "../../../store/useAppStore.js";
 import CountUp from "../../../components/CountUp/CountUp.jsx";
+import { useClockText } from "../../../utils/time.js";
 import styles from "./RecipeTab.module.scss";
 
 function RecipeTab() {
   const { goodDayRate, items, statusText } = useAppStore((s) => s.patterns.recipe);
+  const clock = useClockText();
 
   return (
     <div className={styles.tab}>
       <article className={styles.formula}>
         <p className={styles.eyebrow}>Your personal formula</p>
-        <h2 className={styles.formulaTitle}>{statusText}</h2>
+        <h2 className={styles.formulaTitle}>{clock(statusText)}</h2>
         {goodDayRate !== null && (
           <p className={styles.rate}>
             <strong>
@@ -35,8 +37,8 @@ function RecipeTab() {
             <span className={styles.rank}>{String(i + 1).padStart(2, "0")}</span>
             <div className={styles.itemBody}>
               <p className={styles.area}>{item.area}</p>
-              <h3 className={styles.itemTitle}>{item.title}</h3>
-              <p className={styles.itemNote}>{item.note}</p>
+              <h3 className={styles.itemTitle}>{clock(item.title)}</h3>
+              <p className={styles.itemNote}>{clock(item.note)}</p>
             </div>
             <ScoreRing score={item.score} delay={0.3 + i * 0.1} />
           </motion.li>

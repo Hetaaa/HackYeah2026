@@ -24,6 +24,7 @@ const userOf = (persona) => ({
 });
 
 const PERSONA_KEY = "why.persona";
+const CLOCK_KEY = "why.clock";
 const EVIDENCE_DAYS = 7;
 
 function readSavedPersona() {
@@ -31,6 +32,22 @@ function readSavedPersona() {
     return localStorage.getItem(PERSONA_KEY);
   } catch {
     return null;
+  }
+}
+
+function readClockFormat() {
+  try {
+    return localStorage.getItem(CLOCK_KEY) === "12h" ? "12h" : "24h";
+  } catch {
+    return "24h";
+  }
+}
+
+function saveClockFormat(format) {
+  try {
+    localStorage.setItem(CLOCK_KEY, format);
+  } catch {
+    // private mode / blocked storage: the setting just lasts until reload
   }
 }
 
@@ -73,6 +90,8 @@ export const useAppStore = create((set, get) => ({
   checkIn: null,
   prediction: null,
   isCheckInOpen: false,
+  isPrivacyOpen: false,
+  clockFormat: readClockFormat(),
 
   init: async () => {
     set({ status: "loading", error: null });
@@ -109,6 +128,13 @@ export const useAppStore = create((set, get) => ({
 
   openCheckIn: () => set({ isCheckInOpen: true }),
   closeCheckIn: () => set({ isCheckInOpen: false }),
+  openPrivacy: () => set({ isPrivacyOpen: true }),
+  closePrivacy: () => set({ isPrivacyOpen: false }),
+
+  setClockFormat: (format) => {
+    saveClockFormat(format);
+    set({ clockFormat: format });
+  },
 
   saveCheckIn: async (answers) => {
     const { persona } = get();

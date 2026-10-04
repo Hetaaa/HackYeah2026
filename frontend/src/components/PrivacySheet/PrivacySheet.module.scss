@@ -1,0 +1,118 @@
+@use "tokens" as *;
+
+// Same sheet shell as CheckInSheet: stays inside the phone frame, slides up from the bottom.
+.root {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba($plum, 0.4);
+  pointer-events: auto;
+}
+
+.sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 88%;
+  overflow-y: auto;
+  padding: 10px $gutter calc(30px + env(safe-area-inset-bottom));
+  border-radius: $radius-lg $radius-lg 0 0;
+  background: $surface;
+  pointer-events: auto;
+}
+
+.grabber {
+  display: block;
+  width: 40px;
+  height: 5px;
+  margin: 0 auto 18px;
+  border-radius: 3px;
+  background: $line;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.eyebrow {
+  @include eyebrow;
+  color: $orange;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: $bg;
+}
+
+.title {
+  margin: 8px 0 18px;
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.section {
+  display: flex;
+  gap: 12px;
+}
+
+.icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: $bg;
+}
+
+.sectionTitle {
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.sectionText {
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: $ink-soft;
+}
+
+.done {
+  width: 100%;
+  height: 54px;
+  margin-top: 24px;
+  border-radius: 18px;
+  background: $plum;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
