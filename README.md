@@ -43,7 +43,7 @@ Za darmo: backend na Render, frontend na Vercel. Krok po kroku: [DEPLOY.md](DEPL
 
 ## Dla jury
 
-Scenariusz na 2 minuty (co kliknąć, na co zwrócić uwagę): [JURY_GUIDE.md](JURY_GUIDE.md).
+Scenariusz na 2 minuty (co kliknąć, na co zwrócić uwagę): [JURY_GUIDE.txt](JURY_GUIDE.txt).
 
 ## AI, dane i biblioteki
 
