@@ -1,7 +1,3 @@
-"""Tests for clean.py outputs. Run clean.py first.
-
-uv run --with pandas --with numpy --with pyarrow --with pytest python -m pytest test_clean.py -q
-"""
 import hashlib
 import json
 

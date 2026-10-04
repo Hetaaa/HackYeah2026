@@ -5,6 +5,8 @@ description = "Hackathon backend (FastAPI + SQLModel + SQLite)"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "scikit-learn>=1.6,<2",
+    "xgboost>=2.1,<4",
     "fastapi>=0.142.2",
     "numpy>=2.5.3",
     "pandas>=3.0.6",

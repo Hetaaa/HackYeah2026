@@ -2,10 +2,20 @@ from fastapi import APIRouter
 
 from app.db import SessionDep
 from app.deps import NOT_FOUND, PersonaDep
-from app.schemas import TodayRead
+from app.schemas import PredictionRead, TodayRead
+from app.services import predictions as predictions_service
 from app.services import today as today_service
 
 router = APIRouter(prefix="/users/{user_id}/today", tags=["today"], responses=NOT_FOUND)
+
+
+@router.get(
+    "/prediction",
+    response_model=PredictionRead,
+    summary="Personalized pre-survey wellness prediction",
+)
+def get_prediction(persona: PersonaDep, session: SessionDep) -> PredictionRead:
+    return predictions_service.get_prediction(session, persona)
 
 
 @router.get(

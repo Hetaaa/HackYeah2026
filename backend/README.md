@@ -106,6 +106,62 @@ kilku istniejących** względem stuba:
 Po zmianie schematu bazy: `uv run python -m scripts.reset_db` (bez tego stara `app.db` nie ma
 nowych kolumn, a seed się nie uruchomi, bo `Persona` nie jest pusta). Szczegóły w Swaggerze.
 
+## Predykcja przed ankietą (HackYeah2026)
+
+`GET /api/users/{user_id}/today/prediction` zwraca `status`, `date`, `pred`,
+`p_bad`, `p_neutral`, `p_good` i `training_days`. Etykieta prognozy to
+`bad`, `neutral` lub `good`; przy braku historii status to `insufficient_history`,
+a prognoza i prawdopodobieństwa są `null`. Endpoint używa zegara persony demo.
+Frontend może wywołać go obok `/today`; prognoza jest osobna od etykiety ankiety.
+
+Model współdzieli historię wszystkich użytkowników sprzed dnia prognozy, waży dni
+osoby docelowej x3 i uśrednia trzy modele XGBoost (seeds 0,1,2). Dzisiejsza ankieta
+i przyszłe dni są usuwane przed przetwarzaniem. Dane zegarka przechodzą przez
+istniejący adapter backendu; aktywność jest z dnia poprzedniego, sen z ostatniej
+nocy zakończonej przed poranną ankietą. Nieznane wartości są imputowane medianą
+wyłącznie treningu. Historyczne etykiety API są zamrażane z użyciem historii
+dostępnej do danego dnia; mogą różnić się od etykiet kalendarza przeliczanych
+przez dotychczasowy algorytm względem całego okna.
+
+Predykcje są przechowywane w ograniczonym cache w pamięci procesu (32 wersje).
+Klucz obejmuje personę, dzień prognozy, okna analizy oraz wszystkie dane mogące
+wpływać na wynik. Zmiana historycznej ankiety lub danych zegarka odświeża wynik;
+dzisiejsza ankieta i przyszłe dane nie wpływają na klucz. Równoczesne identyczne
+zapytania wykonują obliczenia raz. Restart serwera usuwa cache. Kalibracja
+historycznych etykiet używa NumPy zamiast ponownego budowania DataFrame dla
+każdego dnia, z zachowaniem tych samych wartości i zasad czasowych.
+
+Pomiar na demo p01 (368 dni treningowych, lokalnie): poprzednia implementacja
+3,35 s, pierwszy odczyt po optymalizacji 0,69 s, kolejne odczyty mediana 18 ms
+(p95 23 ms, 20 powtórzeń). Czas zależy od sprzętu i ilości historii. Prawdopodobieństwa
+przed i po optymalizacji są zgodne do 1e-12; parametry XGBoost i ewaluacja bez zmian.
+
+Pełna ocena danych wejściowych i eksport wyników jednym poleceniem (z `backend/`):
+
+```bash
+uv run python -m app.wellness.evaluate ../analysiscontext/analysis/output/daily_clean.csv
+```
+
+Powstaje `data/wellness/metrics.json` oraz katalogi `safeguard` i
+`without_safeguard`, każdy z `features.csv`, `predictions.csv` i
+`confusion_matrix.csv`; `data/wellness/README.md` zawiera wyniki. Oba warianty
+są raportowane bez wybierania najlepszego na zbiorze testowym. Przedziały 95%
+pochodzą z 2000 sparowanych losowań dni testowych (nie uwzględniają korelacji
+wewnątrz użytkownika). Baseline większości jest ustalany tylko z treningu
+danego bloku. Macro-F1 zawsze obejmuje wszystkie trzy klasy.
+
+Moduły można też uruchomić osobno: `python -m app.wellness.build_features INPUT`
+i `python -m app.wellness.train_predict features.csv`.
+Zależności są w `pyproject.toml` i `requirements.txt`.
+
+Kontrakt wejścia: zegarkowe `*_lag1` i `*_avg3` muszą już być przygotowane bez
+wycieku czasowego. Kalendarz jest znany przed ankietą. W dostarczonym pliku
+`comp` i `label` są gotowymi wartościami docelowymi; ocena traktuje historyczne
+wartości jako znane, nie przeprowadza ponownej kalibracji etykiet. Jeśli źródłowa
+kalibracja etykiet korzystała z przyszłych ankiet, wynik oceny jest warunkowy
+względem tej definicji celu. Testy chronią cechy i prognozy przed zmianą ankiety
+tego samego dnia i danych przyszłych oraz pilnują granic treningu.
+
 ## Analiza (zespół od algorytmów)
 
 Algorytm jest w pakiecie `app/insights/` (pandas/numpy), a `app/analysis.py` to adapter: zamienia

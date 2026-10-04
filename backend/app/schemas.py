@@ -353,6 +353,16 @@ class Signal(BaseModel):
     )
 
 
+class PredictionRead(BaseModel):
+    date: dt.date
+    status: Literal["ok", "insufficient_history"]
+    training_days: int
+    pred: Label | None = None
+    p_bad: float | None = Field(default=None, ge=0, le=1)
+    p_neutral: float | None = Field(default=None, ge=0, le=1)
+    p_good: float | None = Field(default=None, ge=0, le=1)
+
+
 class TodayRead(BaseModel):
     """Home screen: what last night and yesterday say about today, before and after check-in."""
 
