@@ -30,12 +30,16 @@ class PersonaCreate(BaseModel):
     name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)] = (
         Field(examples=["Maja"])
     )
+    last_name: Annotated[str, StringConstraints(strip_whitespace=True, max_length=100)] = Field(
+        default="", examples=["Nowak"]
+    )
     description: str = Field(default="", max_length=500, examples=[""])
 
 
 class PersonaRead(BaseModel):
     id: str = Field(examples=["p01"])
     name: str = Field(examples=["Alex"])
+    last_name: str = Field(default="", examples=["Morgan"])
     description: str = Field(examples=["Bad days tend to follow short nights."])
     first_date: dt.date | None = Field(examples=["2019-11-01"])
     last_date: dt.date | None = Field(examples=["2020-03-29"])
@@ -95,6 +99,11 @@ class FeatureValue(BaseModel):
     norm: NormRange | None
     when: When = Field(default="last_night", description="Which data the value describes")
     display: str | None = Field(default=None, examples=["5h54"])
+    difference_text: str | None = Field(
+        default=None,
+        description="value - norm.average with the reference; null when either is missing",
+        examples=["-1h52 vs good days"],
+    )
     in_patterns: bool = Field(
         default=True, description="False: shown for context only, never used as a reason"
     )
@@ -282,9 +291,9 @@ class PatternReport(BaseModel):
 class Ingredient(PatternStats):
     feature: str = Field(examples=["steps"])
     label: str = Field(examples=["Steps"])
-    condition: str = Field(examples=["Over 3k steps (3-day avg)"])
+    condition: str = Field(examples=["Over 3k steps"])
     good_share: float = Field(description="Share of good days matching", examples=[0.8])
-    text: str = Field(examples=["Over 3k steps (3-day avg): 9 of 14 days good"])
+    text: str = Field(examples=["Over 3k steps: 9 of 14 days good"])
 
 
 class Recipe(BaseModel):

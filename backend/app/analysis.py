@@ -183,6 +183,13 @@ def day_summary(analysis: dict, date: dt.date) -> DaySummary:
     )
 
 
+def _difference_text(analysis: dict, v: dict) -> str | None:
+    if v["value"] is None or v["reference"] is None:
+        return None
+    ref = texts.compare_ref(norm_reference(analysis))
+    return texts.difference_text(v["feature"], v["value"] - v["reference"], ref)
+
+
 def _features(analysis: dict, entry: dict | None) -> list[FeatureValue]:
     searched = engine.search_features(analysis["info"]["group_e_feature"])
     return [
@@ -194,6 +201,7 @@ def _features(analysis: dict, entry: dict | None) -> list[FeatureValue]:
             norm=_norm(v["norm"], v["reference"]),
             when=v["when"],
             display=v["display"],
+            difference_text=_difference_text(analysis, v),
             in_patterns=v["feature"] in searched,
             leans=v["leans"],
         )

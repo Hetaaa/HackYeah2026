@@ -24,7 +24,7 @@ def test_recipe(client: TestClient, demo: Session) -> None:
     recipe = client.get("/api/users/p16/recipe").json()
 
     assert recipe["status"] == "ok"
-    assert recipe["ingredients"][0]["condition"] == "Over 3k steps (3-day avg)"
+    assert recipe["ingredients"][0]["condition"] == "Over 3k steps"
     assert recipe["ingredients"][0]["when"] == "previous_3_days"
 
 
@@ -79,7 +79,7 @@ def test_recipe_chart_and_missing_pattern(client: TestClient, demo: Session) -> 
     recipe = client.get("/api/users/p10/patterns/lightly?kind=good").json()
 
     assert recipe["kind"] == "good"
-    assert recipe["condition"] == "Over 5h20 light activity (day before)"
+    assert recipe["condition"] == "Over 5h20 light activity"
     assert client.get("/api/users/p10/patterns/steps").status_code == 404
     assert client.get("/api/users/p10/patterns/lightly?kind=meh").status_code == 422
 

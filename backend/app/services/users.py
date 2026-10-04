@@ -65,6 +65,7 @@ def to_read(session: Session, persona: Persona) -> PersonaRead:
     return PersonaRead(
         id=persona.id,
         name=persona.name,
+        last_name=persona.last_name or "",
         description=persona.description,
         first_date=first_date,
         last_date=last_date,

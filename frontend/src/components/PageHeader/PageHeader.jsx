@@ -67,9 +67,11 @@ function PersonaSwitcher() {
                     className={`${styles.person} ${u.id === current ? styles.current : ""}`}
                     onClick={() => choose(u.id)}
                   >
-                    <span className={styles.personAvatar}>{initialsOf(u.name)}</span>
+                    <span className={styles.personAvatar}>{initialsOf(`${u.name} ${u.last_name}`)}</span>
                     <span className={styles.personText}>
-                      <strong>{u.name}</strong>
+                      <strong>
+                        {u.name} {u.last_name}
+                      </strong>
                       {u.description && <small>{u.description}</small>}
                     </span>
                     {u.id === current && <Check size={16} strokeWidth={2.5} className={styles.check} />}

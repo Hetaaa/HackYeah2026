@@ -34,6 +34,7 @@ export const api = {
   patterns: (id) => request("GET", `/users/${id}/patterns`),
   recipe: (id) => request("GET", `/users/${id}/recipe`),
   stats: (id) => request("GET", `/users/${id}/stats`),
+  days: (id, from, to) => request("GET", `/users/${id}/days?from=${from}&to=${to}`),
   day: (id, date) => orNull(request("GET", `/users/${id}/days/${date}`)),
   saveSurvey: (id, date, answers) => request("PUT", `/users/${id}/surveys/${date}`, answers),
 };

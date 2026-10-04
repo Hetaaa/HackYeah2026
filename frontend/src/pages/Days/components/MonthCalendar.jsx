@@ -1,6 +1,5 @@
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { FIRST_MONTH, TODAY } from "../../../mocks/days.js";
 import styles from "./MonthCalendar.module.scss";
 
 const WEEKDAYS = ["M", "T", "W", "T", "F", "S", "S"];
@@ -34,10 +33,10 @@ function monthCells(month) {
   ];
 }
 
-function MonthCalendar({ month, days, selected, onMonthChange, onSelect }) {
+function MonthCalendar({ month, days, selected, firstMonth, today, onMonthChange, onSelect }) {
   const byDate = Object.fromEntries(days.map((d) => [d.date, d]));
-  const canPrev = month > FIRST_MONTH;
-  const canNext = month < TODAY.slice(0, 7);
+  const canPrev = month > firstMonth;
+  const canNext = month < today.slice(0, 7);
 
   const counts = days.reduce((acc, d) => ({ ...acc, [d.label]: (acc[d.label] ?? 0) + 1 }), {});
 
@@ -92,7 +91,7 @@ function MonthCalendar({ month, days, selected, onMonthChange, onSelect }) {
             return (
               <button
                 key={date}
-                className={`${styles.tile} ${styles[tone]} ${date === TODAY ? styles.today : ""}`}
+                className={`${styles.tile} ${styles[tone]} ${date === today ? styles.today : ""}`}
                 disabled={!day}
                 onClick={() => onSelect(date)}
                 aria-pressed={isSelected}

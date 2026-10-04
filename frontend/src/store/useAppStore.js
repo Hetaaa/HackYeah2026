@@ -19,8 +19,8 @@ const MOCK_PROFILE = {
 const userOf = (persona) => ({
   ...MOCK_PROFILE,
   firstName: persona.name,
-  lastName: "",
-  initials: initialsOf(persona.name),
+  lastName: persona.last_name,
+  initials: initialsOf(`${persona.name} ${persona.last_name}`),
 });
 
 const PERSONA_KEY = "why.persona";

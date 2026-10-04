@@ -187,3 +187,16 @@ export function buildPatterns(raw) {
     },
   };
 }
+
+export function buildDay(detail) {
+  if (!detail) return null;
+  return {
+    date: detail.date,
+    label: detail.label,
+    summary: detail.summary,
+    survey: fromApiAnswers(detail.survey),
+    reasons: detail.reasons,
+    deviations: detail.deviations,
+    features: detail.features.filter((f) => f.in_patterns && f.value !== null && f.norm),
+  };
+}

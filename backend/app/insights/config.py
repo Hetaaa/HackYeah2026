@@ -127,11 +127,12 @@ class Persona:
     role: str  # "main" | "backup"
     name: str
     tagline: str
+    last_name: str = ""
 
 
 PERSONAS: dict[str, Persona] = {
-    "p06": Persona("main", "Alex", "Sleep length shapes the good days"),
-    "p01": Persona("main", "Robin", "Hard training days take their toll"),
-    "p10": Persona("main", "Sam", "Restless nights, light movement"),
-    "p16": Persona("backup", "Kim", "A night owl whose sleep sets the tone"),
+    "p06": Persona("main", "Alex", "Sleep length shapes the good days", "Morgan"),
+    "p01": Persona("main", "Robin", "Hard training days take their toll", "Hayes"),
+    "p10": Persona("main", "Sam", "Restless nights, light movement", "Carter"),
+    "p16": Persona("backup", "Kim", "A night owl whose sleep sets the tone", "Lee"),
 }
