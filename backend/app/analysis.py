@@ -419,7 +419,7 @@ def good_day_recipe(analysis: dict) -> Recipe:
 
 
 def pattern_chart(analysis: dict, feature: str, kind: str) -> PatternChart | None:
-    """The persona's pattern for `feature` of this kind (significant or early signal)."""
+    """The persona's pattern for `feature` of this kind (significant or preliminary)."""
     p = next((p for p in analysis["patterns"][kind]["patterns"] if p["feature"] == feature), None)
     if p is None:
         return None

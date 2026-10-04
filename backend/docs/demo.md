@@ -42,7 +42,7 @@ kalendarza, data ankiety.
 
 | Kolejność | id | Imię | „Dziś” | Historia | Odpowiedzi demo (mood, fatigue, sleep q., stress) |
 | --- | --- | --- | --- | --- | --- |
-| 1 | p06 | Alex | 2020-03-08 | **Sen**: dłuższy sen daje dobre dni (przepis); wzorzec złych dni to tylko wczesny sygnał | 4, 3, 3, 4 |
+| 1 | p06 | Alex | 2020-03-08 | **Sen**: dłuższy sen daje dobre dni (przepis); wzorzec złych dni (sen < 6 h) jest słabszy i nie daje „possible reason” | 4, 3, 3, 4 |
 | 2 | p01 | Robin | 2020-03-06 | **Wysiłek**: dzień po ciężkim treningu jest gorszy; brak przepisu (tylko 3 dobre dni) | 3, 2, 2, 3 |
 | 3 | p10 | Sam | 2020-02-14 | **Niespokojne noce + lekki ruch**: wzorce w obie strony, najlepsza do pokazania | 3, 1, 2, 2 |
 | 4 | p16 | Kim (zapas) | 2020-02-27 | **Nocny marek**: krótki sen i bardzo późne zasypianie | 3, 2, 3, 2 |
@@ -89,13 +89,16 @@ Wynik: `label = bad`, a Today pokazuje:
 13 z nich ma „possible reason” (najwięcej ze wszystkich miesięcy).
 
 **7. Wzorce i przepis:**
-- `/patterns`: *Awake over 12% of night: 15 of 27 days bad*
-- `/recipe`: *Over 5h20 light activity (day before): 13 of 16 days good*
+- `/patterns` (2): *Awake over 12% of night: 15 of 27 days bad*, *Under 7h sleep: 11 of 20 days bad*
+- `/recipe` (3): *Over 5h20 light activity (day before): 13 of 16 days good*, *Over 7h30 sleep: 20
+  of 32 days good*, *Sleep HR under 68 bpm: 13 of 18 days good*
+
+Liczba wzorców na liście (złe dni / przepis): Sam 2 / 3, Kim 3 / 1, Alex 1 / 2, Robin 2 / 0.
 
 **8. Personalizacja → Robin (p01).** Today: *Heads-up: 1h20 hard exercise (day before)*. Inna osoba, inna przyczyna. Przepis jest pusty („Not enough good days yet”), co pokazuje, że
 aplikacja nie zmyśla.
 
-**9. Alex (p06), dobry dzień.** Today: *Good sign: 7h23 sleep*. Przepis: *Over 6h30 sleep*. Wzorzec złych dni to tylko „Early signal”, bo nie przeszedł testu istotności.
+**9. Alex (p06), dobry dzień.** Today: *Good sign: 7h23 sleep*. Przepis: *Over 6h30 sleep*. Wzorzec złych dni (*Under 6h sleep*) jest na liście, ale słabszy (`level = preliminary`), więc w kalendarzu nie daje „possible reason”.
 
 **10. Wiarygodność (slajd).**
 - Na losowych etykietach ~5% fałszywych alarmów.
@@ -123,13 +126,13 @@ aplikacja nie zmyśla.
 ## Na co uważać
 
 - **Daty 2019/2020** to zegar demo. Na scenie warto powiedzieć: „nagrane dane prawdziwych osób”.
-- **Kim (p16) po ankiecie na żywo** dostaje trzeci wzorzec złych dni (czuwanie > 13% nocy), bo
-  nowy dzień przesuwa go poniżej p = 0,05. Zachowanie poprawne, ale lista na ekranie wzorców się
-  zmienia. U pozostałych person wzorce po ankiecie zostają takie same.
+- **Kim (p16) po ankiecie na żywo**: trzeci wzorzec złych dni (czuwanie > 13% nocy) zmienia się ze
+  słabszego na istotny, bo nowy dzień przesuwa go poniżej p = 0,05. Lista ma nadal 3 pozycje, ale
+  zmieniają się liczby w tekście. U pozostałych person wzorce po ankiecie zostają takie same.
 - **Kim (p16)** zasypia rano (*Heads-up: asleep at 09:41*). Opowiadać jako „nocny marek”
   albo pominąć.
 - **Robin (p01) ma 3 dobre dni**: porównania idą do średniego dnia (`norm_reference = all_days`),
   a `leans` jest zawsze `null`. Na ekranie porównań i w kalendarzu lepiej pokazywać Sama.
-- **Teksty frontendu:** `level = preliminary` oznaczać jako „early signal”; `status != ok` to
+- **Teksty frontendu:** wzorce `significant` i `preliminary` wyświetlamy tak samo; `status != ok` to
   stany puste z gotowym zdaniem w `summary`.
 - **Pierwsze zapytanie po starcie** liczy analizy (~0,4 s), potem odpowiedzi są z cache.

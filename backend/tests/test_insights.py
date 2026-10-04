@@ -10,7 +10,8 @@ def test_bad_day_patterns(client: TestClient, demo: Session) -> None:
     report = client.get("/api/users/p10/patterns").json()
 
     assert report["status"] == "ok"
-    assert report["summary"] == "1 possible reason for bad days"
+    assert report["summary"] == "2 possible reasons for bad days"
+    assert [p["level"] for p in report["patterns"]] == ["significant", "preliminary"]
     pattern = report["patterns"][0]
     assert pattern["feature"] == "wake_pct" and pattern["condition"] == "Awake over 12% of night"
     assert pattern["level"] == "significant" and pattern["p_value"] <= 0.05
@@ -142,3 +143,25 @@ def test_drivers_on_recipe_and_signals(client: TestClient, demo: Session) -> Non
     assert today["heads_up"][0]["drivers_text"] == pattern["drivers_text"]
     reason = client.get("/api/users/p10/days/2019-11-20").json()["reasons"][0]
     assert reason["drivers_text"] == pattern["drivers_text"]
+
+
+def test_lists_are_filled_with_preliminary_patterns(client: TestClient, demo: Session) -> None:
+    patterns = client.get("/api/users/p10/patterns").json()["patterns"]
+    recipe = client.get("/api/users/p10/recipe").json()["ingredients"]
+
+    assert len(recipe) == 3 and recipe[0]["level"] == "significant"
+    for item in patterns + recipe:
+        assert "early" not in item["text"]  # no label: level tells them apart
+    early = next(p for p in patterns if p["level"] == "preliminary")
+    assert early["text"] == "Under 7h sleep: 11 of 20 days bad"
+    # only significant patterns explain a day or warn in the morning
+    calendar = client.get("/api/users/p10/days").json()
+    reasons = [
+        r["feature"]
+        for d in calendar
+        if d["has_reason"]
+        for r in client.get(f"/api/users/p10/days/{d['date']}").json()["reasons"]
+    ]
+    assert reasons and early["feature"] not in reasons
+    today = client.get("/api/users/p10/today").json()
+    assert all(s["feature"] != early["feature"] for s in today["heads_up"])

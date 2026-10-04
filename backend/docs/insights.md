@@ -52,7 +52,10 @@ Zasady, które stosuje algorytm:
    - próg typu „sen < 6 h”, który obejmuje ≤ 50% dni i ma ≥ 10 dni po obu stronach,
    - score: dolna granica Wilsona P(zły | warunek) − P(zły | bez warunku),
    - istotność: test permutacyjny z przesunięciem cyklicznym etykiet, porównanie z maksimum ze
-     wszystkich kandydatów, p ≤ 0,05.
+     wszystkich kandydatów, p ≤ 0,05,
+   - lista na ekranie: do 3 wzorców, najpierw istotne, potem dopełnienie słabszymi
+     (`preliminary`: p ≤ 0,05 tylko względem własnej cechy). Słabsze nie dają „possible reason”
+     ani porannych ostrzeżeń.
 4. **Bramki**:
    - ≥ 60 dni z ankietą i danymi z zegarka, inaczej `insufficient_days`,
    - wystarczająca zmienność odpowiedzi, inaczej `insufficient_variation`,
@@ -94,7 +97,7 @@ P01 35%, P06 0%). Porównanie z dobrym dniem daje treść w ok. 88% dni.
 
 | id | Imię | Wzorce |
 | --- | --- | --- |
-| p06 | Alex | sen > 6,5 h → 17 z 48 dni dobre (vs 7%); wzorzec złych dni tylko jako early signal (sen < 6 h) |
+| p06 | Alex | sen > 6,5 h → 17 z 48 dni dobre (vs 7%); wzorzec złych dni tylko słabszy (`preliminary`, sen < 6 h) |
 | p01 | Robin | > 10 min w strefach cardio/peak dzień wcześniej → 21 z 27 dni złe (vs 40%); brak przepisu (3 dobre dni) |
 | p10 | Sam | czuwanie > 12% nocy → 15 z 27 dni złe (vs 13%); lekka aktywność > 320 min → 13 z 16 dni dobre (vs 38%) |
 | p16 | Kim (zapas) | sen < 6 h → 10 z 13 dni złe (vs 19%); zaśnięcie po 08:00 → 8 z 12 dni złe (vs 22%); średnio > 3000 kroków → 9 z 14 dni dobre (vs 23%) |
