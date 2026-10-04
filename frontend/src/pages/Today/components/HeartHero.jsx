@@ -28,14 +28,16 @@ function HeartHero() {
         </div>
       </motion.div>
 
-      {/* Cards pop in one by one after the heart; the inner card keeps its idle float. */}
+      {/* Cards pop in one by one after the heart; the inner card keeps its idle float.
+          Only transform here, never opacity: an ancestor with opacity < 1 becomes the card's
+          backdrop root, so its backdrop-filter would have nothing to blur until the fade ends. */}
       {patterns.map((p, i) => (
         <motion.div
           key={p.rank}
           className={`${styles.slot} ${SLOTS[i]}`}
-          initial={{ opacity: 0, scale: 0.85, y: 12 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ type: "spring", stiffness: 260, damping: 22, delay: 0.35 + i * 0.15 }}
+          initial={{ scale: 0, y: 16 }}
+          animate={{ scale: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 22, delay: 0.35 + i * 0.15 }}
         >
           <PatternCard pattern={p} className={styles.card} />
         </motion.div>
