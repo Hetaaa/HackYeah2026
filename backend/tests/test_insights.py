@@ -10,8 +10,8 @@ def test_bad_day_patterns(client: TestClient, demo: Session) -> None:
     report = client.get("/api/users/p10/patterns").json()
 
     assert report["status"] == "ok"
-    assert report["summary"] == "2 possible reasons for bad days"
-    assert [p["level"] for p in report["patterns"]] == ["significant", "preliminary"]
+    assert report["summary"] == "3 possible reasons for bad days"
+    assert [p["level"] for p in report["patterns"]] == ["significant", "preliminary", "exploratory"]
     pattern = report["patterns"][0]
     assert pattern["feature"] == "wake_pct" and pattern["condition"] == "Awake over 12% of night"
     assert pattern["level"] == "significant" and pattern["p_value"] <= 0.05
@@ -165,3 +165,11 @@ def test_lists_are_filled_with_preliminary_patterns(client: TestClient, demo: Se
     assert reasons and early["feature"] not in reasons
     today = client.get("/api/users/p10/today").json()
     assert all(s["feature"] != early["feature"] for s in today["heads_up"])
+
+
+def test_exploratory_patterns_fill_a_short_list(client: TestClient, demo: Session) -> None:
+    patterns = client.get("/api/users/p06/patterns").json()["patterns"]  # Alex: no significant
+
+    assert [p["level"] for p in patterns] == ["preliminary", "exploratory", "exploratory"]
+    assert all(p["rate_in"] > p["rate_out"] and p["p_value"] <= 0.2 for p in patterns)
+    assert len({p["feature"] for p in patterns}) == 3

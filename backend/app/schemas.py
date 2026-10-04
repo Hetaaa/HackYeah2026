@@ -11,7 +11,7 @@ Lean = Literal["bad", "good"]
 When = Literal["last_night", "day_before", "last_3_nights", "previous_3_days"]
 InsightStatus = Literal[
     "ok",  # significant patterns found
-    "preliminary",  # only patterns that passed the per-feature test; listed like "ok"
+    "preliminary",  # no significant pattern, only weaker ones; listed like "ok"
     "not_enough_evidence",
     "insufficient_bad_days",
     "insufficient_good_days",
@@ -214,10 +214,11 @@ class Driver(BaseModel):
 
 
 class PatternStats(BaseModel):
-    level: Literal["significant", "preliminary"] = Field(
+    level: Literal["significant", "preliminary", "exploratory"] = Field(
         description="significant: passed the test against all features; preliminary: only "
-        "against its own feature. Both are listed (significant first, up to 3); only "
-        "significant ones become a day's possible reason or a morning signal"
+        "against its own feature; exploratory: weaker (per-feature p <= 0.20), fills the list. "
+        "Listed by level, up to 3; only significant ones become a day's possible reason or a "
+        "morning signal"
     )
     when: When
     threshold: float = Field(

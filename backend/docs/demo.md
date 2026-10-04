@@ -42,7 +42,7 @@ kalendarza, data ankiety.
 
 | Kolejność | id | Imię | „Dziś” | Historia | Odpowiedzi demo (mood, fatigue, sleep q., stress) |
 | --- | --- | --- | --- | --- | --- |
-| 1 | p06 | Alex | 2020-03-08 | **Sen**: dłuższy sen daje dobre dni (przepis); wzorzec złych dni (sen < 6 h) jest słabszy i nie daje „possible reason” | 4, 3, 3, 4 |
+| 1 | p06 | Alex | 2020-03-08 | **Sen**: dłuższy sen daje dobre dni (przepis); wzorce złych dni (sen < 6 h, późne zasypianie, wybudzenia) są słabsze i nie dają „possible reason” | 4, 3, 3, 4 |
 | 2 | p01 | Robin | 2020-03-06 | **Wysiłek**: dzień po ciężkim treningu jest gorszy; brak przepisu (tylko 3 dobre dni) | 3, 2, 2, 3 |
 | 3 | p10 | Sam | 2020-02-14 | **Niespokojne noce + lekki ruch**: wzorce w obie strony, najlepsza do pokazania | 3, 1, 2, 2 |
 | 4 | p16 | Kim (zapas) | 2020-02-27 | **Nocny marek**: krótki sen i bardzo późne zasypianie | 3, 2, 3, 2 |
@@ -89,16 +89,17 @@ Wynik: `label = bad`, a Today pokazuje:
 13 z nich ma „possible reason” (najwięcej ze wszystkich miesięcy).
 
 **7. Wzorce i przepis:**
-- `/patterns` (2): *Awake over 12% of night: 15 of 27 days bad*, *Under 7h sleep: 11 of 20 days bad*
+- `/patterns` (3): *Awake over 12% of night: 15 of 27 days bad*, *Under 7h sleep: 11 of 20 days bad*,
+  *REM under 18%: 6 of 10 days bad*
 - `/recipe` (3): *Over 5h20 light activity (day before): 13 of 16 days good*, *Over 7h30 sleep: 20
   of 32 days good*, *Sleep HR under 68 bpm: 13 of 18 days good*
 
-Liczba wzorców na liście (złe dni / przepis): Sam 2 / 3, Kim 3 / 1, Alex 1 / 2, Robin 2 / 0.
+Liczba wzorców na liście (złe dni / przepis): Sam 3 / 3, Kim 3 / 3, Alex 3 / 2, Robin 3 / 0.
 
 **8. Personalizacja → Robin (p01).** Today: *Heads-up: 1h20 hard exercise (day before)*. Inna osoba, inna przyczyna. Przepis jest pusty („Not enough good days yet”), co pokazuje, że
 aplikacja nie zmyśla.
 
-**9. Alex (p06), dobry dzień.** Today: *Good sign: 7h23 sleep*. Przepis: *Over 6h30 sleep*. Wzorzec złych dni (*Under 6h sleep*) jest na liście, ale słabszy (`level = preliminary`), więc w kalendarzu nie daje „possible reason”.
+**9. Alex (p06), dobry dzień.** Today: *Good sign: 7h23 sleep*. Przepis: *Over 6h30 sleep*. Wzorce złych dni (*Under 6h sleep*, *Asleep after 00:30*, *Awake over 12% of night*) są na liście, ale słabsze (`preliminary` / `exploratory`), więc w kalendarzu nie dają „possible reason”.
 
 **10. Wiarygodność (slajd).**
 - Na losowych etykietach ~5% fałszywych alarmów.
@@ -133,6 +134,6 @@ aplikacja nie zmyśla.
   albo pominąć.
 - **Robin (p01) ma 3 dobre dni**: porównania idą do średniego dnia (`norm_reference = all_days`),
   a `leans` jest zawsze `null`. Na ekranie porównań i w kalendarzu lepiej pokazywać Sama.
-- **Teksty frontendu:** wzorce `significant` i `preliminary` wyświetlamy tak samo; `status != ok` to
+- **Teksty frontendu:** wzorce `significant`, `preliminary` i `exploratory` wyświetlamy tak samo; `status != ok` to
   stany puste z gotowym zdaniem w `summary`.
 - **Pierwsze zapytanie po starcie** liczy analizy (~0,4 s), potem odpowiedzi są z cache.

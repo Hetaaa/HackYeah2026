@@ -55,6 +55,9 @@ E_HRZ_MIN_MIN = 10
 MIN_SUPPORT = 10
 MAX_COVER = 0.5
 ALPHA = 0.05
+# display only: lists are filled up to MAX_PATTERNS with "exploratory" patterns (per-feature p
+# <= 0.20); they are never a day's reason or a morning signal, so the validation is unaffected
+FILL_ALPHA = 0.20
 MIN_SHIFT = 14
 MAX_PATTERNS = 3
 

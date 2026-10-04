@@ -9,8 +9,10 @@ For one person and one kind ("bad" / "good"):
   score       Wilson lower bound of P(kind | cond) - P(kind | not cond)
   test        labels shifted circularly by every k in [14, n-14]; null = max score over ALL
               candidates; significant if permutation p <= ALPHA. Preliminary = same test against
-              the feature's own null only (listed after significant ones to fill the screen
-              up to MAX_PATTERNS, never used as a day's reason or a morning signal).
+              the feature's own null only; exploratory = per-feature p <= FILL_ALPHA. Both only
+              fill the lists up to MAX_PATTERNS after significant ones, never used as a day's
+              reason or a morning signal. Every pattern needs score > 0 (Wilson lower bound
+              of the in-condition rate above the rate outside it).
 """
 
 import numpy as np
@@ -19,6 +21,7 @@ import pandas as pd
 from app.insights import config as C
 
 Z95 = 1.959964
+LEVEL_RANK = {"significant": 0, "preliminary": 1, "exploratory": 2}
 
 
 def search_features(group_e: str) -> dict[str, C.Feature]:
@@ -118,6 +121,8 @@ def run_person(rows: pd.DataFrame, target: np.ndarray, feats: dict, kind: str) -
             level = "significant"
         elif p_feature <= C.ALPHA:
             level = "preliminary"
+        elif p_feature <= C.FILL_ALPHA:
+            level = "exploratory"
         else:
             continue
         cond, v = ins[i], valid[i]
@@ -138,7 +143,7 @@ def run_person(rows: pd.DataFrame, target: np.ndarray, feats: dict, kind: str) -
                 "n_valid": int(v.sum()),
             }
         )
-    patterns.sort(key=lambda p: (p["level"] != "significant", -p["score"]))
+    patterns.sort(key=lambda p: (LEVEL_RANK[p["level"]], -p["score"]))
     return patterns
 
 
@@ -157,7 +162,7 @@ def find_patterns(table: pd.DataFrame, info: dict) -> dict:
         target = (rows.label == kind).to_numpy()
         found = [_with_shares(p, rows) for p in run_person(rows, target, feats, kind)]
         sig = [p for p in found if p["level"] == "significant"]
-        if sig:  # significant first (found is sorted so), then preliminary up to MAX_PATTERNS
+        if sig:  # significant first (found is sorted by level), then the rest up to MAX_PATTERNS
             out[kind] = {"status": "ok", "patterns": found[: C.MAX_PATTERNS]}
         elif found:
             out[kind] = {"status": "preliminary", "patterns": found[: C.MAX_PATTERNS]}

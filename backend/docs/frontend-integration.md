@@ -65,7 +65,8 @@ Kierunek pochodzi z danych tej osoby. Nie zakładaj na froncie, że „więcej s
 | `insufficient_variation` | ankiety prawie zawsze takie same | `summary` |
 
 **7. Poziom wzorca:** listy `/patterns` i `/recipe` mają do 3 pozycji: najpierw istotne
-(`level = "significant"`), potem dopełnienie słabszymi (`"preliminary"`). Wyświetlamy je tak samo,
+(`level = "significant"`), potem dopełnienie słabszymi (`"preliminary"`, a dalej
+`"exploratory"`). Wyświetlamy je tak samo,
 bez etykiety. Różnica dla frontendu: „Possible reason” w kalendarzu i ostrzeżenia rano powstają
 tylko z istotnych wzorców, więc słabszy wzorzec może nie mieć żadnego dnia z powodem. Nie
 pokazujemy `p_value`.
