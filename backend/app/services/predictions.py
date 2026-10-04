@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from sqlmodel import Session, select
 
-from app.insights import cleaning
+from app.insights import cleaning, texts
 from app.insights import config as C
 from app.insights.sources.rows import user_from_rows
 from app.models import Day, Persona
@@ -158,11 +158,13 @@ def _compute_prediction(
         return PredictionRead(date=date, status="insufficient_history", training_days=len(train))
     probabilities = predict(train, test, persona.id)[0]
     names = list(LABELS)
+    best = int(np.argmax(probabilities))
     return PredictionRead(
         date=date,
         status="ok",
         training_days=len(train),
-        pred=names[int(np.argmax(probabilities))],
+        pred=names[best],
+        text=texts.prediction_text(names[best], float(probabilities[best])),
         p_bad=float(probabilities[0]),
         p_neutral=float(probabilities[1]),
         p_good=float(probabilities[2]),

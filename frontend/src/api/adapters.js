@@ -71,6 +71,15 @@ const OUTLOOK = {
   unknown: ["No watch data", "for today yet."],
 };
 
+const PREDICTED = {
+  bad: ["Today you may feel a little", "under the weather."],
+  neutral: ["Today looks like", "a typical day."],
+  good: ["Today looks", "promising."],
+};
+
+const UNSURE = ["It's gonna be", "normal today."];
+const SURE_ENOUGH = 0.55;
+
 const CHECKED_IN = {
   good: ["You’re having", "a good day."],
   neutral: ["Looks like", "a typical day."],
@@ -80,14 +89,26 @@ const CHECKED_IN = {
 function forecast(today) {
   if (today.survey?.label) {
     const [lead, emphasis] = CHECKED_IN[today.survey.label];
-    return { lead, emphasis, reason: today.summary };
+    return { lead, emphasis, reason: today.summary, checkedIn: true };
   }
   const [lead, emphasis] = OUTLOOK[today.outlook];
   const signals = [...today.heads_up, ...today.good_signs];
   const reason = signals.length
     ? signals.map((s) => s.text).join(" · ")
     : today.deviations.map((d) => d.text).join(" · ");
-  return { lead, emphasis, reason };
+  const agreeing = {
+    bad: today.heads_up.map((s) => s.text).join(" · "),
+    good: today.good_signs.map((s) => s.text).join(" · "),
+    neutral: "",
+  };
+  return { lead, emphasis, reason, agreeing, checkedIn: false };
+}
+
+export function withPrediction(forecast, prediction) {
+  if (forecast.checkedIn || prediction?.status !== "ok") return forecast;
+  const sure = prediction[`p_${prediction.pred}`] >= SURE_ENOUGH;
+  const [lead, emphasis] = sure ? PREDICTED[prediction.pred] : UNSURE;
+  return { ...forecast, lead, emphasis, chance: prediction.text, reason: forecast.agreeing[prediction.pred] };
 }
 
 function recipeCard(recipe) {
