@@ -4,11 +4,13 @@ import { ChevronDown } from "lucide-react";
 import { useAppStore } from "../../../store/useAppStore.js";
 import CountUp from "../../../components/CountUp/CountUp.jsx";
 import ComparisonPanel from "./ComparisonPanel.jsx";
+import { useClockText } from "../../../utils/time.js";
 import styles from "./LowerDaysTab.module.scss";
 
 function LowerDaysTab() {
   const { summary, reasons, combination, statusText } = useAppStore((s) => s.patterns);
   const [showAll, setShowAll] = useState(false);
+  const clock = useClockText();
 
   return (
     <div className={styles.tab}>
@@ -30,14 +32,14 @@ function LowerDaysTab() {
           </button>
         </div>
 
-        {reasons.length === 0 && <p className={styles.empty}>{statusText}</p>}
+        {reasons.length === 0 && <p className={styles.empty}>{clock(statusText)}</p>}
         <ol className={styles.reasons}>
           {reasons.map((r, i) => (
             <li key={r.key} className={styles.reason}>
               <span className={styles.rank}>{String(i + 1).padStart(2, "0")}</span>
               <div className={styles.reasonBody}>
-                <h3 className={styles.reasonTitle}>{r.title}</h3>
-                <p className={styles.reasonSub}>{r.frequency}</p>
+                <h3 className={styles.reasonTitle}>{clock(r.title)}</h3>
+                <p className={styles.reasonSub}>{clock(r.frequency)}</p>
                 {r.drivers && <p className={styles.reasonSub}>{r.drivers}</p>}
                 <div className={styles.track}>
                   <motion.span
@@ -78,8 +80,8 @@ function LowerDaysTab() {
           </span>
           <div>
             <p className={styles.comboEyebrow}>Strongest signal</p>
-            <h3 className={styles.comboTitle}>{combination.title}</h3>
-            <p className={styles.comboText}>{combination.text}</p>
+            <h3 className={styles.comboTitle}>{clock(combination.title)}</h3>
+            <p className={styles.comboText}>{clock(combination.text)}</p>
           </div>
         </article>
       )}

@@ -15,6 +15,7 @@ import {
   Zap,
 } from "lucide-react";
 import WalkIcon from "../../../components/icons/WalkIcon.jsx";
+import { useClockText } from "../../../utils/time.js";
 import styles from "./PatternCard.module.scss";
 
 // Icon per backend feature id (GET /api/features); falls back to sleep / activity by `kind`.
@@ -42,6 +43,7 @@ const KIND_ICONS = { sleep: Moon, steps: WalkIcon };
 const RANK_COLORS = [styles.rank1, styles.rank2, styles.rank3];
 
 function PatternCard({ pattern, className = "" }) {
+  const clock = useClockText();
   const Icon = FEATURE_ICONS[pattern.feature] ?? KIND_ICONS[pattern.kind] ?? Moon;
 
   return (
@@ -52,10 +54,10 @@ function PatternCard({ pattern, className = "" }) {
         </span>
         <div>
           <p className={styles.rank}>#{pattern.rank} pattern</p>
-          <h3 className={styles.title}>{pattern.title}</h3>
+          <h3 className={styles.title}>{clock(pattern.title)}</h3>
         </div>
       </div>
-      <p className={styles.subtitle}>{pattern.subtitle}</p>
+      <p className={styles.subtitle}>{clock(pattern.subtitle)}</p>
       <p className={styles.frequency}>{pattern.frequency}</p>
     </Link>
   );

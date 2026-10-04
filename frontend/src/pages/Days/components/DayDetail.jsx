@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { CHECK_IN_METRICS, useAppStore } from "../../../store/useAppStore.js";
 import NormBar from "./NormBar.jsx";
+import { useClockText } from "../../../utils/time.js";
 import styles from "./DayDetail.module.scss";
 
 const LABEL_TEXT = { good: "Good day", neutral: "Typical day", bad: "Lower day" };
@@ -12,6 +13,8 @@ function formatDate(date) {
 }
 
 function DayDetail({ date, day, today, reference, isLoading, error }) {
+  const clock = useClockText();
+
   if (!day) {
     return (
       <section className={styles.card}>
@@ -68,7 +71,7 @@ function DayDetail({ date, day, today, reference, isLoading, error }) {
                     <p className={styles.when}>{WHEN_TEXT[f.when]}</p>
                   </div>
                   <div className={styles.featureValues}>
-                    <p className={styles.value}>{f.display}</p>
+                    <p className={styles.value}>{clock(f.display)}</p>
                     <p className={`${styles.diff} ${styles[`leans_${f.leans}`] ?? ""}`}>
                       {f.difference_text}
                     </p>
@@ -97,13 +100,15 @@ function DayDetail({ date, day, today, reference, isLoading, error }) {
 
 /** Possible reason > biggest difference > neutral text, as in backend `headline`. */
 function Summary({ day }) {
+  const clock = useClockText();
+
   if (day.reasons.length) {
     const reason = day.reasons[0];
     return (
       <div className={`${styles.summary} ${styles.summaryReason}`}>
         <p className={styles.summaryEyebrow}>Possible reason</p>
-        <p className={styles.summaryText}>{reason.text.replace("Possible reason: ", "")}</p>
-        <p className={styles.summaryNote}>{reason.pattern_text}</p>
+        <p className={styles.summaryText}>{clock(reason.text.replace("Possible reason: ", ""))}</p>
+        <p className={styles.summaryNote}>{clock(reason.pattern_text)}</p>
       </div>
     );
   }
@@ -111,14 +116,14 @@ function Summary({ day }) {
     return (
       <div className={styles.summary}>
         <p className={styles.summaryEyebrow}>Biggest difference</p>
-        <p className={styles.summaryText}>{day.deviations[0].text}</p>
+        <p className={styles.summaryText}>{clock(day.deviations[0].text)}</p>
         <p className={styles.summaryNote}>A difference, not necessarily a cause.</p>
       </div>
     );
   }
   return (
     <div className={styles.summary}>
-      <p className={styles.summaryText}>{day.summary ?? "Typical day for you"}</p>
+      <p className={styles.summaryText}>{clock(day.summary) ?? "Typical day for you"}</p>
     </div>
   );
 }
