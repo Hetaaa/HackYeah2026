@@ -17,6 +17,7 @@ function App() {
   const scrollRef = useRef(null);
   const status = useAppStore((s) => s.status);
   const init = useAppStore((s) => s.init);
+  const switching = useAppStore((s) => s.switching);
 
   useEffect(() => {
     init();
@@ -54,6 +55,18 @@ function App() {
       </main>
       <BottomNav />
       <CheckInSheet />
+      <AnimatePresence>
+        {switching && (
+          <motion.div
+            className={styles.switching}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.2 } }}
+            exit={{ opacity: 0, transition: { duration: 0.2 } }}
+          >
+            <span className={styles.spinner} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </PhoneFrame>
   );
 }

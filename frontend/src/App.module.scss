@@ -1,3 +1,5 @@
+@use "tokens" as *;
+
 // The only scrolling element: lives inside the phone screen, under the nav.
 .scroll {
   position: absolute;
@@ -16,5 +18,33 @@
   @media (max-width: 500px) {
     padding-top: calc(env(safe-area-inset-top) + 12px);
     padding-bottom: calc(env(safe-area-inset-bottom) + 120px);
+  }
+}
+
+// Covers the screen while another persona loads, so stale data doesn't look like a freeze.
+.switching {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba($bg, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba($plum, 0.15);
+  border-top-color: $orange;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }

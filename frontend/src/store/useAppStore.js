@@ -64,6 +64,7 @@ async function loadPersona(persona) {
 export const useAppStore = create((set, get) => ({
   status: "loading",
   error: null,
+  switching: false, // true while another persona's data loads over the current screen
   users: [],
   persona: null,
   user: { ...MOCK_PROFILE, firstName: "", lastName: "", initials: "" },
@@ -90,13 +91,14 @@ export const useAppStore = create((set, get) => ({
     const persona = get().users.find((u) => u.id === id);
     if (!persona) return;
     savePersona(id);
-    set({ persona, user: userOf(persona), prediction: null });
+    const switching = get().status === "ready" && get().persona?.id !== id;
+    set({ persona, user: userOf(persona), prediction: null, ...(switching && { switching: true }) });
     try {
       const data = await loadPersona(persona);
       if (get().persona?.id !== id) return;
-      set({ ...data, status: "ready", error: null });
+      set({ ...data, status: "ready", error: null, switching: false });
     } catch (error) {
-      if (get().persona?.id === id) set({ status: "error", error: error.message });
+      if (get().persona?.id === id) set({ status: "error", error: error.message, switching: false });
       return;
     }
     const prediction = await api.prediction(id);
