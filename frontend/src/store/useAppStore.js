@@ -5,9 +5,9 @@ import { buildPatterns, buildToday, fromApiAnswers, initialsOf, lastDays, toApiA
 // Daily check-in: four 1–5 scales. low/high describe what 1 and 5 mean.
 export const CHECK_IN_METRICS = [
   { key: "mood", label: "Mood", low: "Awful", high: "Great" },
-  { key: "fatigue", label: "Fatigue", low: "Fresh", high: "Exhausted" },
+  { key: "fatigue", label: "Fatigue", low: "Exhausted", high: "Rested" },
   { key: "sleepQuality", label: "Sleep quality", low: "Poor", high: "Great" },
-  { key: "stress", label: "Stress", low: "Calm", high: "Very high" },
+  { key: "stress", label: "Stress", low: "Very high", high: "Calm" },
 ];
 
 const MOCK_PROFILE = {
@@ -112,6 +112,13 @@ export const useAppStore = create((set, get) => ({
     const { persona } = get();
     await api.saveSurvey(persona.id, persona.today, toApiAnswers(answers));
     set({ checkIn: answers });
+    await get().refresh();
+  },
+
+  resetCheckIn: async () => {
+    const { persona } = get();
+    await api.deleteSurvey(persona.id, persona.today);
+    set({ checkIn: null });
     await get().refresh();
   },
 

@@ -20,12 +20,39 @@
 }
 
 .done {
+  height: 68px;
+  padding-left: 12px;
   background: $plum;
   box-shadow: 0 12px 28px rgba($plum, 0.2);
 
   .arrow {
-    background: $orange;
+    background: rgba(#fff, 0.12);
   }
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.eyebrow {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b8adb3;
+}
+
+.summary {
+  font-size: 15.5px;
+  font-weight: 600;
 }
 
 .arrow {

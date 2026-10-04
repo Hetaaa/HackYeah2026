@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useSpring, useTransform } from "motion/react";
 import confetti from "canvas-confetti";
-import { X } from "lucide-react";
-import { fromApiAnswers } from "../../api/adapters.js";
+import { RotateCcw, X } from "lucide-react";
 import { CHECK_IN_METRICS, useAppStore } from "../../store/useAppStore.js";
 import styles from "./CheckInSheet.module.scss";
 
@@ -73,6 +72,7 @@ function CheckInSheet() {
         )}
       </AnimatePresence>
       <canvas ref={canvasRef} className={styles.confetti} />
+      <GooFilter />
     </div>
   );
 }
@@ -81,8 +81,8 @@ function CheckInSheet() {
 function SheetBody({ onSaved }) {
   const saved = useAppStore((s) => s.checkIn);
   const saveCheckIn = useAppStore((s) => s.saveCheckIn);
+  const resetCheckIn = useAppStore((s) => s.resetCheckIn);
   const close = useAppStore((s) => s.closeCheckIn);
-  const persona = useAppStore((s) => s.persona);
   const [draft, setDraft] = useState(saved ?? {});
   const [isDone, setIsDone] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -92,7 +92,26 @@ function SheetBody({ onSaved }) {
   useEffect(() => () => clearTimeout(closeTimer.current), []);
 
   const isComplete = CHECK_IN_METRICS.every((m) => draft[m.key]);
-  const demoAnswers = fromApiAnswers(persona.demo_answers);
+
+  const hasAnswers = saved !== null || Object.keys(draft).length > 0;
+
+  // Saved check-in: delete it on the backend. Unsaved answers: just clear the form.
+  const handleReset = async () => {
+    setError(null);
+    if (saved === null) {
+      setDraft({});
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await resetCheckIn();
+      setDraft({});
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -144,11 +163,6 @@ function SheetBody({ onSaved }) {
               ))}
             </div>
 
-            {demoAnswers && (
-              <button className={styles.demo} onClick={() => setDraft(demoAnswers)}>
-                Fill in {persona.name}’s real answers
-              </button>
-            )}
             {error && <p className={styles.error}>{error}</p>}
 
             <motion.button
@@ -159,6 +173,12 @@ function SheetBody({ onSaved }) {
             >
               {isSaving ? "Saving…" : "Save check-in"}
             </motion.button>
+            {hasAnswers && (
+              <button className={styles.reset} onClick={handleReset} disabled={isSaving}>
+                <RotateCcw size={14} strokeWidth={2.2} />
+                {saved !== null ? "Reset today’s check-in" : "Clear answers"}
+              </button>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -166,36 +186,116 @@ function SheetBody({ onSaved }) {
   );
 }
 
+// One button (38px) + gap (8px): how far the blob moves per step.
+const STEP = 46;
+
+const R = 19; // button radius
+const SCALE_WIDTH = 5 * 38 + 4 * 8;
+
+/** Teardrop outline: hull of a full circle at the head and a smaller one at the tail,
+ *  joined by their outer tangent lines (no neck, so it never pinches or breaks). */
+function teardropPath(head, tail) {
+  const d = Math.abs(head - tail);
+  const R1 = R - Math.min(d / 40, 2); // head thins slightly while stretched
+  const r = Math.max(R1 - d * 0.17, 5); // tail shrinks the longer the drop
+  if (d < R1 - r + 0.5) {
+    return `M ${head - R1} ${R} a ${R1} ${R1} 0 1 0 ${2 * R1} 0 a ${R1} ${R1} 0 1 0 ${-2 * R1} 0 Z`;
+  }
+  const dir = Math.sign(head - tail); // drop points the way it moves
+  const cos = (R1 - r) / d;
+  const sin = Math.sqrt(1 - cos * cos);
+  const hx = head + dir * R1 * cos;
+  const tx = tail + dir * r * cos;
+  const sweep = dir > 0 ? 1 : 0;
+  return [
+    `M ${tx} ${R - r * sin}`,
+    `L ${hx} ${R - R1 * sin}`,
+    `A ${R1} ${R1} 0 0 ${sweep} ${hx} ${R + R1 * sin}`,
+    `L ${tx} ${R + r * sin}`,
+    `A ${r} ${r} 0 1 ${sweep} ${tx} ${R - r * sin}`,
+    "Z",
+  ].join(" ");
+}
+
+/** The selection drop: the head springs ahead, the tail follows slower, so the shape
+ *  stretches into a teardrop on start and pulls itself back into a circle at the end. */
+function GooBlob({ value }) {
+  const target = R + (value - 1) * STEP;
+  const head = useSpring(target, { stiffness: 520, damping: 40 });
+  const tail = useSpring(target, { stiffness: 220, damping: 30 });
+
+  useEffect(() => {
+    head.set(target);
+    tail.set(target);
+  }, [target, head, tail]);
+
+  const path = useTransform(() => teardropPath(head.get(), tail.get()));
+
+  return (
+    <motion.div
+      className={styles.goo}
+      aria-hidden="true"
+      initial={{ opacity: 0, scale: 0.6 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.4, transition: { duration: 0.2 } }}
+      style={{ transformOrigin: `${target}px 50%` }}
+    >
+      <svg className={styles.dropSvg} width={SCALE_WIDTH} height={2 * R}>
+        <motion.path d={path} />
+      </svg>
+    </motion.div>
+  );
+}
+
 function ScaleRow({ metric, value, onChange }) {
   return (
     <fieldset className={styles.row}>
       <legend className={styles.label}>{metric.label}</legend>
-      <div className={styles.scale}>
-        {[1, 2, 3, 4, 5].map((n) => (
-          <motion.button
-            key={n}
-            type="button"
-            className={`${styles.option} ${value === n ? styles.selected : ""}`}
-            onClick={() => onChange(n)}
-            whileTap={{ scale: 0.9 }}
-            aria-pressed={value === n}
-          >
-            {value === n && (
-              <motion.span
-                layoutId={`pill-${metric.key}`}
-                className={styles.pill}
-                transition={{ type: "spring", stiffness: 500, damping: 35 }}
-              />
-            )}
-            <span className={styles.number}>{n}</span>
-          </motion.button>
-        ))}
-      </div>
-      <div className={styles.ends}>
-        <span>{metric.low}</span>
-        <span>{metric.high}</span>
+      <div className={styles.scaleLine}>
+        <span className={styles.endLow}>{metric.low}</span>
+        <div className={styles.scale}>
+          {/* Layers: grey circles, then the orange goo, then the (transparent) buttons with numbers.
+              Buttons stay on top even while pressed (a pressed button gets a transform). */}
+          <div className={styles.track} aria-hidden="true">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <span key={n} />
+            ))}
+          </div>
+          <AnimatePresence>{value && <GooBlob key="goo" value={value} />}</AnimatePresence>
+          {[1, 2, 3, 4, 5].map((n) => (
+            <motion.button
+              key={n}
+              type="button"
+              className={`${styles.option} ${value === n ? styles.selected : ""}`}
+              onClick={() => onChange(n)}
+              whileTap={{ scale: 0.9 }}
+              aria-pressed={value === n}
+              aria-label={`${metric.label} ${n}`}
+            >
+              <span className={styles.number}>{n}</span>
+            </motion.button>
+          ))}
+        </div>
+        <span className={styles.endHigh}>{metric.high}</span>
       </div>
     </fieldset>
+  );
+}
+
+/** Gooey filter: blur merges the blobs, the alpha matrix sharpens the merged edge back. */
+function GooFilter() {
+  return (
+    <svg width="0" height="0" className={styles.svgDefs} aria-hidden="true">
+      <filter id="goo" x="-20%" y="-60%" width="140%" height="220%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
+        <feColorMatrix
+          in="blur"
+          values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"
+          result="goo"
+        />
+        <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+      </filter>
+    </svg>
   );
 }
 

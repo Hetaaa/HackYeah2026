@@ -38,4 +38,5 @@ export const api = {
   days: (id, from, to) => request("GET", `/users/${id}/days?from=${from}&to=${to}`),
   day: (id, date) => orNull(request("GET", `/users/${id}/days/${date}`)),
   saveSurvey: (id, date, answers) => request("PUT", `/users/${id}/surveys/${date}`, answers),
+  deleteSurvey: (id, date) => request("DELETE", `/users/${id}/surveys/${date}`),
 };

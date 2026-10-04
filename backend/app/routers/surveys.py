@@ -39,3 +39,15 @@ def save_survey(
             status.HTTP_422_UNPROCESSABLE_CONTENT, detail=f"Date {date} is out of range"
         )
     return surveys_service.save_survey(session, persona.id, date, data)
+
+
+@router.delete(
+    "/{date}",
+    summary="Delete the survey of a day",
+    description="Clears the day's answers so the check-in can be filled again; watch data is "
+    "kept. 404 when the day has no survey.",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_survey(persona: PersonaDep, date: dt.date, session: SessionDep) -> None:
+    if not surveys_service.delete_survey(session, persona.id, date):
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail=f"No survey for {date}")

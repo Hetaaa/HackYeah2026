@@ -13,14 +13,16 @@ function Today() {
 
   return (
     <div className={styles.page}>
-      <PageHeader
-        eyebrow={date}
-        title="Feeling off today?"
-        subtitle="Here’s what may be behind it."
-      />
-      <HeartHero />
-      <div className={styles.cards}>
+      {/* First screen: header, heart and today's forecast resting right above the nav. */}
+      <section className={styles.fold}>
+        <PageHeader eyebrow={date} title="Feeling off today?" subtitle="Here’s what may be behind it." />
+        <div className={styles.hero}>
+          <HeartHero />
+        </div>
         <ForecastCard />
+      </section>
+
+      <div className={styles.cards}>
         <CheckInButton />
         <RecipeCard />
       </div>

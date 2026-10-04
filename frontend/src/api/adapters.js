@@ -24,17 +24,19 @@ export const initialsOf = (name) =>
     .slice(0, 2)
     .toUpperCase();
 
+// UI and API use the same scales: every answer is 1–5 with "higher = better"
+// (fatigue 5 = rested, stress 5 = calm). Only the key names differ.
 export function toApiAnswers(ui) {
-  return { mood: ui.mood, fatigue: 6 - ui.fatigue, sleep_quality: ui.sleepQuality, stress: 6 - ui.stress };
+  return { mood: ui.mood, fatigue: ui.fatigue, sleep_quality: ui.sleepQuality, stress: ui.stress };
 }
 
 export function fromApiAnswers(answers) {
   if (!answers) return null;
   return {
     mood: answers.mood,
-    fatigue: 6 - answers.fatigue,
+    fatigue: answers.fatigue,
     sleepQuality: answers.sleep_quality,
-    stress: 6 - answers.stress,
+    stress: answers.stress,
   };
 }
 
@@ -49,6 +51,7 @@ function heroPatterns(patterns, recipe) {
   const good = hasList(recipe) ? recipe.ingredients.map((p) => ({ ...p, tone: "good" })) : [];
   return [...bad, ...good].slice(0, 3).map((p, i) => ({
     rank: i + 1,
+    feature: p.feature,
     kind: kindOf(p.when),
     title: p.condition,
     subtitle:

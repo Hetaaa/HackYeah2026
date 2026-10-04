@@ -102,6 +102,11 @@
   color: $ink;
 }
 
+// The ring slides in from the previous day: keep the selected tile above the tiles it passes.
+.tile[aria-pressed="true"] {
+  z-index: 1;
+}
+
 // Day tones; also used by the legend swatches.
 .good {
   background: $sage-soft;

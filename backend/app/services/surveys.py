@@ -31,6 +31,19 @@ def save_survey(session: Session, user_id: str, date: dt.date, data: SurveyCreat
     return to_read(session, day)
 
 
+def delete_survey(session: Session, user_id: str, date: dt.date) -> bool:
+    """Clears the day's answers (watch data stays). False when there was no survey."""
+    day = get_day(session, user_id, date)
+    if day is None or survey_of(day) is None:
+        return False
+    day.sqlmodel_update(
+        {"mood": None, "fatigue": None, "sleep_quality": None, "stress": None, "survey_at": None}
+    )
+    session.add(day)
+    session.commit()
+    return True
+
+
 def to_read(session: Session, day: Day) -> SurveyRead:
     """The label is personal (relative to the user's history), so it needs all their days."""
     return read_from(day, get_analysis(session, day.user_id))

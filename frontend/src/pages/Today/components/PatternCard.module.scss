@@ -5,10 +5,14 @@
   width: 178px;
   padding: 14px 14px 12px;
   border-radius: 20px;
-  background: $surface;
+  // Light glass: the heart shows through softly, text stays fully readable.
+  background: rgba($surface, 0.62);
+  backdrop-filter: blur(14px) saturate(1.5);
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
   box-shadow:
-    0 2px 6px rgba(80, 30, 30, 0.06),
-    0 16px 36px rgba(80, 30, 30, 0.16);
+    inset 0 0 0 1px rgba(#fff, 0.75),
+    0 2px 6px rgba(80, 30, 30, 0.05),
+    0 16px 36px rgba(80, 30, 30, 0.13);
 }
 
 .head {
@@ -28,16 +32,16 @@
   color: #fff;
 }
 
-.sleep {
+.rank1 {
   background: $purple;
 }
 
-.steps {
+.rank2 {
   background: $orange;
 }
 
-.stress {
-  background: $red;
+.rank3 {
+  background: #c83f42;
 }
 
 .rank {
@@ -57,7 +61,7 @@
 
 .subtitle {
   padding-bottom: 8px;
-  border-bottom: 1px solid $line;
+  border-bottom: 1px solid rgba($ink, 0.08);
   font-size: 11.5px;
   color: $ink-soft;
 }

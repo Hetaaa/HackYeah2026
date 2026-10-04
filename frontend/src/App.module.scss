@@ -4,6 +4,7 @@
   inset: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
+  container-type: size; // lets pages size a section to the visible area with `cqh`
   padding-top: 54px;
   padding-bottom: 130px;
   scrollbar-width: none;

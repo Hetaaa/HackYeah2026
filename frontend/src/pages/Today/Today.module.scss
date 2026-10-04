@@ -4,8 +4,39 @@
   padding: 0 $gutter;
 }
 
+// The visible area above the nav (cqh = height of the scroll container, see App), ending
+// with the forecast card. +16px puts the card's bottom one regular gap (14px) above the nav,
+// so the next card starts right under it. Taller content on small phones grows past it.
+.fold {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100cqh + 16px);
+}
+
+// Spare height goes around the heart, so the forecast always sits at the bottom.
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+// Shorter phones: shrink the hero so the forecast still fits on the first screen.
+@container (max-height: 720px) {
+  .hero {
+    zoom: 0.88;
+  }
+}
+
+@container (max-height: 660px) {
+  .hero {
+    zoom: 0.78;
+  }
+}
+
 .cards {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  margin-top: 14px;
 }
