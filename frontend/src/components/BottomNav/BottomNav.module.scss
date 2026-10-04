@@ -11,7 +11,7 @@
   padding: 10px 8px 12px;
   border-radius: $radius-lg;
   // Frosted milk glass: content underneath only hints through, heavily blurred.
-  background: rgba($surface, 0.96);
+  background: rgba($surface, 0.85);
   -webkit-backdrop-filter: blur(32px) saturate(1.2);
   backdrop-filter: blur(32px) saturate(1.2);
   box-shadow:
