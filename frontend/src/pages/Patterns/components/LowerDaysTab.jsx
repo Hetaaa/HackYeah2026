@@ -24,12 +24,6 @@ function LowerDaysTab() {
         <p className={styles.eyebrow}>Possible reasons</p>
         <div className={styles.sectionHead}>
           <h2 className={styles.sectionTitle}>What pulls your days down</h2>
-          <button className={styles.toggle} onClick={() => setShowAll((v) => !v)} aria-expanded={showAll}>
-            View all data
-            <motion.span animate={{ rotate: showAll ? 180 : 0 }} className={styles.chevron}>
-              <ChevronDown size={14} strokeWidth={2.4} />
-            </motion.span>
-          </button>
         </div>
 
         {reasons.length === 0 && <p className={styles.empty}>{clock(statusText)}</p>}
@@ -58,6 +52,25 @@ function LowerDaysTab() {
         </ol>
       </section>
 
+      {combination && (
+        <article className={styles.combo}>
+          <span className={styles.multiplier}>
+            ×<CountUp value={combination.multiplier} decimals={1} />
+          </span>
+          <div>
+            <p className={styles.comboEyebrow}>Strongest signal</p>
+            <h3 className={styles.comboTitle}>{clock(combination.title)}</h3>
+            <p className={styles.comboText}>{clock(combination.text)}</p>
+          </div>
+        </article>
+      )}
+
+      <button className={styles.viewAll} onClick={() => setShowAll((v) => !v)} aria-expanded={showAll}>
+        {showAll ? "Hide data" : "View all data"}
+        <motion.span animate={{ rotate: showAll ? 180 : 0 }} className={styles.chevron}>
+          <ChevronDown size={14} strokeWidth={2.4} />
+        </motion.span>
+      </button>
       <AnimatePresence initial={false}>
         {showAll && (
           <motion.div
@@ -72,19 +85,6 @@ function LowerDaysTab() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {combination && (
-        <article className={styles.combo}>
-          <span className={styles.multiplier}>
-            ×<CountUp value={combination.multiplier} decimals={1} />
-          </span>
-          <div>
-            <p className={styles.comboEyebrow}>Strongest signal</p>
-            <h3 className={styles.comboTitle}>{clock(combination.title)}</h3>
-            <p className={styles.comboText}>{clock(combination.text)}</p>
-          </div>
-        </article>
-      )}
     </div>
   );
 }
