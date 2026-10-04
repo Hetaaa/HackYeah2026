@@ -41,4 +41,9 @@ Przy włączonym serwerze:
 
 Za darmo: backend na Render, frontend na Vercel. Krok po kroku: [DEPLOY.md](DEPLOY.md).
 
+## AI, dane i biblioteki
+
+Użycie AI (Claude), zbiór danych PMData (CC BY 4.0), modele, usługi i biblioteki z licencjami i
+cytowaniami: [ACKNOWLEDGMENTS.md](ACKNOWLEDGMENTS.md).
+
 Konwencje dla agentów AI: [CLAUDE.md](CLAUDE.md).
